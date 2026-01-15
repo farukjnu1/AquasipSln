@@ -1,0 +1,117 @@
+﻿@model Aquasip.Models.PageContentVM
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h4>Edit of</h4>
+<h1 class="text-danger">@Model.SlugPage CONTENT</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" asp-controller="PageContents" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PageContentId" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="SlugPage" class="control-label"></label>
+                <input asp-for="SlugPage" class="form-control" />
+                <span asp-validation-for="SlugPage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SlugPageContent" class="control-label"></label>
+                <input asp-for="SlugPageContent" class="form-control" />
+                <span asp-validation-for="SlugPageContent" class="text-danger"></span>
+            </div> *@
+            <input type="hidden" asp-for="SlugPage" />
+            <input type="hidden" asp-for="SlugPageContent" />
+            <div class="form-group">
+                <label asp-for="Header" class="control-label"></label>
+                @* <input asp-for="Header" class="form-control" /> *@
+                <textarea asp-for="Header" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Header" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Body" class="control-label"></label>
+                @* <input asp-for="Body" class="form-control" /> *@
+                <textarea asp-for="Body" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Footer" class="control-label"></label>
+                @* <input asp-for="Footer" class="form-control" /> *@
+                <textarea asp-for="Footer" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Footer" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="MediaId" class="control-label"></label>
+                <input asp-for="MediaId" class="form-control" />
+                <span asp-validation-for="MediaId" class="text-danger"></span>
+            </div> *@
+            <input type="hidden" asp-for="MediaId" />
+            <div class="form-group">
+                <label asp-for="IsActive" class="control-label"></label>
+                @* <input asp-for="IsActive" type="text" /> *@
+                <select asp-for="IsActive">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+
+                
+            </div>
+            @* <div class="form-group">
+                <label asp-for="UploadedBy" class="control-label"></label>
+                <input asp-for="UploadedBy" class="form-control" />
+                <span asp-validation-for="UploadedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UploadedAt" class="control-label"></label>
+                <input asp-for="UploadedAt" class="form-control" />
+                <span asp-validation-for="UploadedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FileName" class="control-label"></label>
+                <input asp-for="FileName" class="form-control" />
+                <span asp-validation-for="FileName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FilePath" class="control-label"></label>
+                <input asp-for="FilePath" class="form-control" />
+                <span asp-validation-for="FilePath" class="text-danger"></span>
+            </div> *@
+            <input type="hidden" asp-for="UploadedBy" />
+            <input type="hidden" asp-for="UploadedAt" />
+            <input type="hidden" asp-for="FileName" />
+            <input type="hidden" asp-for="FilePath" />
+            <input type="file" asp-for="MediaFile" style="padding-top:5px" />
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="padding-top:5px">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <img src="@Model.FilePath" style="width:500px" />
+    </div>
+</div>
+
+<div>
+    @* <a asp-action="Index" asp-controller="Pages">Back to List</a> *@
+    <a href="/Pages/Details?slug=@Model.SlugPage">Back to @Model.SlugPage</a>
+</div>
+
+@* @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@

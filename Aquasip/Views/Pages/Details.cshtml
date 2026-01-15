@@ -1,0 +1,657 @@
+﻿@model IEnumerable<Aquasip.Models.PageVM>
+@{
+    ViewData["Title"] = "Details";
+    //Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    Layout = "~/Views/Shared/_LayoutReview.cshtml";
+
+    var oPage = Model == null ? new PageVM() : Model.First();
+    int serial = 0;
+}
+
+<div class="container-fluid">
+    <h4 style="padding-top:100px">Details of</h4>
+    <h1 class="text-danger">@oPage.Title PAGE</h1>
+    <a href="/Pages">Back to List</a>
+    <hr />
+    <div class="table-responsive">
+        <table class="table table-bordered table-responsive">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Header</th>
+                <th>Body</th>
+                <th>Footer</th>
+                <th>Attachment</th>
+            </tr>
+            @foreach (var item in oPage.PageContents.Where(x => x.SlugPageContent != "quick_links"
+            && x.SlugPageContent != "our_services"
+            && x.SlugPageContent != "copy_right"
+            && x.SlugPageContent != "designed_by"))
+            {
+                serial += 1;
+                <tr>
+                    <td>@serial</td>
+                    <td>
+                        <a href="/PageContents/Edit/@item.PageContentId">@item.Title</a>
+                    </td>
+                    <td>@item.Header</td>
+                    <td>@item.Body</td>
+                    <td>@item.Footer</td>
+                    <td><img src="@item.FilePath" style="width:150px" /></td>
+                </tr>
+            }
+        </table>
+    </div>
+    
+</div>
+
+<h4 style="padding:10px">Output:</h4>
+
+@if (oPage.Slug == "about")
+{
+    var aboutUs = oPage.PageContents.Where(x => x.SlugPageContent == "about").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oPage.PageContents.Where(x => x.SlugPageContent == "about").First();
+    var aboutImg = oPage.PageContents.Where(x => x.SlugPageContent == "about_img").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oPage.PageContents.Where(x => x.SlugPageContent == "about_img").First();
+    var listAbout = oPage.PageContents.Where(x => x.SlugPageContent == "abouts").ToList();
+
+    <!-- About Start -->
+    <div class="container-fluid about bg-light py-5">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5 wow fadeInLeft" data-wow-delay="0.2s">
+                    <div class="about-img pb-5 ps-5">
+                        <img src="@aboutUs.FilePath" class="img-fluid rounded w-100" style="object-fit: cover;" alt="Image">
+                        <div class="about-img-inner">
+                            <img src="@aboutImg.FilePath" class="img-fluid rounded-circle w-100 h-100" alt="Image">
+                        </div>
+                        <div class="about-experience">@aboutImg.Title</div>
+                    </div>
+                </div>
+                <div class="col-lg-7 wow fadeInRight" data-wow-delay="0.4s">
+                    <div class="section-title text-start mb-5">
+                        <h4 class="sub-title pe-3 mb-0">About Us</h4>
+                        <h1 class="display-3 mb-4">@aboutUs.Title</h1>
+                        <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(aboutUs.Header)</p>
+                        <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(aboutUs.Body)</p>
+                        <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(aboutUs.Footer)</p>
+                        <div class="mb-4">
+                            @foreach (var item in listAbout)
+                            {
+                                <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> @item.Title</p>
+                            }
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn-primary rounded-pill text-white py-3 px-5">Discover More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+}
+
+
+@if (oPage.Slug == "appointment")
+{
+    var oAppointment = Model.Where(x => x.Slug == "appointment").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "appointment").First();
+    var appointment = oAppointment.PageContents.Where(x => x.SlugPageContent == "appointment").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oAppointment.PageContents.Where(x => x.SlugPageContent == "appointment").First();
+    <!-- Book Appointment Start -->
+    <div class="container-fluid appointment bg-light py-5">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6 wow fadeInLeft" data-wow-delay="0.2">
+                    <div class="section-title text-start">
+                        <h4 class="sub-title pe-3 mb-0">@appointment.Title</h4>
+                        <h1 class="display-4 mb-4">@appointment.Header</h1>
+                        <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(appointment.Body)</p>
+                        <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(appointment.Footer)</p>
+                        @* <div class="row g-4">
+                            <div class="col-sm-8">
+                                <div class="video h-100">
+                                    <img src="@appointment.FilePath" class="img-fluid rounded w-100 h-100" style="object-fit: cover;" alt="">
+                                    <button type="button" class="btn btn-play" data-bs-toggle="modal" data-src="@appointment.Footer" data-bs-target="#videoModal">
+                                        <span></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div> *@
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.4s">
+                    <div class="appointment-form rounded p-5">
+                        <p class="fs-4 text-uppercase text-primary">Get In Touch</p>
+                        <h1 class="display-5 mb-4">Get Appointment</h1>
+                        <form>
+                            <div class="row gy-3 gx-4">
+                                <div class="col-xl-12">
+                                    <input type="text" required class="form-control py-3 border-primary bg-transparent text-black" placeholder="Full Name" />
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-xl-6">
+                                    <input type="email" required class="form-control py-3 border-primary bg-transparent text-black" placeholder="Email" />
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-xl-6">
+                                    <input type="text" required class="form-control py-3 border-primary bg-transparent text-black" placeholder="Phone" />
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-xl-6">
+                                    <select required class="form-select py-3 border-primary bg-transparent" aria-label="select gender">
+                                        <option value="" selected>Your Gender</option>
+                                        <option value="1">Female</option>
+                                        <option value="2">Male</option>
+                                        <option value="3">Others</option>
+                                    </select>
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-xl-6">
+                                    <input type="number" required class="form-control py-3 border-primary bg-transparent" placeholder="Age">
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <textarea required class="form-control border-primary bg-transparent text-black" cols="30" rows="5" placeholder="Address"></textarea>
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <textarea required class="form-control border-primary bg-transparent text-black" cols="30" rows="5" placeholder="Problem Details"></textarea>
+                                    <span class="text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary text-white w-100 py-3 px-5">SUBMIT NOW</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Video -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Youtube Video</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 16:9 aspect ratio -->
+                    <div class="ratio ratio-16x9">
+                        <iframe class="embed-responsive-item" src="" id="video" allowfullscreen allowscriptaccess="always"
+                        allow="autoplay"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Book Appointment End -->
+}
+
+
+@if (oPage.Slug == "home")
+{
+    var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
+
+    <h4 style="color:red;padding-left:20px"><i>To show in slides in Home page, activate the slide</i></h4>
+    <!-- Navbar & Hero Start -->
+    <div class="container-fluid position-relative">
+        <!-- Carousel Start -->
+        <div class="header-carousel owl-carousel">
+            @foreach (var item in oHome.PageContents.Where(x => x.SlugPageContent == "slides" && x.IsActive == true))
+            {
+                <div class="header-carousel-item">
+                    <img src="@item.FilePath" class="img-fluid w-100" alt="Image">
+                    <div class="carousel-caption">
+                        <div class="carousel-caption-content p-3">
+                            <h5 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">@item.Title</h5>
+                            <h1 class="display-1 text-capitalize text-white mb-4">Where Beauty Meets Radiance</h1>
+                            <p class="mb-5 fs-5">@Html.Raw(item.Header)</p>
+                            <p class="mb-5 fs-5">@Html.Raw(item.Body)</p>
+                            <p class="mb-5 fs-5">@Html.Raw(item.Footer)</p>
+                            <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="javascript:void(0)" name="appointment">Book Appointment</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- Carousel End -->
+    </div>
+    <!-- Navbar & Hero End -->
+}
+
+@if (oPage.Slug == "services")
+{
+    var oService = Model.Where(x => x.Slug == "services").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "services").First();
+    var ourService = oService.PageContents.Where(x => x.SlugPageContent == "our_services").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oService.PageContents.Where(x => x.SlugPageContent == "our_services").First();
+    var listService = oService.PageContents.Where(x => x.SlugPageContent == "services").ToList();
+
+    <a href="/PageContents/Create?Slug=services&SlugPageContent=services" style="padding-left:20px">New services</a>
+    <h4 style="color:red;padding-left:20px"><i>To show services in Home page, input 'home' in description</i></h4>
+    <!-- Services Start -->
+    <div class="container-fluid service py-5">
+        <div class="container py-5">
+            <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="sub-style">
+                    <h4 class="sub-title px-3 mb-0">What We Do</h4>
+                </div>
+                <h1 class="display-3 mb-4">@ourService.Title</h1>
+                <p class="mb-1">@Html.Raw(ourService.Body)</p>
+                <p class="mb-1">@Html.Raw(ourService.Footer)</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @for (var i = 0; i < listService.Count; i++)
+                {
+                    if (i < 8)
+                    {
+                        string body = string.IsNullOrEmpty(listService[i].Body) == true ? "" : Convert.ToString(listService[i].Body);
+                        body = body.Length > 100 ? body.ToString().Substring(0, 100) : body.ToString().Substring(0, body.Length);
+                        var delay = i * 0.1;
+                        <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="@delay.ToString()s">
+                            <div class="service-item rounded">
+                                <div class="service-img rounded-top">
+                                    <img src="@listService[i].FilePath" class="img-fluid rounded-top w-100" alt="">
+                                </div>
+                                <div class="service-content rounded-bottom bg-light p-4">
+                                    <div class="service-content-inner">
+                                        <h5 class="mb-4">@listService[i].Title</h5>
+                                        <p class="mb-4">@body</p>
+                                        <a href="/Home/Service/@listService[i].PageContentId" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Read More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+
+                <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.2s">
+                    <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="javascript:void(0)">Services More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Services End -->
+}
+
+
+@if (oPage.Slug == "our_team")
+{
+    var oOurTeam = Model.Where(x => x.Slug == "our_team").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "our_team").First();
+    var ourTeam = oOurTeam.PageContents.Where(x => x.SlugPageContent == "our_team").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oOurTeam.PageContents.Where(x => x.SlugPageContent == "our_team").First();
+    var listOurTeam = oOurTeam.PageContents.Where(x => x.SlugPageContent == "our_teams").ToList();
+
+    <a href="/PageContents/Create?Slug=our_team&SlugPageContent=our_teams" style="padding-left:20px">New Team Member</a>
+    <h4 style="color:red;padding-left:20px"><i>To show team member in Home page, input 'home' in description</i></h4>
+    <!-- Team Start -->
+    <div class="container-fluid team py-5">
+        <div class="container py-5">
+            <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="sub-style">
+                    <h4 class="sub-title px-3 mb-0">Meet our team</h4>
+                </div>
+                <h1 class="display-3 mb-4">@ourTeam.Title</h1>
+                <p class="mb-1">@Html.Raw(ourTeam.Header)</p>
+                <p class="mb-1">@Html.Raw(ourTeam.Body)</p>
+                <p class="mb-1">@Html.Raw(ourTeam.Footer)</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @for (var i = 0; i < listOurTeam.Count; i++)
+                {
+                    if (i < 4)
+                    {
+                        var delay = i * 0.1;
+                        <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="@delay.ToString()s">
+                            <div class="team-item rounded">
+                                <div class="team-img rounded-top h-100">
+                                    <img src="@listOurTeam[i].FilePath" class="img-fluid rounded-top w-100" alt="">
+                                    @* <div class="team-icon d-flex justify-content-center">
+                                    <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div> *@
+                                </div>
+                                <div class="team-content text-center border border-primary border-top-0 rounded-bottom p-4">
+                                    <h5>@listOurTeam[i].Title</h5>
+                                    <p class="mb-0">@listOurTeam[i].Header</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+    <!-- Team End -->
+}
+
+
+@if (oPage.Slug == "testimonial")
+{
+    var oTestimonial = Model.Where(x => x.Slug == "testimonial").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "testimonial").First();
+    var testimonial = oTestimonial.PageContents.Where(x => x.SlugPageContent == "testimonial").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oTestimonial.PageContents.Where(x => x.SlugPageContent == "testimonial").First();
+    var listTestimonial = oTestimonial.PageContents.Where(x => x.SlugPageContent == "testimonials").ToList();
+
+    <a href="/PageContents/Create?Slug=testimonial&SlugPageContent=testimonials" style="padding-left:20px">New Testimonial</a>
+    <h4 style="color:red;padding-left:20px"><i>To show testimonial in Home page, input 'home' in description</i></h4>
+    <!-- Testimonial Start -->
+    <div class="container-fluid testimonial py-5 wow zoomInDown" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="section-title mb-5">
+                <div class="sub-style">
+                    <h4 class="sub-title text-white px-3 mb-0">Testimonial</h4>
+                </div>
+                <h1 class="display-3 mb-4">@testimonial.Title</h1>
+                <p class="mb-1">@Html.Raw(testimonial.Header)</p>
+                <p class="mb-1">@Html.Raw(testimonial.Body)</p>
+                <p class="mb-1">@Html.Raw(testimonial.Footer)</p>
+            </div>
+            <div class="testimonial-carousel owl-carousel">
+                @foreach (var item in listTestimonial.Take(3))
+                {
+                    <div class="testimonial-item">
+                        <div class="testimonial-inner p-5">
+                            <div class="testimonial-inner-img mb-4">
+                                <img src="@item.FilePath" class="img-fluid rounded-circle" alt="">
+                            </div>
+                            <p class="text-white fs-7">
+                                @item.Body
+                            </p>
+                            <div class="text-center">
+                                <h5 class="mb-2">@item.Title</h5>
+                                <p class="mb-2 text-white-50">@item.Header</p>
+                                <div class="d-flex justify-content-center">
+                                    @for (var i = 0; i < int.Parse(item.Footer); i++)
+                                    {
+                                        <i class="fas fa-star text-secondary"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    <!-- Testimonial End -->
+}
+
+
+@if (oPage.Slug == "our_blog")
+{
+    var oOurBlog = Model.Where(x => x.Slug == "our_blog").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "our_blog").First();
+    var ourBlog = oOurBlog.PageContents.Where(x => x.SlugPageContent == "our_blog").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oOurBlog.PageContents.Where(x => x.SlugPageContent == "our_blog").First();
+    var listOurBlog = oOurBlog.PageContents.Where(x => x.SlugPageContent == "our_blogs").ToList();
+
+    <a href="/PageContents/Create?Slug=our_blog&SlugPageContent=our_blogs" style="padding-left:20px">New Blog</a>
+    <!-- Blog Start -->
+    <div class="container-fluid blog py-5">
+        <div class="container py-5">
+            <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="sub-style">
+                    <h4 class="sub-title px-3 mb-0">Our Blog</h4>
+                </div>
+                <h1 class="display-3 mb-4">@ourBlog.Title</h1>
+                <p class="mb-0">@Html.Raw(ourBlog.Header)</p>
+                <p class="mb-0">@Html.Raw(ourBlog.Body)</p>
+                <p class="mb-0">@Html.Raw(ourBlog.Footer)</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @for (var i = 0; i < listOurBlog.Count; i++)
+                {
+                    if (i < 3)
+                    {
+                        var delay = i * 0.1;
+                        <div class="col-md-6 col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="@delay.ToString()s">
+                            <div class="blog-item rounded">
+                                <div class="blog-img">
+                                    <img src="@listOurBlog[i].FilePath" class="img-fluid w-100" alt="Image">
+                                </div>
+                                <div class="blog-centent p-4">
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <p class="mb-0 text-muted"><i class="fa fa-calendar-alt text-primary"></i> @Convert.ToDateTime(listOurBlog[i].UploadedAt).ToString("dd MMM yyyy")</p>
+                                        @* <a href="#" class="text-muted"><span class="fa fa-comments text-primary"></span> Comment(s)</a> *@
+                                    </div>
+                                    <a href="#" class="h4">@listOurBlog[i].Title</a>
+                                    <p class="my-4">@listOurBlog[i].Header</p>
+                                    <a href="/Home/OurBlog/@listOurBlog[i].PageContentId" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-1">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+    <!-- Blog End -->
+}
+
+
+@if (oPage.Slug == "contact")
+{
+    var viewModel = Model;
+    var oContact = viewModel.Where(x => x.Slug == "contact").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "contact").First();
+    var contact = oContact.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oContact.PageContents.Where(x => x.SlugPageContent == "contact").First();
+
+    var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                    oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
+
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "layout").First();
+    var listLayout = oContact.PageContents.Where(x => x.SlugPage == "layout").ToList();
+
+    var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "location").First();
+
+    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+
+    var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
+
+    var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
+
+    var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
+
+    var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
+
+    var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
+
+    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+
+    var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
+    var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
+
+    var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
+
+    var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
+
+    var oMobile = layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").First();
+
+    <!-- Contact Start -->
+    <div class="container-fluid contact py-5 bg-light">
+        <div class="container py-5">
+            <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="sub-style mb-4">
+                    <h4 class="sub-title text-white px-3 mb-0">@contact.Title</h4>
+                </div>
+                <p class="mb-0 text-black-50">
+                    @contact.Body
+                </p>
+            </div>
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-5 col-xl-5 contact-form wow fadeInLeft" data-wow-delay="0.1s">
+                    <h2 class="display-5 text-white mb-2">@contact.Header</h2>
+                    <p class="mb-4 text-white">
+                        @contact.Footer
+                    </p>
+                    <form asp-controller="Home" asp-action="Contact" method="post">
+                        <div class="row g-3">
+                            <div class="col-lg-12 col-xl-12">
+                                <div class="form-floating">
+                                    <input type="text" required class="form-control bg-transparent border border-white" placeholder="Your Name">
+                                    <label for="FullName">Full Name</label>
+                                </div>
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-lg-12 col-xl-6">
+                                <div class="form-floating">
+                                    <input type="email" required class="form-control bg-transparent border border-white" placeholder="Your Email">
+                                    <label for="Email">Your Email</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-xl-6">
+                                <div class="form-floating">
+                                    <input type="text" required class="form-control bg-transparent border border-white" placeholder="Phone">
+                                    <label for="Phone">Your Phone</label>
+                                </div>
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" required class="form-control bg-transparent border border-white" placeholder="Subject">
+                                    <label for="Subject">Subject</label>
+                                </div>
+                                <span required class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea required class="form-control bg-transparent border border-white" placeholder="Leave a message here" style="height: 160px"></textarea>
+                                    <label for="Message">Message</label>
+                                </div>
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-light text-primary w-100 py-3">Send Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-2 col-xl-2 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="bg-transparent rounded">
+                        <div class="d-flex flex-column align-items-center text-center mb-4">
+                            <div class="bg-white d-flex align-items-center justify-content-center mb-3" style="width: 90px; height: 90px; border-radius: 50px;"><i class="fa fa-map-marker-alt fa-2x text-primary"></i></div>
+                            <h4 class="text-dark">Addresses</h4>
+                            <p class="mb-0 text-white">@oAddress.Body</p>
+                        </div>
+                        <div class="d-flex flex-column align-items-center text-center mb-4">
+                            <div class="bg-white d-flex align-items-center justify-content-center mb-3" style="width: 90px; height: 90px; border-radius: 50px;"><i class="fa fa-phone-alt fa-2x text-primary"></i></div>
+                            <h4 class="text-dark">Mobile</h4>
+                            <p class="mb-0 text-white">@oPhone.Body</p>
+                            <p class="mb-0 text-white">@oMobile.Body</p>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-center text-center">
+                            <div class="bg-white d-flex align-items-center justify-content-center mb-3" style="width: 90px; height: 90px; border-radius: 50px;"><i class="fa fa-envelope-open fa-2x text-primary"></i></div>
+                            <h4 class="text-dark">Email</h4>
+                            <p class="mb-0 text-white">@oEmail.Body</p>
+                            <p class="mb-0 text-white">@oEmail2.Body</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-xl-5 wow fadeInRight" data-wow-delay="0.3s">
+                    <div class="d-flex justify-content-center mb-4">
+                        <a class="btn btn-lg-square btn-light rounded-circle mx-2" href="@oFacebook.Body"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-lg-square btn-light rounded-circle mx-2" href="@oTwitter.Body"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-lg-square btn-light rounded-circle mx-2" href="@oInstagram.Body"><i class="fab fa-instagram"></i></a>
+                        <a class="btn btn-lg-square btn-light rounded-circle mx-2" href="@oLinkedin.Body"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <div class="rounded h-100">
+                        <iframe class="rounded w-100"
+                        style="height: 500px;" src="@map.Header"
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contact End -->
+}
+
+
+@if (oPage.Slug == "privacy_policy")
+{
+    var oPrivacyPolicy = Model.Where(x => x.Slug == "privacy_policy").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "privacy_policy").First();
+    var privacyPolicy = oPrivacyPolicy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oPrivacyPolicy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").First();
+    var listPrivacyPolicy = oPrivacyPolicy.PageContents.Where(x => x.SlugPageContent == "privacy_policies").ToList();
+
+    <a href="/PageContents/Create?Slug=privacy_policy&SlugPageContent=privacy_policies" style="padding-left:20px">New Policy</a>
+    <h4 style="color:red;padding-left:20px"><i>To show in Policy in Home page, activate the policy</i></h4>
+    <!-- Privacy Policy Start -->
+    <div class="container-fluid about bg-light py-5">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-12 wow fadeInRight" data-wow-delay="0.4s">
+                    <div class="section-title text-start mb-5">
+                        <h4 class="sub-title pe-3 mb-0">Privacy Policy</h4>
+                        <h1 class="display-3 mb-4">@privacyPolicy.Title</h1>
+                        <p class="mb-2" style="text-align: justify;text-justify: inter-word;">@Html.Raw(privacyPolicy.Header)</p>
+                        <p class="mb-2" style="text-align: justify;text-justify: inter-word;">@Html.Raw(privacyPolicy.Body)</p>
+                        <p class="mb-2" style="text-align: justify;text-justify: inter-word;">@Html.Raw(privacyPolicy.Footer)</p>
+                        <div class="mb-4">
+                            @foreach (var item in listPrivacyPolicy.Where(x=>x.IsActive == true))
+                            {
+                                <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> @item.Title</p>
+                            }
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn-primary rounded-pill text-white py-3 px-5">Discover More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Privacy Policy End -->
+}
+
+
+@if (oPage.Slug == "terms_condition")
+{
+    var oTerms = Model.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "terms_condition").First();
+    var terms = oTerms.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oTerms.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
+    var listTerms = oTerms.PageContents.Where(x => x.SlugPageContent == "terms_conditions").ToList();
+
+    <a href="/PageContents/Create?Slug=terms_condition&SlugPageContent=terms_conditions" style="padding-left:20px">New Terms & Condition</a>
+    <h4 style="color:red;padding-left:20px"><i>To show in terms in Home page, activate the term</i></h4>
+    <!--  terms_condition Start -->
+    <div class="container-fluid about bg-light py-5">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-12 wow fadeInRight" data-wow-delay="0.4s">
+                    <div class="section-title text-start mb-5">
+                        <h4 class="sub-title pe-3 mb-0">Terms & Conditions</h4>
+                        <h1 class="display-3 mb-4">@terms.Title</h1>
+                        <p class="mb-1">@terms.Header</p>
+                        <p class="mb-1">@terms.Body</p>
+                        <p class="mb-1">@terms.Footer</p>
+                        <div class="mb-4">
+                            @foreach (var item in listTerms.Where(x => x.IsActive == true))
+                            {
+                                <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> @item.Title</p>
+                            }
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn-primary rounded-pill text-white py-3 px-5">Discover More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  terms_condition End -->
+}

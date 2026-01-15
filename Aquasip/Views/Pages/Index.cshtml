@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Aquasip.Models.PageVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Pages</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                URL
+            </th>
+            <th>#</th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Slug)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublishedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th></th> *@
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @* <a asp-action="Edit" asp-route-id="@item.PageId">Edit</a> | *@
+                <a href="/Pages/Details?slug=@item.Slug" target="_blank">Edit</a> |
+                <a href="@item.Content" target="_blank">Go to Website</a>
+            </td>
+            @* <td>
+            @Html.DisplayFor(modelItem => item.Slug)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td><td>
+                @Html.DisplayFor(modelItem => item.PublishedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PageId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PageId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PageId">Delete</a>
+            </td> *@
+        </tr>
+}
+    </tbody>
+</table>

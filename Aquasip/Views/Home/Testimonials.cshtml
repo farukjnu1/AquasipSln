@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Aquasip.Models.PageVM>
+@{
+    ViewData["Title"] = "Testimonials";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var oTestimonial = Model.Where(x => x.Slug == "testimonial").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "testimonial").First();
+    var testimonial = oTestimonial.PageContents.Where(x => x.SlugPageContent == "testimonial").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oTestimonial.PageContents.Where(x => x.SlugPageContent == "testimonial").First();
+    var listTestimonial = oTestimonial.PageContents.Where(x => x.SlugPageContent == "testimonials").ToList();
+}
+
+<!-- Testimonial Start -->
+<div class="container-fluid testimonial py-5 wow zoomInDown" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="section-title mb-5">
+            <div class="sub-style">
+                <h4 class="sub-title text-white px-3 mb-0">Testimonial</h4>
+            </div>
+            <h1 class="display-3 mb-4">@Html.Raw(@testimonial.Title)</h1>
+            <p class="mb-1">@Html.Raw(testimonial.Header)</p>
+            <p class="mb-1">@Html.Raw(testimonial.Body)</p>
+            <p class="mb-1">@Html.Raw(testimonial.Footer)</p>
+        </div>
+        <div class="testimonial-carousel owl-carousel">
+            @foreach (var item in listTestimonial)
+            {
+                int start = 0;
+                bool isInt = int.TryParse(item.Footer, out start);
+                start = isInt == true ? start : 0;
+                <div class="testimonial-item">
+                    <div class="testimonial-inner p-5">
+                        <div class="testimonial-inner-img mb-4">
+                            <img src="@item.FilePath" class="img-fluid rounded-circle" alt="">
+                        </div>
+                        <p class="text-white fs-7">
+                            @item.Body
+                        </p>
+                        <div class="text-center">
+                            <h5 class="mb-2">@item.Title</h5>
+                            <p class="mb-2 text-white-50">@item.Header</p>
+                            <div class="d-flex justify-content-center">
+                                @for (var i = 0; i < start; i++)
+                                {
+                                    <i class="fas fa-star text-secondary"></i>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<!-- Testimonial End -->
+

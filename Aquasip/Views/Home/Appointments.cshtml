@@ -1,0 +1,102 @@
+﻿@model Aquasip.Models.AppointmentVM
+@{
+    ViewData["Title"] = "Appointments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["appointment"];
+    var oAppointment = viewModel.Where(x => x.Slug == "appointment").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "appointment").First();
+    var appointment = oAppointment.PageContents.Where(x => x.SlugPageContent == "appointment").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oAppointment.PageContents.Where(x => x.SlugPageContent == "appointment").First();
+}
+
+<!-- Book Appointment Start -->
+<div class="container-fluid appointment bg-light py-5">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6 wow fadeInLeft" data-wow-delay="0.2">
+                <div class="section-title text-start">
+                    <h4 class="sub-title pe-3 mb-0">@Html.Raw(appointment.Title)</h4>
+                    <h1 class="display-4 mb-4">@Html.Raw(appointment.Header)</h1>
+                    <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(appointment.Body)</p>
+                    <p class="mb-4" style="text-align: justify;text-justify: inter-word;">@Html.Raw(appointment.Footer)</p>
+                    <div class="row g-4">
+                        <div class="col-sm-8">
+                            <div class="video h-100">
+                                <img src="@appointment.FilePath" class="img-fluid rounded w-100 h-100" style="object-fit: cover;" alt="">
+                                <button type="button" class="btn btn-play" data-bs-toggle="modal" data-src="@appointment.FilePath" data-bs-target="#videoModal">
+                                    <span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.4s">
+                <div class="appointment-form rounded p-5">
+                    <p class="fs-4 text-uppercase text-primary">Get In Touch</p>
+                    <h1 class="display-5 mb-4">Get Appointment</h1>
+                    <form asp-controller="Home" asp-action="Appointment" method="post">
+                        <div class="row gy-3 gx-4">
+                            <div class="col-xl-12">
+                                <input type="text" asp-for="FullName" required class="form-control py-3 border-primary bg-transparent text-black" placeholder="Full Name" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                            <div class="col-xl-6">
+                                <input type="email" asp-for="Email" required class="form-control py-3 border-primary bg-transparent text-black" placeholder="Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-xl-6">
+                                <input type="text" asp-for="Phone" required class="form-control py-3 border-primary bg-transparent text-black" placeholder="Phone" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                            <div class="col-xl-6">
+                                <select asp-for="Gender" required class="form-select py-3 border-primary bg-transparent" aria-label="select gender">
+                                    <option value="" selected>Your Gender</option>
+                                    <option value="1">Female</option>
+                                    <option value="2">Male</option>
+                                    <option value="3">Others</option>
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                            <div class="col-xl-6">
+                                <input asp-for="Age" type="number" required class="form-control py-3 border-primary bg-transparent" placeholder="Age">
+                                <span asp-validation-for="Age" class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <textarea asp-for="Address" required class="form-control border-primary bg-transparent text-black" cols="30" rows="5" placeholder="Address"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <textarea asp-for="ProblemDetail" required class="form-control border-primary bg-transparent text-black" cols="30" rows="5" placeholder="Problem Details"></textarea>
+                                <span asp-validation-for="ProblemDetail" class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary text-white w-100 py-3 px-5">SUBMIT NOW</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Video -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Youtube Video</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 16:9 aspect ratio -->
+                <div class="ratio ratio-16x9">
+                    <iframe class="embed-responsive-item" src="@appointment.FilePath" id="video" allowfullscreen allowscriptaccess="always"
+                            allow="autoplay"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Book Appointment End -->
+

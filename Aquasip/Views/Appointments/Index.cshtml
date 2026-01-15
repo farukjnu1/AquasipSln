@@ -1,0 +1,127 @@
+﻿@model PaginatedList<Aquasip.EF.Appointment>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Appointments</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>
+                Full Name
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Phone
+            </th>
+            <th>
+                Address
+            </th>
+            <th>
+                Problem Detail
+            </th>
+            <th>
+                Sending Time
+            </th>
+            <th>Status</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+            var fontWeight = item.IsRead == true ? "normal" : "bold";
+            var markCommand = item.IsRead == true ? "Mark As Unread" : "Mark As Read";
+            var statusCommand = item.IsActive == true ? "Suspend" : "Restore";
+            var status = item.IsActive == true ? "Restored" : "Suspended";
+            var statusCSS = item.IsActive == true ? "badge text-bg-success" : "badge text-bg-danger";
+            <tr style="font-weight: @fontWeight;">
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.AppointmentId">@markCommand</a> |
+                    <a asp-action="Edit" asp-route-id="@item.AppointmentId">@statusCommand</a>
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProblemDetail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateAt)
+            </td>
+            <td>
+                <span class="@statusCSS">@status</span>
+            </td>
+            
+        </tr>
+}
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.PageIndex)
+            {
+                <li class="page-item active"><span class="page-link">@i</span></li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-route-pageNumber="@i">@i</a>
+                </li>
+            }
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+        }
+    </ul>
+</nav>

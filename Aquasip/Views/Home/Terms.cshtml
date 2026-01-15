@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Aquasip.Models.PageVM>
+@{
+    ViewData["Title"] = "Terms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var oTerms = Model.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "terms_condition").First();
+    var terms = oTerms.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oTerms.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
+    var listTerms = oTerms.PageContents.Where(x => x.SlugPageContent == "terms_conditions" && x.IsActive == true).ToList();
+}
+
+<!--  terms_condition Start -->
+<div class="container-fluid about bg-light py-5">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-12 wow fadeInRight" data-wow-delay="0.4s">
+                <div class="section-title text-start mb-5">
+                    <h4 class="sub-title pe-3 mb-0">Terms & Conditions</h4>
+                    <h1 class="display-3 mb-4">@terms.Title</h1>
+                    <p class="mb-1">@terms.Header</p>
+                    <p class="mb-1">@terms.Body</p>
+                    <p class="mb-1">@terms.Footer</p>
+                    <div class="mb-4">
+                        @foreach (var item in listTerms)
+                        {
+                            <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> @item.Title</p>
+                        }
+                    </div>
+                    <a href="javascript:void(0)" class="btn btn-primary rounded-pill text-white py-3 px-5">Discover More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  terms_condition End -->
+
