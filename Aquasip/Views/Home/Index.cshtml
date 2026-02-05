@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Aquasip.Models.PageVM>
 @using Aquasip.Utilities
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "AquaSip | Home";
     var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
 
     var oService = Model.Where(x => x.Slug == "services").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "services").First();
@@ -42,7 +42,7 @@
 <!-- Navbar & Hero Start -->
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-        <a href="" class="navbar-brand p-0">
+        <a href="/" class="navbar-brand p-0">
             @* <h1 class="text-primary"><i class="fas fa-hand-holding-water me-3"></i>@websiteName.SettingValue</h1> *@
             <img src="img/logo.png" alt="Logo">
         </a>
@@ -51,17 +51,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto py-0">
-                <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About</a>
-                <a href="service.html" class="nav-item nav-link">Service</a>
+                <a href="/" class="nav-item nav-link active">Home</a>
+                <a href="javascript:void(0)" class="nav-item nav-link">About</a>
+                <a href="javascript:void(0)" class="nav-item nav-link">Service</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu m-0">
-                        <a href="product.html" class="dropdown-item">Products</a>
-                        <a href="blog.html" class="dropdown-item">Blog Posts</a>
+                        <a href="javascript:void(0)" class="dropdown-item">Products</a>
+                        <a href="javascript:void(0)" class="dropdown-item">Blog Posts</a>
                     </div>
                 </div>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
+                <a href="Home/Contact" class="nav-item nav-link">Contact</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 <div class="d-flex flex-column pe-3 border-end border-primary">
