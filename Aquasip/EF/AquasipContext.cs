@@ -45,7 +45,7 @@ public partial class AquasipContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=Faruk-Abdullah;Database=Aquasip;User=sa;Password=123;TrustServerCertificate=True;Trusted_Connection=True;");
+        => optionsBuilder.UseSqlServer("Server=db40213.databaseasp.net;Database=db40213;User Id=db40213;Password=9w=CsN8%E_q2;Encrypt=False;MultipleActiveResultSets=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
