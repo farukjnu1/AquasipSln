@@ -21,7 +21,7 @@ namespace Aquasip.Controllers
             _connectionString = configuration.GetConnectionString("AquasipContext");
             _environment = environment;
         }
-
+        #region Requirement from Client
         public IActionResult Index()
         {
             PageRepository pageRepo = new PageRepository(_connectionString);
@@ -66,59 +66,27 @@ namespace Aquasip.Controllers
 
         public IActionResult About()
         {
+            #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
-            var aboutPage = pageRepo.GetBySlug("about");
-            aboutPage.PageContents = pageContentRepo.GetBySlugPage("about");
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var contactPage = pageRepo.GetBySlug("contact");
+            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
 
             var listPage = new List<PageVM>();
-            listPage.Add(aboutPage);
+            listPage.Add(contactPage);
+            listPage.Add(layoutPage);
+            ViewData["contact"] = listPage;
+            #endregion
 
-            return View(listPage);
-        }
+            #region Create
+            ContactMessageVM model = new ContactMessageVM();
+            #endregion
 
-        public IActionResult Services()
-        {
-            PageRepository pageRepo = new PageRepository(_connectionString);
-            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-
-            var servicePage = pageRepo.GetBySlug("services");
-            servicePage.PageContents = pageContentRepo.GetBySlugPage("services");
-
-            var listPage = new List<PageVM>();
-            listPage.Add(servicePage);
-
-            return View(listPage);
-        }
-
-        public IActionResult Service(int id)
-        {
-            PageRepository pageRepo = new PageRepository(_connectionString);
-            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-
-            var servicePage = pageRepo.GetBySlug("services");
-            var oService = pageContentRepo.GetById(id);
-            servicePage.PageContents.Add(oService);
-
-            var listPage = new List<PageVM>();
-            listPage.Add(servicePage);
-
-            return View(listPage);
-        }
-
-        public IActionResult OurTeams()
-        {
-            PageRepository pageRepo = new PageRepository(_connectionString);
-            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-
-            var ourTeamPage = pageRepo.GetBySlug("our_team");
-            ourTeamPage.PageContents = pageContentRepo.GetBySlugPage("our_team");
-
-            var listPage = new List<PageVM>();
-            listPage.Add(ourTeamPage);
-
-            return View(listPage);
+            return View(model);
         }
 
         public IActionResult Contact()
@@ -161,6 +129,176 @@ namespace Aquasip.Controllers
                 TempData["message"] = "Exception!";
             }
             return RedirectToAction("Appointments");
+        }
+
+        public IActionResult Spec()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var contactPage = pageRepo.GetBySlug("contact");
+            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(contactPage);
+            listPage.Add(layoutPage);
+            ViewData["contact"] = listPage;
+            #endregion
+
+            #region Create
+            ContactMessageVM model = new ContactMessageVM();
+            #endregion
+
+            return View(model);
+        }
+
+        public IActionResult Gallery()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var contactPage = pageRepo.GetBySlug("contact");
+            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(contactPage);
+            listPage.Add(layoutPage);
+            ViewData["contact"] = listPage;
+            #endregion
+
+            #region Create
+            ContactMessageVM model = new ContactMessageVM();
+            #endregion
+
+            return View(model);
+        }
+
+        public IActionResult Cart()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var contactPage = pageRepo.GetBySlug("contact");
+            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(contactPage);
+            listPage.Add(layoutPage);
+            ViewData["contact"] = listPage;
+            #endregion
+
+            #region Create
+            ContactMessageVM model = new ContactMessageVM();
+            #endregion
+
+            return View(model);
+        }
+
+        public IActionResult Review()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var contactPage = pageRepo.GetBySlug("contact");
+            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(contactPage);
+            listPage.Add(layoutPage);
+            ViewData["contact"] = listPage;
+            #endregion
+
+            #region Create
+            ContactMessageVM model = new ContactMessageVM();
+            #endregion
+
+            return View(model);
+        }
+
+        public IActionResult Faq()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var contactPage = pageRepo.GetBySlug("contact");
+            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(contactPage);
+            listPage.Add(layoutPage);
+            ViewData["contact"] = listPage;
+            #endregion
+
+            #region Create
+            ContactMessageVM model = new ContactMessageVM();
+            #endregion
+
+            return View(model);
+        }
+        #endregion
+
+
+        public IActionResult Services()
+        {
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var servicePage = pageRepo.GetBySlug("services");
+            servicePage.PageContents = pageContentRepo.GetBySlugPage("services");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(servicePage);
+
+            return View(listPage);
+        }
+
+        public IActionResult Service(int id)
+        {
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var servicePage = pageRepo.GetBySlug("services");
+            var oService = pageContentRepo.GetById(id);
+            servicePage.PageContents.Add(oService);
+
+            var listPage = new List<PageVM>();
+            listPage.Add(servicePage);
+
+            return View(listPage);
+        }
+
+        public IActionResult OurTeams()
+        {
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var ourTeamPage = pageRepo.GetBySlug("our_team");
+            ourTeamPage.PageContents = pageContentRepo.GetBySlugPage("our_team");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(ourTeamPage);
+
+            return View(listPage);
         }
 
         public IActionResult OurBlogs()

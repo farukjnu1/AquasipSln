@@ -14,9 +14,10 @@
     <a href="/Pages">Back to List</a>
     <hr />
     <div class="table-responsive">
-        <table class="table table-bordered table-responsive">
+        <table class="table table-bordered table-responsive" style="table-layout:fixed;width:100%">
             <tr>
                 <th>#</th>
+                <th>Status</th>
                 <th>Title</th>
                 <th>Header</th>
                 <th>Body</th>
@@ -29,15 +30,20 @@
             && x.SlugPageContent != "designed_by"))
             {
                 serial += 1;
+                string status = item.IsActive == true ? "Enabled" : "Disabled";
+                string statusCss = item.IsActive == true ? "success" : "danger";
                 <tr>
                     <td>@serial</td>
                     <td>
+                        <div class="badge bg-@statusCss">@status</div>
+                    </td>
+                    <td style="overflow-wrap:break-word">
                         <a href="/PageContents/Edit/@item.PageContentId">@item.Title</a>
                     </td>
-                    <td>@item.Header</td>
-                    <td>@item.Body</td>
-                    <td>@item.Footer</td>
-                    <td><img src="@item.FilePath" style="width:150px" /></td>
+                    <td style="overflow-wrap:break-word">@item.Header</td>
+                    <td style="overflow-wrap:break-word">@item.Body</td>
+                    <td style="overflow-wrap:break-word">@item.Footer</td>
+                    <td style="overflow-wrap:break-word"><img src="@item.FilePath" style="width:150px" /></td>
                 </tr>
             }
         </table>
@@ -219,6 +225,7 @@
     </div>
     <!-- Navbar & Hero End -->
 }
+
 
 @if (oPage.Slug == "services")
 {
