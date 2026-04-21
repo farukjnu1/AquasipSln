@@ -97,31 +97,6 @@
                 <li data-bs-target="#carouselId" data-bs-slide-to="2"></li>
             </ol>
             <div class="carousel-inner" role="listbox">
-                @* @foreach (var item in oHome.PageContents.Where(x => x.SlugPageContent == "slides" && x.IsActive == true))
-                {
-                    <div class="carousel-item">
-                        <img src="@item.FilePath" class="img-fluid w-100" alt="Image">
-                        <div class="carousel-caption-1">
-                            <div class="carousel-caption-1-content" style="max-width: 900px;">
-                                <h4 class="text-white text-uppercase fw-bold mb-4 fadeInLeft animated" data-animation="fadeInLeft" data-delay="1s" style="animation-delay: 1s;" style="letter-spacing: 3px;">@Html.Raw(item.Title)</h4>
-                                <h1 class="display-2 text-capitalize text-white mb-4 fadeInLeft animated" data-animation="fadeInLeft" data-delay="1.3s" style="animation-delay: 1.3s;">@Html.Raw(item.Title)</h1>
-                                <p class="mb-5 fs-5 text-white fadeInLeft animated" data-animation="fadeInLeft" data-delay="1.5s" style="animation-delay: 1.5s;">
-                                    @Html.Raw(item.Header)
-                                </p>
-                                <p class="mb-5 fs-5 text-white fadeInLeft animated" data-animation="fadeInLeft" data-delay="1.5s" style="animation-delay: 1.5s;">
-                                    @Html.Raw(item.Body)
-                                </p>
-                                <p class="mb-5 fs-5 text-white fadeInLeft animated" data-animation="fadeInLeft" data-delay="1.5s" style="animation-delay: 1.5s;">
-                                    @Html.Raw(item.Footer)
-                                </p>
-                                <div class="carousel-caption-1-content-btn fadeInLeft animated" data-animation="fadeInLeft" data-delay="1.7s" style="animation-delay: 1.7s;">
-                                    <a class="btn btn-primary rounded-pill flex-shrink-0 py-3 px-5 me-2" href="#">Order Now</a>
-                                    <a class="btn btn-secondary rounded-pill flex-shrink-0 py-3 px-5 ms-2" href="#">Free Estimate</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                } *@
                 <div class="carousel-item active">
                     <img src="@oSlide0.FilePath" class="img-fluid w-100" alt="Image">
                     <div class="carousel-caption-1">
@@ -228,14 +203,14 @@
 <!-- Products End -->
 
 <!-- JavaScript Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Template Javascript -->
+<!-- Template Javascript -->
 <script src="~/lib/wow/wow.min.js"></script>
-    <script src="~/lib/easing/easing.min.js"></script>
-    <script src="~/lib/waypoints/waypoints.min.js"></script>
-    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="~/lib/easing/easing.min.js"></script>
+<script src="~/lib/waypoints/waypoints.min.js"></script>
+<script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
 <script src="~/js/main.js"></script>
 
 <script>
