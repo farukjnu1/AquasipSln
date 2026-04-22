@@ -21,6 +21,8 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<ContactMessage> ContactMessages { get; set; }
 
+    public virtual DbSet<Customer> Customers { get; set; }
+
     public virtual DbSet<Department> Departments { get; set; }
 
     public virtual DbSet<Medium> Media { get; set; }
@@ -30,6 +32,22 @@ public partial class AquasipContext : DbContext
     public virtual DbSet<Page> Pages { get; set; }
 
     public virtual DbSet<PageContent> PageContents { get; set; }
+
+    public virtual DbSet<Product> Products { get; set; }
+
+    public virtual DbSet<ProductMedium> ProductMedia { get; set; }
+
+    public virtual DbSet<ProductPrice> ProductPrices { get; set; }
+
+    public virtual DbSet<ProductRatingSummary> ProductRatingSummaries { get; set; }
+
+    public virtual DbSet<Review> Reviews { get; set; }
+
+    public virtual DbSet<ReviewComment> ReviewComments { get; set; }
+
+    public virtual DbSet<ReviewMedium> ReviewMedia { get; set; }
+
+    public virtual DbSet<ReviewVote> ReviewVotes { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -94,6 +112,20 @@ public partial class AquasipContext : DbContext
                 .HasMaxLength(25)
                 .IsUnicode(false);
             entity.Property(e => e.Subject).HasMaxLength(510);
+        });
+
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__1788CC4CF5FB3A7F");
+
+            entity.ToTable("Customer");
+
+            entity.HasIndex(e => e.Email, "UQ__Customer__A9D105340BF65E6B").IsUnique();
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.CustomerCode).HasMaxLength(100);
+            entity.Property(e => e.Email).HasMaxLength(150);
+            entity.Property(e => e.PasswordHash).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Department>(entity =>
@@ -176,6 +208,135 @@ public partial class AquasipContext : DbContext
             entity.Property(e => e.UploadedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6CDBDE63684");
+
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ProductCode).HasMaxLength(20);
+            entity.Property(e => e.ProductName).HasMaxLength(200);
+            entity.Property(e => e.UploadedAt).HasDefaultValueSql("(getdate())");
+        });
+
+        modelBuilder.Entity<ProductMedium>(entity =>
+        {
+            entity.HasKey(e => e.ProductMediaId);
+
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.FileName).HasMaxLength(255);
+            entity.Property(e => e.FilePath).HasMaxLength(255);
+            entity.Property(e => e.UploadedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<ProductPrice>(entity =>
+        {
+            entity.ToTable("ProductPrice");
+
+            entity.Property(e => e.Description).HasMaxLength(250);
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UploadedAt).HasDefaultValueSql("(getdate())");
+        });
+
+        modelBuilder.Entity<ProductRatingSummary>(entity =>
+        {
+            entity.HasKey(e => e.ProductId).HasName("PK__ProductR__B40CC6CD1D389296");
+
+            entity.ToTable("ProductRatingSummary");
+
+            entity.Property(e => e.ProductId).ValueGeneratedNever();
+            entity.Property(e => e.AverageRating).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.LastUpdated).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.TotalReviews).HasDefaultValue(0);
+
+            entity.HasOne(d => d.Product).WithOne(p => p.ProductRatingSummary)
+                .HasForeignKey<ProductRatingSummary>(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Summary_Product");
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasKey(e => e.ReviewId).HasName("PK__Reviews__74BC79CE355DC824");
+
+            entity.HasIndex(e => e.CustomerId, "IX_Reviews_CustomerId");
+
+            entity.HasIndex(e => e.ProductId, "IX_Reviews_ProductId");
+
+            entity.HasIndex(e => new { e.ProductId, e.CustomerId }, "UQ_Product_Customer").IsUnique();
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.IsApproved).HasDefaultValue(true);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            entity.Property(e => e.ModerationStatus)
+                .HasMaxLength(50)
+                .HasDefaultValue("Approved");
+            entity.Property(e => e.Title).HasMaxLength(200);
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Reviews)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reviews_Customer");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.Reviews)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reviews_Product");
+        });
+
+        modelBuilder.Entity<ReviewComment>(entity =>
+        {
+            entity.HasKey(e => e.CommentId).HasName("PK__ReviewCo__C3B4DFCAE956CF55");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.ReviewComments)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Comments_Customer");
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewComments)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Comments_Review");
+        });
+
+        modelBuilder.Entity<ReviewMedium>(entity =>
+        {
+            entity.HasKey(e => e.MediaId).HasName("PK__ReviewMe__B2C2B5CF2A6FE60C");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.MediaType).HasMaxLength(50);
+            entity.Property(e => e.MediaUrl).HasMaxLength(500);
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewMedia)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Media_Review");
+        });
+
+        modelBuilder.Entity<ReviewVote>(entity =>
+        {
+            entity.HasKey(e => e.VoteId).HasName("PK__ReviewVo__52F015C23DAAE953");
+
+            entity.HasIndex(e => e.ReviewId, "IX_ReviewVotes_ReviewId");
+
+            entity.HasIndex(e => new { e.ReviewId, e.CustomerId }, "UQ_Review_Customer_Vote").IsUnique();
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.ReviewVotes)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Votes_Customer");
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewVotes)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Votes_Review");
         });
 
         modelBuilder.Entity<Role>(entity =>

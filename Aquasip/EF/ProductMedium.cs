@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace Aquasip.EF;
 
-public partial class Medium
+public partial class ProductMedium
 {
-    public int MediaId { get; set; }
+    public long ProductMediaId { get; set; }
+
+    public long? ProductId { get; set; }
 
     public string FileName { get; set; } = null!;
 
@@ -18,6 +20,4 @@ public partial class Medium
     public int? UploadedBy { get; set; }
 
     public DateTime? UploadedAt { get; set; }
-
-    public virtual User? UploadedByNavigation { get; set; }
 }

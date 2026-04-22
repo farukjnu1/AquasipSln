@@ -3,21 +3,19 @@ using System.Collections.Generic;
 
 namespace Aquasip.EF;
 
-public partial class Medium
+public partial class ProductPrice
 {
-    public int MediaId { get; set; }
+    public long ProductPriceId { get; set; }
 
-    public string FileName { get; set; } = null!;
-
-    public string FilePath { get; set; } = null!;
+    public long ProductId { get; set; }
 
     public string? Description { get; set; }
+
+    public decimal? Price { get; set; }
 
     public bool? IsActive { get; set; }
 
     public int? UploadedBy { get; set; }
 
     public DateTime? UploadedAt { get; set; }
-
-    public virtual User? UploadedByNavigation { get; set; }
 }

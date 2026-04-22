@@ -29,21 +29,22 @@ namespace Aquasip.Controllers
 
             var homePage = pageRepo.GetBySlug("home");
             homePage.PageContents = pageContentRepo.GetBySlugPage("home");
+            //homePage.Products = new ProductRepository(_connectionString).GetAll();
 
-            var servicesPage = pageRepo.GetBySlug("services");
-            servicesPage.PageContents = pageContentRepo.GetBySlugPage("services");
+            //var servicesPage = pageRepo.GetBySlug("services");
+            //servicesPage.PageContents = pageContentRepo.GetBySlugPage("services");
 
-            var aboutPage = pageRepo.GetBySlug("about");
-            aboutPage.PageContents = pageContentRepo.GetBySlugPage("about");
+            //var aboutPage = pageRepo.GetBySlug("about");
+            //aboutPage.PageContents = pageContentRepo.GetBySlugPage("about");
 
-            var ourTeamPage = pageRepo.GetBySlug("our_team");
-            ourTeamPage.PageContents = pageContentRepo.GetBySlugPage("our_team");
+            //var ourTeamPage = pageRepo.GetBySlug("our_team");
+            //ourTeamPage.PageContents = pageContentRepo.GetBySlugPage("our_team");
 
-            var testimonialPage = pageRepo.GetBySlug("testimonial");
-            testimonialPage.PageContents = pageContentRepo.GetBySlugPage("testimonial");
+            //var testimonialPage = pageRepo.GetBySlug("testimonial");
+            //testimonialPage.PageContents = pageContentRepo.GetBySlugPage("testimonial");
 
-            var ourBlogPage = pageRepo.GetBySlug("our_blog");
-            ourBlogPage.PageContents = pageContentRepo.GetBySlugPage("our_blog");
+            //var ourBlogPage = pageRepo.GetBySlug("our_blog");
+            //ourBlogPage.PageContents = pageContentRepo.GetBySlugPage("our_blog");
 
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
@@ -53,13 +54,13 @@ namespace Aquasip.Controllers
 
             var listPage = new List<PageVM>();
             listPage.Add(homePage);
-            listPage.Add(servicesPage);
-            listPage.Add(aboutPage);
+            //listPage.Add(servicesPage);
+            //listPage.Add(aboutPage);
             //listPage.Add(appointmentPage);
-            listPage.Add(ourTeamPage);
-            listPage.Add(testimonialPage);
-            listPage.Add(ourBlogPage);
-            listPage.Add(layoutPage);
+            //listPage.Add(ourTeamPage);
+            //listPage.Add(testimonialPage);
+            //listPage.Add(ourBlogPage);
+            //listPage.Add(layoutPage);
 
             return View(listPage);
         }

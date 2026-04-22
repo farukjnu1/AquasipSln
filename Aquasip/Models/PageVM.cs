@@ -20,5 +20,6 @@ namespace Aquasip.Models
         public DateTime? CreatedAt { get; set; }
         public List<PageContentVM> PageContents { get; set; } = new List<PageContentVM>();
         public List<SiteSettingVM> SiteSettings { get; set; } = new List<SiteSettingVM>();
+        public List<ProductVM> Products { get; set; } = new List<ProductVM>();
     }
 }
