@@ -23,5 +23,8 @@ namespace Aquasip.Models
         public virtual ProductRatingSummary? ProductRatingSummary { get; set; }
 
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public IFormFile MediaFile { get; set; }
+        public List<ProductMediumVM> listProductMedia = new List<ProductMediumVM>();
+
     }
 }
