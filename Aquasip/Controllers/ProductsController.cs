@@ -56,7 +56,7 @@ namespace Aquasip.Controllers
             }
 
             var oProduct = new Models.ProductVM();
-            oProduct.listProductMedia = (from x in _context.ProductMedia
+            oProduct.ListProductMedia = (from x in _context.ProductMedia
                                          where x.ProductId == product.ProductId
                                          select new ProductMediumVM()
                                          {

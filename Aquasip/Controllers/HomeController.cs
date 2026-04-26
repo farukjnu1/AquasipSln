@@ -29,7 +29,8 @@ namespace Aquasip.Controllers
 
             var homePage = pageRepo.GetBySlug("home");
             homePage.PageContents = pageContentRepo.GetBySlugPage("home");
-            //homePage.Products = new ProductRepository(_connectionString).GetAll();
+
+            homePage.Products = new ProductRepository(_connectionString).GetAll();
 
             //var servicesPage = pageRepo.GetBySlug("services");
             //servicesPage.PageContents = pageContentRepo.GetBySlugPage("services");
@@ -60,7 +61,7 @@ namespace Aquasip.Controllers
             //listPage.Add(ourTeamPage);
             //listPage.Add(testimonialPage);
             //listPage.Add(ourBlogPage);
-            //listPage.Add(layoutPage);
+            listPage.Add(layoutPage);
 
             return View(listPage);
         }

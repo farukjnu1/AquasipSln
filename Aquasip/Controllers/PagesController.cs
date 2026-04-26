@@ -70,6 +70,8 @@ namespace Aquasip.Controllers
                 var oPage = pRepo.GetBySlug(slug);
                 oPage.PageContents = pcRepo.GetBySlugPage(slug);
 
+                oPage.Products = new ProductRepository(_connectionString).GetAll();
+
                 listPage = new List<PageVM>();
                 listPage.Add(oPage);
             }

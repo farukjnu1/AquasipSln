@@ -50,6 +50,9 @@
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
 
     var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
+
+    //var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
+    var listProduct = oHome.Products;
 }
 
 <!-- Navbar & Hero Start -->
@@ -149,7 +152,57 @@
             <h1 class="display-3 text-capitalize mb-3">We Deliver Best Quality Bottle Packs.</h1>
         </div>
         <div class="row g-4 justify-content-center">
-            <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
+            @for (var i = 0; i < listProduct.Count; i++)
+            {
+                var item = listProduct[i];
+                int dela = (i + 1) * 20;
+                double delas = dela / 100.0;
+                string delays = delas.ToString() + "s";
+                string FilePath = item.ListProductMedia.Count > 0 ? item.ListProductMedia[0].FilePath : "";
+                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="@delays">
+                    <div class="product-item">
+                        <img src="@FilePath" class="img-fluid w-100 rounded-top" alt="Image" />
+                        <div class="product-content bg-light text-center rounded-bottom p-4">
+                            <p>@item.Description</p>
+                            <a href="#" class="h4 d-inline-block mb-3">@item.ProductName</a>
+                            <p class="fs-4 text-primary mb-3">BDT. @item.Price</p>
+                            <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
+                            <a href="#" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
+                            <a href="#" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
+                        </div>
+                        <div class="product-content bg-light text-center rounded-bottom p-4">
+                            @if (item.AverageRating < 2)
+                            {
+                                var starts = "Review: ⭐";
+                                @starts
+                            }
+                            else if (item.AverageRating < 3)
+                            {
+                                var starts = "Review: ⭐⭐";
+                                @starts
+                            }
+                            else if (item.AverageRating < 4)
+                            {
+                                var starts = "Review: ⭐⭐⭐";
+                                @starts
+                            }
+                            else if (item.AverageRating < 5)
+                            {
+                                var starts = "Review: ⭐⭐⭐⭐";
+                                @starts
+                            }
+                            else if (item.AverageRating < 6)
+                            {
+                                var starts = "Review: ⭐⭐⭐⭐⭐";
+                                @starts
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @* <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="product-item">
                     <img src="~/img/product-3.png" class="img-fluid w-100 rounded-top" alt="Image" />
                     <div class="product-content bg-light text-center rounded-bottom p-4">
@@ -196,7 +249,7 @@
                         Review: ⭐⭐⭐⭐⭐
                     </div>
                 </div>
-            </div>
+            </div> *@
         </div>
     </div>
 </div>

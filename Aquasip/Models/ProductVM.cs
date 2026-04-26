@@ -20,11 +20,14 @@ namespace Aquasip.Models
 
         public DateTime? UploadedAt { get; set; }
 
-        public virtual ProductRatingSummary? ProductRatingSummary { get; set; }
+        public decimal? AverageRating { get; set; }
 
-        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-        public IFormFile MediaFile { get; set; }
-        public List<ProductMediumVM> listProductMedia = new List<ProductMediumVM>();
+        public int? TotalReviews { get; set; }
 
+        public List<ReviewVM> ListReview { get; set; } = new List<ReviewVM>();
+        public string? Reviews { get; set; }
+        public IFormFile? MediaFile { get; set; }
+        public List<ProductMediumVM> ListProductMedia { get; set; } = new List<ProductMediumVM>();
+        public string? Medias { get; set; }
     }
 }

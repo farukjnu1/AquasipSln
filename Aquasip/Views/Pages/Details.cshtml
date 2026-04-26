@@ -202,7 +202,7 @@
 @if (oPage.Slug == "home")
 {
     var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
-    var listProduct = oHome.PageContents.Where(x => x.SlugPageContent == "product" && x.IsActive == true).ToList();
+    var listProduct = oHome.Products;
 
     <h4 style="color:red;padding-left:20px"><i>To show in slides in Home page, activate the slide</i></h4>
     <!-- Navbar & Hero Start -->
@@ -241,23 +241,50 @@
                         int dela = (i + 1) * 20;
                         double delas = dela / 100.0;
                         string delays = delas.ToString() + "s";
+                        string FilePath = item.ListProductMedia.Count > 0 ? item.ListProductMedia[0].FilePath : "";
                         <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="@delays">
                             <div class="product-item">
-                                <img src="@item.FilePath" class="img-fluid w-100 rounded-top" alt="Image" />
+                                <img src="@FilePath" class="img-fluid w-100 rounded-top" alt="Image" />
                                 <div class="product-content bg-light text-center rounded-bottom p-4">
-                                    <p>@item.Footer</p>
-                                    <a href="#" class="h4 d-inline-block mb-3">@item.Title</a>
-                                    <p class="fs-4 text-primary mb-3">BDT. @item.Header</p>
+                                    <p>@item.Description</p>
+                                    <a href="#" class="h4 d-inline-block mb-3">@item.ProductName</a>
+                                    <p class="fs-4 text-primary mb-3">BDT. @item.Price</p>
                                     <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
                                     <a href="#" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
                                     <a href="#" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
                                 </div>
                                 <div class="product-content bg-light text-center rounded-bottom p-4">
-                                    Review: ⭐⭐⭐⭐⭐
+                                    @if (item.AverageRating < 2)
+                                    {
+                                        var starts = "Review: ⭐";
+                                        @starts
+                                    }
+                                    else if (item.AverageRating < 3)
+                                    {
+                                        var starts = "Review: ⭐⭐";
+                                        @starts
+                                    }
+                                    else if (item.AverageRating < 4)
+                                    {
+                                        var starts = "Review: ⭐⭐⭐";
+                                        @starts
+                                    }
+                                    else if (item.AverageRating < 5)
+                                    {
+                                        var starts = "Review: ⭐⭐⭐⭐";
+                                        @starts
+                                    }
+                                    else if (item.AverageRating < 6)
+                                    {
+                                        var starts = "Review: ⭐⭐⭐⭐⭐";
+                                        @starts
+                                    }
+                                    
                                 </div>
                             </div>
                         </div>
                     }
+                
                 </div>
             </div>
         </div>
