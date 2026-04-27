@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Aquasip.EF;
 using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Repositories;
 using Aquasip.Utilities;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 
 namespace Aquasip.Controllers
@@ -23,6 +24,50 @@ namespace Aquasip.Controllers
         }
         #region Requirement from Client
         public IActionResult Index()
+        {
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var homePage = pageRepo.GetBySlug("home");
+            homePage.PageContents = pageContentRepo.GetBySlugPage("home");
+
+            homePage.Products = new ProductRepository(_connectionString).GetAll();
+
+            //var servicesPage = pageRepo.GetBySlug("services");
+            //servicesPage.PageContents = pageContentRepo.GetBySlugPage("services");
+
+            //var aboutPage = pageRepo.GetBySlug("about");
+            //aboutPage.PageContents = pageContentRepo.GetBySlugPage("about");
+
+            //var ourTeamPage = pageRepo.GetBySlug("our_team");
+            //ourTeamPage.PageContents = pageContentRepo.GetBySlugPage("our_team");
+
+            //var testimonialPage = pageRepo.GetBySlug("testimonial");
+            //testimonialPage.PageContents = pageContentRepo.GetBySlugPage("testimonial");
+
+            //var ourBlogPage = pageRepo.GetBySlug("our_blog");
+            //ourBlogPage.PageContents = pageContentRepo.GetBySlugPage("our_blog");
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var siteSettingRepo = new SiteSettingRepository(_connectionString);
+            layoutPage.SiteSettings = siteSettingRepo.GetAll();
+
+            var listPage = new List<PageVM>();
+            listPage.Add(homePage);
+            //listPage.Add(servicesPage);
+            //listPage.Add(aboutPage);
+            //listPage.Add(appointmentPage);
+            //listPage.Add(ourTeamPage);
+            //listPage.Add(testimonialPage);
+            //listPage.Add(ourBlogPage);
+            listPage.Add(layoutPage);
+
+            return View(listPage);
+        }
+
+        public IActionResult Products()
         {
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
@@ -133,7 +178,7 @@ namespace Aquasip.Controllers
             return RedirectToAction("Appointments");
         }
 
-        public IActionResult Spec()
+        public IActionResult Spec(long id)
         {
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
@@ -142,19 +187,13 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var contactPage = pageRepo.GetBySlug("contact");
-            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
-
             var listPage = new List<PageVM>();
-            listPage.Add(contactPage);
             listPage.Add(layoutPage);
-            ViewData["contact"] = listPage;
+            ViewData["layout"] = listPage;
             #endregion
 
-            #region Create
-            ContactMessageVM model = new ContactMessageVM();
-            #endregion
-
+            ProductRepository productRepo = new ProductRepository(_connectionString);
+            var model = productRepo.GetById(id);
             return View(model);
         }
 
@@ -192,20 +231,49 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var contactPage = pageRepo.GetBySlug("contact");
-            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+            var cartPage = pageRepo.GetBySlug("cart");
+            cartPage.PageContents = pageContentRepo.GetBySlugPage("cart");
 
             var listPage = new List<PageVM>();
-            listPage.Add(contactPage);
             listPage.Add(layoutPage);
-            ViewData["contact"] = listPage;
+            listPage.Add(cartPage);
+            ViewData["layout"] = listPage;
             #endregion
 
-            #region Create
-            ContactMessageVM model = new ContactMessageVM();
-            #endregion
+            var products = HttpContext.Session.GetString("Cart");
+            var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
 
-            return View(model);
+            return View(listProduct);
+        }
+
+        [HttpPost]
+        public IActionResult Cart(long productId, decimal quantity)
+        {
+            ProductRepository productRepo = new ProductRepository(_connectionString);
+            var product = productRepo.GetById(productId);
+            if (product != null)
+            {
+                var products = HttpContext.Session.GetString("Cart");
+                var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
+                listProduct.Add(new ProductVM
+                {
+                    ProductId = product.ProductId,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    Quantity = quantity,
+                    Total = product.Price * quantity,
+                    ListProductMedia = product.ListProductMedia
+                });
+                HttpContext.Session.SetString("Cart", JsonConversion.SerializeObject(listProduct));
+            }
+            return RedirectToAction("Cart");
+        }
+
+        public IActionResult CartClear()
+        {
+            HttpContext.Session.Remove("Cart");
+
+            return RedirectToAction("Cart");
         }
 
         public IActionResult Review()

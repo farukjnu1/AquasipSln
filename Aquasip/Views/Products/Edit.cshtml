@@ -10,8 +10,8 @@
 <h4>Product</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-12">
+        <form asp-action="Edit" asp-controller="Products" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ProductId" />
             <div class="form-group">
@@ -24,11 +24,7 @@
                 <input asp-for="ProductName" class="form-control" />
                 <span asp-validation-for="ProductName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
                 <input asp-for="Price" class="form-control" />
@@ -42,6 +38,15 @@
                 </select>
                 <span asp-validation-for="IsActive" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            
             @* <div class="form-group">
                 <label asp-for="IsActive" class="control-label"></label>
                 <input asp-for="IsActive" class="form-control" />
@@ -57,9 +62,6 @@
                 <input asp-for="UploadedBy" class="form-control" />
                 <span asp-validation-for="UploadedBy" class="text-danger"></span>
             </div> *@
-            <div class="form-group pt-5">
-                <input type="submit" value="Update" class="btn btn-primary" />
-            </div>
             
         </form>
     </div>

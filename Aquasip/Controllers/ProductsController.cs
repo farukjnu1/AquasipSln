@@ -204,6 +204,7 @@ namespace Aquasip.Controllers
         }
 
         // GET: Products/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -223,8 +224,8 @@ namespace Aquasip.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ProductId,ProductCode,ProductName,Description,Price,IsActive,UploadedBy,UploadedAt")] EF.Product product)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(long id, [Bind("ProductId,ProductCode,ProductName,Description,Price,IsActive")] EF.Product product)
         {
             if (id != product.ProductId)
             {

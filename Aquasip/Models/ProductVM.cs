@@ -29,5 +29,7 @@ namespace Aquasip.Models
         public IFormFile? MediaFile { get; set; }
         public List<ProductMediumVM> ListProductMedia { get; set; } = new List<ProductMediumVM>();
         public string? Medias { get; set; }
+        public decimal? Quantity { get; set; }
+        public decimal? Total { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace Aquasip.Repositories
         }
 
         // Read by id
-        public ProductVM? GetById(int productId)
+        public ProductVM? GetById(long productId)
         {
             ProductVM? model = null;
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -79,10 +79,10 @@ namespace Aquasip.Repositories
                             model.AverageRating = reader.GetValue("AverageRating") == DBNull.Value ? (decimal?)null : reader.GetDecimal("AverageRating");
                             model.TotalReviews = reader.GetValue("TotalReviews") == DBNull.Value ? (int?)null : reader.GetInt32("TotalReviews");
                             model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
-                            model.ListProductMedia = JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias) == null ? new List<ProductMediumVM>() : JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias);
+                            model.ListProductMedia = string.IsNullOrEmpty(model.Medias) ? new List<ProductMediumVM>() : JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias);
                             model.Reviews = reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews");
-                            model.ListReview = JsonConversion.DeserializeObject<List<ReviewVM>>(reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews")) ?? new List<ReviewVM>();
-
+                            //model.ListReview = JsonConversion.DeserializeObject<List<ReviewVM>>(reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews")) ?? new List<ReviewVM>();
+                            model.ListReview = string.IsNullOrEmpty(model.Reviews) ? new List<ReviewVM>() : JsonConversion.DeserializeObject<List<ReviewVM>>(model.Reviews);
                         }
                     }
                     conn.Close();
