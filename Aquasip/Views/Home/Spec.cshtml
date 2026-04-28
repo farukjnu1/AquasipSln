@@ -244,7 +244,7 @@
                 <div class="actions">
                     <form asp-action="Cart" asp-controller="Home" method="post">
                         <input type="hidden" name="productId" value="@Model.ProductId" />
-                        Quantity: <input type="number" name="quantity" value="1" min="1" />
+                        Quantity: <input type="number" name="quantity" value="1" min="1" style="width:120px;height:48px" />
                         <button class="buy-btn">Add to Cart</button> 
                         @* <button class="wishlist-btn">Add to Wishlist</button> *@
                     </form>

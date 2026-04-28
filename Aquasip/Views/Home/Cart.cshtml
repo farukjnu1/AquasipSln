@@ -1,25 +1,30 @@
 ﻿@model IEnumerable<Aquasip.Models.ProductVM>
 @{
-    ViewData["Title"] = "AquaSip | Spec";
+    ViewData["Title"] = "AquaSip | Cart";
     // Layout = "~/Views/Shared/_Layout.cshtml";
 
     var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["layout"];
 
-    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "layout").First();
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() 
+    : viewModel.Where(x => x.Slug == "layout").First();
 
-    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+    var oPhone = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "phone").First();
 
-    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+    var oLogo = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+     : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").First();
 
     // var oMedia0 = Model.ListProductMedia.Count > 0 ? Model.ListProductMedia[0] : new ProductMediumVM();
 
-    var cartPage = viewModel.Where(x => x.Slug == "cart").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "cart").First();
-    var delivery_charge = cartPage.PageContents.Where(x => x.SlugPageContent == "delivery_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : cartPage.PageContents.Where(x => x.SlugPageContent == "delivery_charge").First();
-    var gateway_charge = cartPage.PageContents.Where(x => x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : cartPage.PageContents.Where(x => x.SlugPageContent == "gateway_charge").First();
+    var cartPage = viewModel.Where(x => x.Slug == "cart").FirstOrDefault() == null ? new PageVM() 
+        : viewModel.Where(x => x.Slug == "cart").First();
+
+    var delivery_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+        : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").First();
+    var gateway_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+        : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").First();
+    var vat = cartPage.PageContents.Where(x => x.IsActive==true && x.SlugPageContent == "vat").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").First();
     decimal? grandTotal = 0;
     decimal? subTotal = 0;
     foreach (var item in Model)
@@ -27,8 +32,23 @@
         subTotal += item.Total == null ? 0 : item.Total;
     }
     grandTotal += subTotal;
-    grandTotal += Convert.ToDecimal(delivery_charge.Header);
-    grandTotal += Convert.ToDecimal(gateway_charge.Header);
+    if (grandTotal > 0)
+    {
+        if (vat.IsActive == true)
+        {
+            grandTotal += subTotal * (Convert.ToDecimal(vat.Header) / 100);
+        }
+        if (delivery_charge.IsActive == true)
+        {
+            grandTotal += Convert.ToDecimal(delivery_charge.Header);
+
+        }
+        if (gateway_charge.IsActive == true)
+        {
+            grandTotal += Convert.ToDecimal(gateway_charge.Header);
+        }
+        grandTotal = Math.Round(Convert.ToDecimal(grandTotal), 2);
+    }
 }
 <style>
     /* cart page additions */
@@ -247,56 +267,10 @@
     <!-- Header End -->
 </div>
 <!-- Navbar & Hero End -->
+
 <!-- Contact Start -->
 <div class="container-fluid contact bg-light py-5">
     <div class="container py-5">
-        @* <table class="table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Unit Price</th>
-                    <th>Quantity</th>
-                    <th style="text-align:right">Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.ProductName</td>
-                        <td>@item.Price</td>
-                        <td>@item.Quantity</td>
-                        <td style="text-align:right">@item.Total</td>
-                    </tr>
-                }
-            </tbody>
-            <tfoot>
-                @if (delivery_charge.IsActive==true)
-                {
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th style="text-align:right">@delivery_charge.Title:</th>
-                        <th style="text-align:right">@delivery_charge.Header</th>
-                    </tr>
-                }
-                @if (gateway_charge.IsActive == true)
-                {
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th style="text-align:right">@gateway_charge.Title:</th>
-                        <th style="text-align:right">@gateway_charge.Header</th>
-                    </tr>
-                }
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th style="text-align:right">Total:</th>
-                    <th style="text-align:right">@grandTotal</th>
-                </tr>
-            </tfoot>
-        </table> *@
 
         <main class="cart-page">
             <header class="cart-header">
@@ -311,6 +285,7 @@
                         <span>Price</span>
                         <span>Qty</span>
                         <span>Total</span>
+                        <span>#</span>
                     </div>
 
                     @foreach (var item in Model)
@@ -330,12 +305,20 @@
                                 <input type="number" min="1" value="@item.Quantity" readonly />
                             </div>
                             <div class="item-total">@item.Total</div>
+                            <div class="item-remove">
+                                <button class="remove-btn" onclick="clearCart(@item.ProductId)" title="Remove from cart">Remove</button>
+                            </div>
                         </div>
+                    }
+
+                    @if (Model.Count() == 0)
+                    {
+                        <h5 style="text-align:center">Cart is empty!</h5>
                     }
 
                     <div class="cart-actions">
                         <button class="secondary-btn" onclick="goToProducts()">Continue Shopping</button>
-                        <button class="danger-btn" onclick="clearCart()">Clear Cart</button>
+                        <button class="danger-btn" onclick="clearAllCart()">Clear Cart</button>
                     </div>
                 </div>
 
@@ -345,23 +328,33 @@
                         <span>Subtotal</span>
                         <span>@subTotal</span>
                     </div>
-                    <div class="summary-row">
-                        <span>Tax</span>
-                        <span>0</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Shipping</span>
-                        <span>@delivery_charge.Header</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Gateway Fee</span>
-                        <span>@gateway_charge.Header</span>
-                    </div>
+                    @if (vat.IsActive == true)
+                    {
+                        <div class="summary-row">
+                            <span>@vat.Title</span>
+                            <span>@vat.Header</span>
+                        </div>
+                    }
+                    @if (delivery_charge.IsActive == true)
+                    {
+                        <div class="summary-row">
+                            <span>@delivery_charge.Title</span>
+                            <span>@delivery_charge.Header</span>
+                        </div>
+                    }
+                    @if (gateway_charge.IsActive == true)
+                    {
+                        <div class="summary-row">
+                            <span>@gateway_charge.Title</span>
+                            <span>@gateway_charge.Header</span>
+                        </div>
+                    }
+                    
                     <div class="summary-total">
                         <span>Total</span>
                         <span>@grandTotal</span>
                     </div>
-                    <button class="checkout-btn">Proceed to Checkout</button>
+                    <button class="checkout-btn" onclick="gotToCheckout()">Proceed to Checkout</button>
                 </aside>
             </section>
         </main>
@@ -370,12 +363,20 @@
 <!-- Contact End -->
 
 <script>
-    function clearCart(){
-        location.href='/Home/CartClear';
+    function clearAllCart(){
+        location.href='/Home/CartClearAll';
+    }
+
+    function clearCart(id){
+        location.href='/Home/CartClear?id='+id;
     }
 
     function goToProducts(){
         location.href='/Home/Products';
+    }
+
+    function gotToCheckout(){
+        location.href='/Home/Checkout';
     }
 </script>
 

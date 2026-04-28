@@ -269,11 +269,48 @@ namespace Aquasip.Controllers
             return RedirectToAction("Cart");
         }
 
-        public IActionResult CartClear()
+        public IActionResult CartClearAll()
         {
             HttpContext.Session.Remove("Cart");
 
             return RedirectToAction("Cart");
+        }
+
+        public IActionResult CartClear(long id)
+        {
+            var products = HttpContext.Session.GetString("Cart");
+            var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
+            var productToRemove = listProduct.FirstOrDefault(x => x.ProductId == id);
+            if (productToRemove != null)
+            {
+                listProduct.Remove(productToRemove);
+                HttpContext.Session.SetString("Cart", JsonConversion.SerializeObject(listProduct));
+            }
+            return RedirectToAction("Cart");
+        }
+
+        public IActionResult Checkout()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var cartPage = pageRepo.GetBySlug("cart");
+            cartPage.PageContents = pageContentRepo.GetBySlugPage("cart");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(layoutPage);
+            listPage.Add(cartPage);
+            ViewData["layout"] = listPage;
+            #endregion
+
+            var products = HttpContext.Session.GetString("Cart");
+            var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
+
+            return View(listProduct);
         }
 
         public IActionResult Review()

@@ -112,7 +112,7 @@
                                 @oSlide0.Body
                             </p>
                             <div class="carousel-caption-1-content-btn fadeInLeft animated" data-animation="fadeInLeft" data-delay="1.7s" style="animation-delay: 1.7s;">
-                                <a class="btn btn-primary rounded-pill flex-shrink-0 py-3 px-5 me-2" href="javascript:void(0)">Order Now</a>
+                                @* <a class="btn btn-primary rounded-pill flex-shrink-0 py-3 px-5 me-2" href="javascript:void(0)">Order Now</a> *@
                             </div>
                         </div>
                     </div>
@@ -169,7 +169,7 @@
                             <a href="#" class="h4 d-inline-block mb-3">@item.ProductName</a>
                             <p class="fs-4 text-primary mb-3">BDT. @item.Price</p>
                             <a href="/Home/Spec?id=@item.ProductId" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
-                            <a href="/Home/Cart?id=@item.ProductId" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
+                            <a href="/Home/Spec?id=@item.ProductId" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
                             <a href="/Home/Review?id=@item.ProductId" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
                         </div>
                         <div class="product-content bg-light text-center rounded-bottom p-4">
