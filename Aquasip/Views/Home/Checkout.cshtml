@@ -602,8 +602,14 @@
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
         <a href="/" class="navbar-brand p-0">
-            @* <h1 class="text-primary"><i class="fas fa-hand-holding-water me-3"></i>@websiteName.SettingValue</h1> *@
-            <img src="~/img/logo.png" alt="Logo">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars"></span>
@@ -615,8 +621,9 @@
                 <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
                 <a href="/Home/Cart" class="nav-item nav-link active">Shopping Cart</a>
                 <a href="/Home/Gallery" class="nav-item nav-link">Gallery</a>
-                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
                 <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
+                <a href="/Home/Review" class="nav-item nav-link">Review</a>
+                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 <div class="d-flex flex-column pe-3 border-end border-primary">
@@ -697,10 +704,8 @@
                         <label for="country">Country</label>
                         <select id="country" name="country" required>
                             <option value="">Select Country</option>
+                            <option value="bd">Bangladesh</option>
                             <option value="us">United States</option>
-                            <option value="ca">Canada</option>
-                            <option value="uk">United Kingdom</option>
-                            <option value="au">Australia</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
@@ -710,24 +715,25 @@
 
         <!-- Shipping Method -->
         <div class="checkout-card">
-            <h2 class="section-title">2. Shipping Method</h2>
+            <h2 class="section-title">2. Payment Method</h2>
             <div class="shipping-options">
                 <label class="shipping-option">
-                    <input type="radio" name="shipping" value="standard" checked>
+                    <input type="radio" name="PaymentMethod" value="cod" checked>
                     <div class="option-content">
-                        <span class="option-name">Standard Shipping</span>
-                        <span class="option-time">5-7 business days</span>
+                        <span class="option-name">Cash On Delivery</span>
+                        <span class="option-time"></span>
                     </div>
-                    <span class="option-price">$0.00</span>
+                    <span class="option-price">0</span>
                 </label>
                 <label class="shipping-option">
-                    <input type="radio" name="shipping" value="express">
+                    <input type="radio" name="PaymentMethod" value="bkash">
                     <div class="option-content">
-                        <span class="option-name">Express Shipping</span>
-                        <span class="option-time">2-3 business days</span>
+                        <span class="option-name">bKash</span>
+                        <span class="option-time">bKash-Number(merchant/personal)</span>
                     </div>
-                    <span class="option-price">$15.00</span>
+                    <span class="option-price">0</span>
                 </label>
+                <!--
                 <label class="shipping-option">
                     <input type="radio" name="shipping" value="overnight">
                     <div class="option-content">
@@ -736,11 +742,13 @@
                     </div>
                     <span class="option-price">$35.00</span>
                 </label>
+                -->
+                
             </div>
         </div>
 
         <!-- Payment Information -->
-        <div class="checkout-card">
+        <!-- <div class="checkout-card">
             <h2 class="section-title">3. Payment Information</h2>
             <form class="checkout-form">
                 <div class="form-group">
@@ -769,16 +777,15 @@
                 <input type="checkbox" name="billing-same" checked>
                 <span>Billing address same as shipping</span>
             </label>
-        </div>
-
+        </div> -->
         <!-- Promo Code -->
-        <div class="checkout-card">
+        <!--<div class="checkout-card">
             <h2 class="section-title">Promo Code</h2>
             <div class="promo-section">
                 <input type="text" class="promo-input" placeholder="Enter promo code">
                 <button class="promo-btn">Apply</button>
             </div>
-        </div>
+        </div>-->
     </section>
 
     <!-- Right Column: Order Summary -->
@@ -788,7 +795,7 @@
 
             <!-- Cart Items -->
             <div class="cart-items">
-                <div class="cart-item">
+                <!-- <div class="cart-item">
                     <div class="item-image">
                         <img src="assets/images/product-1.jpg" alt="Product 1">
                     </div>
@@ -822,7 +829,7 @@
                         <p class="item-qty">Quantity: 1</p>
                     </div>
                     <div class="item-price">$19.99</div>
-                </div>
+                </div> -->
             </div>
 
             <!-- Divider -->
@@ -832,19 +839,19 @@
             <div class="price-breakdown">
                 <div class="breakdown-row">
                     <span>Subtotal</span>
-                    <span>$399.96</span>
+                    <span>0.00</span>
                 </div>
                 <div class="breakdown-row">
                     <span>Shipping</span>
-                    <span>$0.00</span>
+                    <span>0.00</span>
                 </div>
                 <div class="breakdown-row">
                     <span>Tax</span>
-                    <span>$31.99</span>
+                    <span>0.00</span>
                 </div>
                 <div class="breakdown-row discount">
-                    <span>Discount (SAVE10)</span>
-                    <span>-$40.00</span>
+                    <span>Discount</span>
+                    <span>-0.00</span>
                 </div>
             </div>
 
@@ -854,7 +861,7 @@
             <!-- Total -->
             <div class="order-total">
                 <span>Total</span>
-                <span class="total-amount">$391.95</span>
+                <span class="total-amount">0.00</span>
             </div>
 
             <!-- Checkout Button -->

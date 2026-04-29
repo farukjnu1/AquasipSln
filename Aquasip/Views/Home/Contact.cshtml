@@ -8,56 +8,62 @@
     var contact = oContact.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
                         oContact.PageContents.Where(x => x.SlugPageContent == "contact").First();
 
-    var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                    oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
+    var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() 
+        : oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
 
-    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "layout").First();
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() 
+        : viewModel.Where(x => x.Slug == "layout").First();
     // var listLayout = oContact.PageContents.Where(x => x.SlugPage == "layout").ToList();
 
     // var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     // : layoutPage.PageContents.Where(x => x.SlugPageContent == "location").First();
 
     var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+        : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
 
     var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
+        : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
 
     var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
+        : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
 
-    var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
+    // var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
 
-    var oMobile = layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").First();
+    // var oMobile = layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").First();
 
-    var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
+    // var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
 
-    var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
+    // var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
 
-    var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
+    // var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
 
-    var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
+    // var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
 
-    // var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
 
     // var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
-    // var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
-
-    
+    // var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();    
 }
+
 <!-- Navbar & Hero Start -->
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
         <a href="/" class="navbar-brand p-0">
-            @* <h1 class="text-primary"><i class="fas fa-hand-holding-water me-3"></i>@websiteName.SettingValue</h1> *@
-            <img src="~/img/logo.png" alt="Logo">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars"></span>
@@ -69,8 +75,9 @@
                 <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
                 <a href="/Home/Cart" class="nav-item nav-link">Shopping Cart</a>
                 <a href="/Home/Gallery" class="nav-item nav-link ">Gallery</a>
-                <a href="/Home/Faq" class="nav-item nav-link ">FAQ</a>
                 <a href="/Home/Contact" class="nav-item nav-link active">Contact</a>
+                <a href="/Home/Review" class="nav-item nav-link">Review</a>
+                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 <div class="d-flex flex-column pe-3 border-end border-primary">
@@ -94,16 +101,18 @@
     <!-- Header End -->
 </div>
 <!-- Navbar & Hero End -->
+
 <!-- Contact Start -->
 <div class="container-fluid contact bg-light py-5">
     <div class="container py-5">
         <div class="row g-5">
             <div class="col-lg-6 h-100 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="text-center mx-auto pb-5" style="max-width: 800px;">
-                    <h4 class="text-uppercase text-primary">Let’s Connect</h4>
-                    <h1 class="display-3 text-capitalize mb-3">Send Your Message</h1>
+                    <h4 class="text-uppercase text-primary">@contact.Header</h4>
+                    <h1 class="display-3 text-capitalize mb-3">@contact.Description</h1>
                     <h6 class="lh-base mb-0">
-                        "Let's Connect" invites you to share your thoughts and begin a conversation. I am here to listen, assist, and build a meaningful dialogue with you. Whether you have a question, a challenge to explore, or a simple idea, your message is the first step toward a collaborative exchange. So, don't hesitate—reach out. Send your message, and let's turn your inquiries into solutions and ideas into action. I look forward to hearing from you and starting our connection. Your input is valued and welcome here.
+                        @contact.Body
+                    </h6>
                 </div>
                 <form>
                     <div class="row g-4">
@@ -121,7 +130,7 @@
                         </div>
                         <div class="col-lg-12 col-xl-6">
                             <div class="form-floating">
-                                <input type="phone" class="form-control border-0" id="phone" placeholder="Phone">
+                                <input type="text" class="form-control border-0" id="phone" placeholder="Phone">
                                 <label for="phone">Your Phone</label>
                             </div>
                         </div>
@@ -150,7 +159,7 @@
                             <i class="fas fa-map-marker-alt fa-2x text-secondary me-4"></i>
                             <div>
                                 <h4>Address</h4>
-                                <p class="mb-0">Mirpur DOHS, Dhaka, Bangladesh</p>
+                                <p class="mb-0">@oAddress.Header</p>
                             </div>
                         </div>
                     </div>
@@ -159,7 +168,7 @@
                             <i class="fas fa-envelope fa-2x text-secondary me-4"></i>
                             <div>
                                 <h4>Mail Us</h4>
-                                <p class="mb-0">info@aquasip.com</p>
+                                <p class="mb-0">@oEmail.Header</p>
                             </div>
                         </div>
                     </div>
@@ -168,14 +177,14 @@
                             <i class="fa fa-phone-alt fa-2x text-secondary me-4"></i>
                             <div>
                                 <h4>Telephone</h4>
-                                <p class="mb-0">(+012) 3456 7890 123</p>
+                                <p class="mb-0">@oPhone.Header</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="h-100 overflow-hidden">
                             <iframe class="w-100 rounded" style="height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                                src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Mirpur DOHS&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+                                    src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Banasree+M+block&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
                             </iframe>
                         </div>
                     </div>

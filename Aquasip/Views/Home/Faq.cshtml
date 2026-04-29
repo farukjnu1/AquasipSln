@@ -4,14 +4,17 @@
     // Layout = "~/Views/Shared/_Layout.cshtml";
 
     var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["contact"];
-    var oContact = viewModel.Where(x => x.Slug == "contact").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "contact").First();
+    var oContact = viewModel.Where(x => x.Slug == "contact").FirstOrDefault() == null ? new PageVM() 
+        : viewModel.Where(x => x.Slug == "contact").First();
     var contact = oContact.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
                         oContact.PageContents.Where(x => x.SlugPageContent == "contact").First();
 
     var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
                     oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
 
-    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "layout").First();
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() 
+        : viewModel.Where(x => x.Slug == "layout").First();
+
     // var listLayout = oContact.PageContents.Where(x => x.SlugPage == "layout").ToList();
 
     // var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
@@ -44,8 +47,8 @@
     var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
 
-    // var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
 
     // var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
     // var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
@@ -56,8 +59,14 @@
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
         <a href="/" class="navbar-brand p-0">
-            @* <h1 class="text-primary"><i class="fas fa-hand-holding-water me-3"></i>@websiteName.SettingValue</h1> *@
-            <img src="~/img/logo.png" alt="Logo">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars"></span>
@@ -69,8 +78,9 @@
                 <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
                 <a href="/Home/Cart" class="nav-item nav-link">Shopping Cart</a>
                 <a href="/Home/Gallery" class="nav-item nav-link ">Gallery</a>
-                <a href="/Home/Faq" class="nav-item nav-link active">FAQ</a>
                 <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
+                <a href="/Home/Review" class="nav-item nav-link">Review</a>
+                <a href="/Home/Faq" class="nav-item nav-link active">FAQ</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 <div class="d-flex flex-column pe-3 border-end border-primary">

@@ -1,36 +1,187 @@
 ﻿@model IEnumerable<Aquasip.Models.PageVM>
 @{
-    ViewData["Title"] = "Terms";
+    ViewData["Title"] = "Terms | AquaSip";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var oTerms = Model.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "terms_condition").First();
-    var terms = oTerms.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        oTerms.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
-    var listTerms = oTerms.PageContents.Where(x => x.SlugPageContent == "terms_conditions" && x.IsActive == true).ToList();
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["terms_condition"];
+    var oTerm = viewModel.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "terms_condition").First();
+    var term = oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
+
+    // var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    //     : oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
+
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+    // var listLayout = oContact.PageContents.Where(x => x.SlugPage == "layout").ToList();
+
+    // var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "location").First();
+
+    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+        : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+
+    // var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
+
+    // var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
+
+    // var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
+
+    // var oMobile = layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").First();
+
+    // var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
+
+    // var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
+
+    // var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
+
+    // var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
+
+    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+
 }
 
-<!--  terms_condition Start -->
-<div class="container-fluid about bg-light py-5">
-    <div class="container py-5">
-        <div class="row g-5 align-items-center">
-            <div class="col-lg-12 wow fadeInRight" data-wow-delay="0.4s">
-                <div class="section-title text-start mb-5">
-                    <h4 class="sub-title pe-3 mb-0">Terms & Conditions</h4>
-                    <h1 class="display-3 mb-4">@terms.Title</h1>
-                    <p class="mb-1">@terms.Header</p>
-                    <p class="mb-1">@terms.Body</p>
-                    <p class="mb-1">@terms.Footer</p>
-                    <div class="mb-4">
-                        @foreach (var item in listTerms)
-                        {
-                            <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> @item.Title</p>
-                        }
-                    </div>
-                    <a href="javascript:void(0)" class="btn btn-primary rounded-pill text-white py-3 px-5">Discover More</a>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .policy-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 28px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        padding: 2rem 1.8rem;
+    }
+
+    @@media (min-width: 640px) {
+        .policy-container {
+            padding: 2.5rem 2.8rem;
+        }
+    }
+
+    .last-updated {
+        color: #4a627a;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #e2edf2;
+        padding-bottom: 1rem;
+        margin-bottom: 1.8rem;
+    }
+
+
+    .highlight-box {
+        background: #eef4fa;
+        border-left: 4px solid #2c7da0;
+        padding: 1rem 1.2rem;
+        border-radius: 16px;
+        margin: 1.2rem 0;
+        font-size: 0.95rem;
+    }
+
+    .contact-line {
+        background: #fef7e0;
+        padding: 1rem 1.2rem;
+        border-radius: 20px;
+        margin-top: 1.8rem;
+        border: 1px solid #ffecb3;
+    }
+
+
+    .badge-note {
+        background: #f9f2e6;
+        color: #b45309;
+        border-radius: 30px;
+        padding: 0.2rem 0.8rem;
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 500;
+        margin-left: 0.6rem;
+        vertical-align: middle;
+    }
+</style>
+<!-- Navbar & Hero Start -->
+<div class="container-fluid position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+        <a href="/" class="navbar-brand p-0">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0">
+                <a href="/" class="nav-item nav-link active">Home</a>
+                <a href="/Home/Products" class="nav-item nav-link">Products</a>
+                <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
+                <a href="/Home/Cart" class="nav-item nav-link ">Shopping Cart</a>
+                <a href="/Home/Gallery" class="nav-item nav-link">Gallery</a>
+                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
+                <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
+            </div>
+            <div class="d-none d-xl-flex me-3">
+                <div class="d-flex flex-column pe-3 border-end border-primary">
+                    <span class="text-body">Get Free Delivery</span>
+                    <a href="tel:@oPhone.Header"><span class="text-primary">Free: @oPhone.Header</span></a>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Header Start -->
+    <div class="container-fluid bg-breadcrumb">
+        <div class="container text-center py-5" style="max-width: 900px;">
+            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Terms & Conditions</h4>
+            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active text-primary">Terms</li>
+            </ol>
+        </div>
     </div>
+    <!-- Header End -->
 </div>
-<!--  terms_condition End -->
+<!-- Navbar & Hero End -->
+
+<div class="policy-container pt-5 pb-5">
+
+    <h1>Terms & Conditions · <span style="color:#1f6392;">@Html.Raw(term.Title)</span></h1>
+
+    <p>@Html.Raw(term.Header)</p>
+
+    <p>@Html.Raw(term.Body)</p>
+
+    <div class="last-updated"><strong>Last updated:</strong> @Html.Raw(term.Footer)</div>
+</div>
+
+<!-- JavaScript Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="~/lib/wow/wow.min.js"></script>
+<script src="~/lib/easing/easing.min.js"></script>
+<script src="~/lib/waypoints/waypoints.min.js"></script>
+<script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="~/js/main.js"></script>
+
 

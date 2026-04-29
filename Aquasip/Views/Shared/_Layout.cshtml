@@ -10,49 +10,58 @@
     var listMenu = menuRepo.GetAll();
     string? urL = Context.Session.GetString("urL");
 
-    var appointment = (from x in listMenu where x.Slug == "appointment" select x).FirstOrDefault() == null ? new MenuVM()
-                        : (from x in listMenu where x.Slug == "appointment" select x).First();
+    // var appointment = (from x in listMenu where x.Slug == "appointment" select x).FirstOrDefault() == null ? new MenuVM()
+    //                     : (from x in listMenu where x.Slug == "appointment" select x).First();
 
-    var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "location").First();
+    var oLocation = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "location").First();
 
-    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+    var oPhone = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "phone").First();
 
-    var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
+    var oEmail = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "email").First();
 
-    var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
+    var oFacebook = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "facebook").First();
 
-    var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
+    var oTwitter = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "twitter").First();
 
-    var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
+    var oInstagram = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "instagram").First();
 
-    var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
+    var oLinkedin = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "linkedin").First();
 
-    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+    var oLogo = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").First();
 
-    var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
-    var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
+    var listQuickLink = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "quick_links").ToList();
+    var listOurService = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "our_services").ToList();
 
-    var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
+    var oAddress = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "address").First();
 
-    var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
+    var oEmail2 = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "email_2").First();
 
-    var oWhatsapp = layoutPage.PageContents.Where(x => x.SlugPageContent == "whatsapp").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "whatsapp").First();
+    var oWhatsapp = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "whatsapp").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "whatsapp").First();
 
-    var oCopyRight = layoutPage.PageContents.Where(x => x.SlugPageContent == "copy_right").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    : layoutPage.PageContents.Where(x => x.SlugPageContent == "copy_right").First();
+    var oCopyRight = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "copy_right").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "copy_right").First();
 
-    var listDesignedBy = layoutPage.PageContents.Where(x => x.SlugPageContent == "designed_by" && x.IsActive == true).ToList();
+    var oQuickLink = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "quick_links").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "quick_links").First();
+
+    var oBusinessHour = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "business_hours").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "business_hours").First();
+
+    var oContactInfo = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "contact_info").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "contact_info").First();
+
+    var listDesignedBy = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "designed_by").ToList();
 
     var message = TempData["message"] as string;
 }
@@ -113,99 +122,119 @@
     <!-- Footer Start -->
     <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
-            <div class="row g-5 mb-5 align-items-center">
-                <div class="col-lg-7">
-                    <div class="position-relative mx-auto">
-                        <input class="form-control rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Email address to Subscribe">
-                        <button type="button" class="btn btn-secondary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="d-flex align-items-center justify-content-center justify-content-lg-end">
-                        <a class="btn btn-secondary btn-md-square rounded-circle me-3" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-secondary btn-md-square rounded-circle me-3" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-secondary btn-md-square rounded-circle me-3" href=""><i class="fab fa-instagram"></i></a>
-                        <a class="btn btn-secondary btn-md-square rounded-circle me-0" href=""><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
             <div class="row g-5">
                 <div class="col-md-6 col-lg-6 col-xl-3">
                     <div class="footer-item d-flex flex-column">
-                        <div class="footer-item">
-                            <h3 class="text-white mb-4"><i class="fas fa-hand-holding-water text-primary me-3"></i>AquaSip</h3>
-                            <p class="mb-3">
-                                Light and compact, reduce travel burden, save space weight, fashion color matching, variable style, outdoor partner, silicone software design, easy storage, not afraid of breaking, high temperature resistance
+                        @if (oLogo.IsActive == true)
+                        {
+                            <h4 class="text-white mb-4"><img src="@oLogo.FilePath" style="width: 135px" /></h4>
+                            <p>
+                                @oLogo.Body
                             </p>
-                        </div>
-                        <div class="position-relative">
-                            <input class="form-control rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Enter your email">
-                            <button type="button" class="btn btn-secondary rounded-pill position-absolute top-0 end-0 py-2 mt-2 me-2">SignUp</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="footer-item d-flex flex-column">
-                        <h4 class="text-white mb-4">About Us</h4>
-                        <a href="#"><i class="fas fa-angle-right me-2"></i> Why Choose Us</a>
-                        <a href="#"><i class="fas fa-angle-right me-2"></i> Free Water Bottles</a>
-                        <a href="#"><i class="fas fa-angle-right me-2"></i> Water Dispensers</a>
-                        <a href="#"><i class="fas fa-angle-right me-2"></i> Bottled Water Coolers</a>
-                        <a href="#"><i class="fas fa-angle-right me-2"></i> Contact us</a>
-                        <a href="#"><i class="fas fa-angle-right me-2"></i> Terms & Conditions</a>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="footer-item d-flex flex-column">
-                        <h4 class="text-white mb-4">Business Hours</h4>
-                        <div class="mb-3">
-                            <h6 class="text-muted mb-0">Mon - Friday:</h6>
-                            <p class="text-white mb-0">09.00 am to 07.00 pm</p>
-                        </div>
-                        <div class="mb-3">
-                            <h6 class="text-muted mb-0">Saturday:</h6>
-                            <p class="text-white mb-0">10.00 am to 05.00 pm</p>
-                        </div>
-                        <div class="mb-3">
-                            <h6 class="text-muted mb-0">Vacation:</h6>
-                            <p class="text-white mb-0">All Sunday is our vacation</p>
+                        }
+                        else
+                        {
+                            <h4 class="text-white mb-4">YOUR-LOGO</h4>
+                            <p></p>
+                        }
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-share fa-2x text-white me-2"></i>
+                            @if (oFacebook.IsActive == true)
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oFacebook.Header" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            }
+                            @if (oTwitter.IsActive == true)
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oTwitter.Header" target="_blank"><i class="fab fa-twitter"></i></a>
+                            }
+                            @if (oInstagram.IsActive == true)
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oInstagram.Header" target="_blank"><i class="fab fa-instagram"></i></a>
+                            }
+                            @if (oLinkedin.IsActive == true)
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oLinkedin.Header" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            }
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6 col-xl-3">
                     <div class="footer-item d-flex flex-column">
-                        <h4 class="text-white mb-4">Contact Info</h4>
-                        <a href="#"><i class="fa fa-map-marker-alt me-2"></i> Mirpur DOHS, Dhaka, Bangladesh</a>
-                        <a href="mailto:info@aquasip.com"><i class="fas fa-envelope me-2"></i> info@aquasip.com</a>
-                        <a href="mailto:info@aquasip.com"><i class="fas fa-envelope me-2"></i> info@aquasip.com</a>
-                        <a href="tel:+012 345 67890"><i class="fas fa-phone me-2"></i> +012 345 67890</a>
-                        <a href="tel:+012 345 67890" class="mb-3"><i class="fas fa-print me-2"></i> +012 345 67890</a>
+                        <h4 class="mb-4 text-white">Quick Links</h4>
+                        @foreach (var item in listQuickLink)
+                        {
+                            if (item.IsActive == true)
+                            {
+                                <a href="@item.Header"><i class="fas fa-angle-right me-2"></i> @item.Title</a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">@Html.Raw(oBusinessHour.Title)</h4>
+                        @Html.Raw(oBusinessHour.Body)
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="mb-4 text-white">Contact Info</h4>
+                        @if (oAddress.IsActive == true)
+                        {
+                            <a href="javascript:void(0)"><i class="fa fa-map-marker-alt me-2"></i> @oAddress.Body</a>
+                        }
+                        @if (oEmail.IsActive == true)
+                        {
+                            <a href="@oEmail.Header"><i class="fas fa-envelope me-2"></i> @oEmail.Body</a>
+                        }
+                        @if (oEmail2.IsActive == true)
+                        {
+                            <a href="@oEmail2.Header"><i class="fas fa-envelope me-2"></i> @oEmail2.Body</a>
+                        }
+                        @if (oPhone.IsActive == true)
+                        {
+                            <a href="@oPhone.Header"><i class="fas fa-phone me-2"></i> @oPhone.Body</a>
+                        }
+                        @if (oWhatsapp.IsActive == true)
+                        {
+                            <a href="@oWhatsapp.Header" class="mb-3"><i class="fab fa-whatsapp me-2"></i> @oWhatsapp.Body</a>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Footer End -->
+
     <!-- Copyright Start -->
     <div class="container-fluid copyright py-4">
         <div class="container">
             <div class="row g-4 align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-md-0">
-                    <span class="text-body"><a href="javascript:void(0)" class="border-bottom text-white"><i class="fas fa-copyright text-light me-2"></i>aquasip.com</a>, All right reserved.</span>
+                    @if (oCopyRight.IsActive == true)
+                    {
+                        <span class="text-white"><a href="@oCopyRight.Header" target="_blank"><i class="fas fa-copyright text-light me-2"></i>@oCopyRight.Title</a>, @oCopyRight.Body.</span>
+                    }
                 </div>
-                <div class="col-md-6 text-center text-md-end text-body">
-                    <!--/*** The author’s attribution link must remain intact in the template. ***/-->
-                    <!--/*** If you wish to remove this credit link, please purchase the Pro Version . ***/-->
-                    Designed By <a class="border-bottom text-white" href="javascript:void(0)">Abdullah</a>
+                <div class="col-md-6 text-center text-md-end text-white">
+                    <span>Designed By</span>
+                    @for (var i = 0; i < listDesignedBy.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            <span> & </span>
+                        }
+                        <a class="border-bottom" href="@listDesignedBy[i].Header" target="_blank">@listDesignedBy[i].Body</a>
+                    }
                 </div>
             </div>
         </div>
     </div>
     <!-- Copyright End -->
+
     <!-- Back to Top -->
     <a href="#" class="btn btn-secondary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 
-   
 </body>
 
 </html>

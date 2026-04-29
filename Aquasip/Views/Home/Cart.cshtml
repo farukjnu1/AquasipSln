@@ -229,8 +229,14 @@
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
         <a href="/" class="navbar-brand p-0">
-            @* <h1 class="text-primary"><i class="fas fa-hand-holding-water me-3"></i>@websiteName.SettingValue</h1> *@
-            <img src="~/img/logo.png" alt="Logo">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars"></span>
@@ -242,8 +248,9 @@
                 <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
                 <a href="/Home/Cart" class="nav-item nav-link active">Shopping Cart</a>
                 <a href="/Home/Gallery" class="nav-item nav-link">Gallery</a>
-                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
                 <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
+                <a href="/Home/Review" class="nav-item nav-link">Review</a>
+                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 <div class="d-flex flex-column pe-3 border-end border-primary">

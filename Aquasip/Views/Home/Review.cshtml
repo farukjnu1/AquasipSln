@@ -44,37 +44,858 @@
     var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
 
-    // var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
 
     // var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
     // var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
-
     
 }
+
+<style>
+    /* ========== REVIEWS PAGE STYLES ========== */
+
+    .reviews-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .reviews-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #667eea 100%);
+        color: #fff;
+        padding: 40px 24px;
+        border-radius: 16px;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+        .reviews-header h1 {
+            margin: 0 0 12px 0;
+            font-size: 2.5rem;
+        }
+
+    /* ===== REVIEWS MAIN LAYOUT ===== */
+
+    .reviews-main {
+        display: grid;
+        grid-template-columns: 0.35fr 1fr;
+        gap: 32px;
+        margin-bottom: 40px;
+    }
+
+    /* ===== RATING SUMMARY SECTION ===== */
+
+    .rating-summary-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .rating-summary-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        height: fit-content;
+    }
+
+    .summary-header h2 {
+        margin: 0 0 24px 0;
+        font-size: 1.3rem;
+        color: #1d1d1d;
+    }
+
+    /* ===== OVERALL SCORE ===== */
+
+    .overall-score {
+        text-align: center;
+        margin-bottom: 28px;
+        padding-bottom: 28px;
+        border-bottom: 1px solid #ececec;
+    }
+
+    .score-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .score-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #4f46e5;
+    }
+
+    .score-out-of {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .stars-large {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .star {
+        display: inline-block;
+        font-size: 1.5rem;
+    }
+
+        .star.filled::before {
+            content: "★";
+            color: #fbbf24;
+        }
+
+        .star.half::before {
+            content: "⯨";
+            color: #fbbf24;
+        }
+
+        .star:not(.filled):not(.half)::before {
+            content: "☆";
+            color: #ddd;
+        }
+
+    .review-count {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* ===== RATING DISTRIBUTION ===== */
+
+    .rating-distribution {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .distribution-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .rating-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 50px;
+        justify-content: flex-end;
+    }
+
+    .stars-text {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .star-sm {
+        font-size: 0.8rem;
+    }
+
+    .distribution-bar {
+        height: 6px;
+        background: #ececec;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: #4f46e5;
+        border-radius: 3px;
+    }
+
+    .rating-percent {
+        font-size: 0.85rem;
+        color: #666;
+        width: 35px;
+        text-align: right;
+    }
+
+    /* ===== WRITE REVIEW BUTTON ===== */
+
+    .write-review-btn {
+        width: 100%;
+        padding: 14px 20px;
+        background: #4f46e5;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .write-review-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+    /* ===== REVIEWS LIST SECTION ===== */
+
+    .reviews-list-section {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .reviews-controls {
+        display: flex;
+        gap: 16px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+    }
+
+        .filter-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+    .filter-select {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+    /* ===== REVIEWS LIST ===== */
+
+    .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .review-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .review-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+    /* ===== REVIEW HEADER ===== */
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #ececec;
+    }
+
+    .reviewer-info {
+        display: flex;
+        gap: 12px;
+    }
+
+    .reviewer-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f46e5 0%, #667eea 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .reviewer-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .reviewer-name {
+        margin: 0;
+        font-size: 1rem;
+        color: #1d1d1d;
+        font-weight: 600;
+    }
+
+    .review-date {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .review-rating {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+    }
+
+    .stars {
+        display: flex;
+        gap: 4px;
+    }
+
+    .rating-text {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    /* ===== REVIEW CONTENT ===== */
+
+    .review-content {
+        margin-bottom: 16px;
+    }
+
+    .review-title {
+        margin: 0 0 12px 0;
+        font-size: 1.1rem;
+        color: #1d1d1d;
+        font-weight: 600;
+    }
+
+    .review-text {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    /* ===== REVIEW ATTACHMENTS ===== */
+
+    .review-attachments {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .attachment-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+        .attachment-item:hover {
+            transform: scale(1.05);
+        }
+
+    .attachment-image {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        display: block;
+        background: #f0f0f0;
+    }
+
+    .attachment-label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+
+    /* ===== REVIEW ACTIONS ===== */
+
+    .review-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 16px;
+        border-top: 1px solid #ececec;
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .action-btn:hover {
+            background: #f0f0f0;
+            border-color: #999;
+        }
+
+    .action-icon {
+        font-size: 1rem;
+    }
+
+    .action-text {
+        font-weight: 500;
+        color: #555;
+    }
+
+    /* ===== LOAD MORE BUTTON ===== */
+
+    .load-more-container {
+        text-align: center;
+        padding-top: 16px;
+    }
+
+    .load-more-btn {
+        padding: 12px 32px;
+        background: transparent;
+        color: #4f46e5;
+        border: 2px solid #4f46e5;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .load-more-btn:hover {
+            background: #f9f8ff;
+            border-color: #4338ca;
+            color: #4338ca;
+        }
+
+    /* ===== MODAL STYLES ===== */
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .review-modal {
+        background: #ffffff;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px;
+        border-bottom: 1px solid #ececec;
+    }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #1d1d1d;
+        }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.3s ease;
+    }
+
+        .modal-close:hover {
+            color: #1d1d1d;
+        }
+
+    /* ===== REVIEW FORM ===== */
+
+    .review-form {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 12px 14px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    /* ===== RATING SELECTOR ===== */
+
+    .rating-selector {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-start;
+    }
+
+        .rating-selector input {
+            display: none;
+        }
+
+    .star-label {
+        cursor: pointer;
+        font-size: 2rem;
+        transition: transform 0.2s ease;
+    }
+
+        .star-label:hover,
+        .star-label.hover {
+            transform: scale(1.2);
+        }
+
+        .star-label.selected .star::before {
+            color: #4f46e5 !important;
+        }
+
+    /* ===== FILE UPLOAD ===== */
+
+    .file-upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .file-upload-area:hover {
+            border-color: #4f46e5;
+            background: #f9f8ff;
+        }
+
+    .file-input {
+        display: none;
+    }
+
+    .file-upload-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+    }
+
+    .file-upload-content p {
+        margin: 0;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .file-upload-content small {
+        color: #999;
+    }
+
+    .file-list {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        background: #f9f9f9;
+        border-radius: 6px;
+        border: 1px solid #ececec;
+    }
+
+    .file-name {
+        font-size: 0.9rem;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .file-size {
+        font-size: 0.8rem;
+        color: #999;
+    }
+
+    /* ===== CHECKBOX GROUP ===== */
+
+    .checkbox-group {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #4f46e5;
+    }
+
+    .checkbox-label {
+        cursor: pointer;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* ===== FORM ACTIONS ===== */
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #ececec;
+    }
+
+    .submit-review-btn,
+    .cancel-review-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-review-btn {
+        background: #4f46e5;
+        color: #fff;
+    }
+
+        .submit-review-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+        }
+
+    .cancel-review-btn {
+        background: #f0f0f0;
+        color: #333;
+    }
+
+        .cancel-review-btn:hover {
+            background: #e0e0e0;
+        }
+
+    /* ===== REVIEWS RESPONSIVE DESIGN ===== */
+
+    @@media (max-width: 1024px) {
+        .reviews-main
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .rating-summary-card {
+        position: static;
+    }
+
+    .reviews-controls {
+        flex-direction: column;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .reviews-header h1
+
+    {
+        font-size: 1.8rem;
+    }
+
+    .review-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .review-rating {
+        align-items: flex-start;
+    }
+
+    .review-attachments {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .review-actions {
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 150px;
+    }
+
+    }
+
+    @@media (max-width: 640px) {
+        .reviews-header h1
+
+    {
+        font-size: 1.4rem;
+    }
+
+    .reviews-header {
+        padding: 24px 16px;
+        margin-bottom: 24px;
+    }
+
+    .reviews-main {
+        gap: 16px;
+    }
+
+    .rating-summary-card {
+        padding: 20px;
+    }
+
+    .review-card {
+        padding: 16px;
+    }
+
+    .reviewer-info {
+        gap: 10px;
+    }
+
+    .reviewer-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 0.8rem;
+    }
+
+    .reviewer-name {
+        font-size: 0.95rem;
+    }
+
+    .review-title {
+        font-size: 1rem;
+    }
+
+    .action-btn {
+        flex: 1 1 calc(50% - 6px);
+    }
+
+    .review-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .rating-selector {
+        gap: 12px;
+    }
+
+    .star-label {
+        font-size: 1.5rem;
+    }
+
+    .file-upload-area {
+        padding: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .submit-review-btn,
+    .cancel-review-btn {
+        width: 100%;
+    }
+
+    }
+</style>
+
 <!-- Navbar & Hero Start -->
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
         <a href="/" class="navbar-brand p-0">
-            @* <h1 class="text-primary"><i class="fas fa-hand-holding-water me-3"></i>@websiteName.SettingValue</h1> *@
-            <img src="~/img/logo.png" alt="Logo">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto py-0">
-                <a href="/" class="nav-item nav-link active">Home</a>
-                <a href="javascript:void(0)" class="nav-item nav-link">About</a>
-                <a href="javascript:void(0)" class="nav-item nav-link">Service</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu m-0">
-                        <a href="javascript:void(0)" class="dropdown-item">Products</a>
-                        <a href="javascript:void(0)" class="dropdown-item">Blog Posts</a>
-                    </div>
-                </div>
-                <a href="~/Home/Contact" class="nav-item nav-link">Contact</a>
+                <a href="/" class="nav-item nav-link">Home</a>
+                <a href="/Home/Products" class="nav-item nav-link">Products</a>
+                <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
+                <a href="/Home/Cart" class="nav-item nav-link">Shopping Cart</a>
+                <a href="/Home/Gallery" class="nav-item nav-link">Gallery</a>
+                <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
+                <a href="/Home/Review" class="nav-item nav-link active">Review</a>
+                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 <div class="d-flex flex-column pe-3 border-end border-primary">
@@ -82,115 +903,486 @@
                     <a href="tel:@oPhone.Header"><span class="text-primary">Free: @oPhone.Header</span></a>
                 </div>
             </div>
-            @* <a href="https://htmlcodex.com/downloading/?item=3402" class="btn btn-primary rounded-pill d-inline-flex flex-shrink-0 py-2 px-4">Buy Pro Version</a> *@
         </div>
     </nav>
 
     <!-- Header Start -->
     <div class="container-fluid bg-breadcrumb">
         <div class="container text-center py-5" style="max-width: 900px;">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Contact Us</h4>
+            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Reviews</h4>
             <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                @* <li class="breadcrumb-item"><a href="javascript:void(0)">Pages</a></li> *@
-                <li class="breadcrumb-item active text-primary">Contact</li>
+                <li class="breadcrumb-item active text-primary">Reviews</li>
             </ol>
         </div>
     </div>
     <!-- Header End -->
 </div>
 <!-- Navbar & Hero End -->
-<!-- Contact Start -->
-<div class="container-fluid contact bg-light py-5">
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-lg-6 h-100 wow fadeInUp" data-wow-delay="0.2s">
-                <div class="text-center mx-auto pb-5" style="max-width: 800px;">
-                    <h4 class="text-uppercase text-primary">Let’s Connect</h4>
-                    <h1 class="display-3 text-capitalize mb-3">Send Your Message</h1>
-                    <h6 class="lh-base mb-0">
-                        "Let's Connect" invites you to share your thoughts and begin a conversation. I am here to listen, assist, and build a meaningful dialogue with you. Whether you have a question, a challenge to explore, or a simple idea, your message is the first step toward a collaborative exchange. So, don't hesitate—reach out. Send your message, and let's turn your inquiries into solutions and ideas into action. I look forward to hearing from you and starting our connection. Your input is valued and welcome here.
-                </div>
-                <form>
-                    <div class="row g-4">
-                        <div class="col-lg-12 col-xl-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control border-0" id="name" placeholder="Your Name">
-                                <label for="name">Your Name</label>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-xl-6">
-                            <div class="form-floating">
-                                <input type="email" class="form-control border-0" id="email" placeholder="Your Email">
-                                <label for="email">Your Email</label>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-xl-6">
-                            <div class="form-floating">
-                                <input type="phone" class="form-control border-0" id="phone" placeholder="Phone">
-                                <label for="phone">Your Phone</label>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-xl-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control border-0" id="subject" placeholder="Subject">
-                                <label for="subject">Subject</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <textarea class="form-control border-0" placeholder="Leave a message here" id="message" style="height: 175px"></textarea>
-                                <label for="message">Message</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <button class="btn btn-primary w-100 py-3">Send Message</button>
-                        </div>
-                    </div>
-                </form>
+
+<!-- Main Reviews Section -->
+<div class="reviews-main p-3">
+    <!-- Rating Summary Section -->
+    <div class="rating-summary-section">
+        <div class="rating-summary-card">
+            <div class="summary-header">
+                <h2>Overall Rating</h2>
             </div>
-            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.4s">
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="d-inline-flex rounded bg-white w-100 p-4">
-                            <i class="fas fa-map-marker-alt fa-2x text-secondary me-4"></i>
-                            <div>
-                                <h4>Address</h4>
-                                <p class="mb-0">Mirpur DOHS, Dhaka, Bangladesh</p>
-                            </div>
-                        </div>
+
+            <!-- Overall Score -->
+            <div class="overall-score">
+                <div class="score-display">
+                    <span class="score-number">4.5</span>
+                    <span class="score-out-of">out of 5</span>
+                </div>
+                <div class="stars-large">
+                    <span class="star filled"></span>
+                    <span class="star filled"></span>
+                    <span class="star filled"></span>
+                    <span class="star filled"></span>
+                    <span class="star half"></span>
+                </div>
+                <p class="review-count">Based on 324 reviews</p>
+            </div>
+
+            <!-- Rating Distribution -->
+            <div class="rating-distribution">
+                <div class="distribution-item">
+                    <div class="rating-label">
+                        <span class="stars-text">5</span>
+                        <span class="star star-sm filled"></span>
                     </div>
-                    <div class="col-lg-12 col-xl-6">
-                        <div class="d-inline-flex rounded bg-white w-100 p-4">
-                            <i class="fas fa-envelope fa-2x text-secondary me-4"></i>
-                            <div>
-                                <h4>Mail Us</h4>
-                                <p class="mb-0">info@aquasip.com</p>
-                            </div>
-                        </div>
+                    <div class="distribution-bar">
+                        <div class="bar-fill" style="width: 60%;"></div>
                     </div>
-                    <div class="col-lg-12 col-xl-6">
-                        <div class="d-inline-flex rounded bg-white w-100 p-4">
-                            <i class="fa fa-phone-alt fa-2x text-secondary me-4"></i>
-                            <div>
-                                <h4>Telephone</h4>
-                                <p class="mb-0">(+012) 3456 7890 123</p>
-                            </div>
-                        </div>
+                    <span class="rating-percent">60%</span>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="rating-label">
+                        <span class="stars-text">4</span>
+                        <span class="star star-sm filled"></span>
                     </div>
-                    <div class="col-12">
-                        <div class="h-100 overflow-hidden">
-                            <iframe class="w-100 rounded" style="height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                                src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Mirpur DOHS&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-                            </iframe>
-                        </div>
+                    <div class="distribution-bar">
+                        <div class="bar-fill" style="width: 25%;"></div>
                     </div>
+                    <span class="rating-percent">25%</span>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="rating-label">
+                        <span class="stars-text">3</span>
+                        <span class="star star-sm filled"></span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="bar-fill" style="width: 10%;"></div>
+                    </div>
+                    <span class="rating-percent">10%</span>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="rating-label">
+                        <span class="stars-text">2</span>
+                        <span class="star star-sm filled"></span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="bar-fill" style="width: 3%;"></div>
+                    </div>
+                    <span class="rating-percent">3%</span>
+                </div>
+
+                <div class="distribution-item">
+                    <div class="rating-label">
+                        <span class="stars-text">1</span>
+                        <span class="star star-sm filled"></span>
+                    </div>
+                    <div class="distribution-bar">
+                        <div class="bar-fill" style="width: 2%;"></div>
+                    </div>
+                    <span class="rating-percent">2%</span>
                 </div>
             </div>
         </div>
+
+        <!-- Write Review Button -->
+        <button class="write-review-btn">Write a Review</button>
+    </div>
+
+    <!-- Reviews List Section -->
+    <div class="reviews-list-section">
+        <!-- Filters & Sort -->
+        <div class="reviews-controls">
+            <div class="filter-group">
+                <label for="rating-filter">Filter by Rating:</label>
+                <select id="rating-filter" class="filter-select">
+                    <option value="">All Ratings</option>
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort-filter">Sort by:</label>
+                <select id="sort-filter" class="filter-select">
+                    <option value="helpful">Most Helpful</option>
+                    <option value="recent">Most Recent</option>
+                    <option value="highest">Highest Rating</option>
+                    <option value="lowest">Lowest Rating</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Review Cards -->
+        <div class="reviews-list">
+            <!-- Review Item 1 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">LM</div>
+                        <div class="reviewer-details">
+                            <h3 class="reviewer-name">Lopa Mudra</h3>
+                            <p class="review-date">Verified Purchase • 2 weeks ago</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                        </div>
+                        <span class="rating-text">5 out of 5</span>
+                    </div>
+                </div>
+
+                <div class="review-content">
+                    <h4 class="review-title">Excellent Product Quality!</h4>
+                    <p class="review-text">
+                        This product exceeded my expectations in every way. The quality is outstanding,
+                        and it arrived in perfect condition. I've already recommended it to all my friends
+                        and family. Highly recommend!
+                    </p>
+                </div>
+
+                <!-- Attachments -->
+                <div class="review-attachments">
+                    <div class="attachment-item">
+                        <img src="/img/water3.png" alt="Product in use" class="attachment-image">
+                        <span class="attachment-label">Product in use</span>
+                    </div>
+                    <div class="attachment-item">
+                        <img src="/img/water4.png" alt="Packaging" class="attachment-image">
+                        <span class="attachment-label">Packaging</span>
+                    </div>
+                </div>
+
+                <!-- Review Actions -->
+                <div class="review-actions">
+                    <button class="action-btn helpful-btn">
+                        <span class="action-icon">👍</span>
+                        <span class="action-text">Helpful (24)</span>
+                    </button>
+                    <button class="action-btn unhelpful-btn">
+                        <span class="action-icon">👎</span>
+                        <span class="action-text">Not Helpful (2)</span>
+                    </button>
+                    <button class="action-btn report-btn">
+                        <span class="action-icon">⚠️</span>
+                        <span class="action-text">Report</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Review Item 2 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">FS</div>
+                        <div class="reviewer-details">
+                            <h3 class="reviewer-name">Fabia Tus Safa</h3>
+                            <p class="review-date">Verified Purchase • 1 month ago</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star"></span>
+                        </div>
+                        <span class="rating-text">4 out of 5</span>
+                    </div>
+                </div>
+
+                <div class="review-content">
+                    <h4 class="review-title">Great Quality, Minor Issue</h4>
+                    <p class="review-text">
+                        Overall, this is a fantastic product. The only minor issue I encountered was with
+                        the packaging, but the product itself is excellent. Customer service was very
+                        responsive in helping me resolve the issue.
+                    </p>
+                </div>
+
+                <div class="review-actions">
+                    <button class="action-btn helpful-btn">
+                        <span class="action-icon">👍</span>
+                        <span class="action-text">Helpful (18)</span>
+                    </button>
+                    <button class="action-btn unhelpful-btn">
+                        <span class="action-icon">👎</span>
+                        <span class="action-text">Not Helpful (1)</span>
+                    </button>
+                    <button class="action-btn report-btn">
+                        <span class="action-icon">⚠️</span>
+                        <span class="action-text">Report</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Review Item 3 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">TB</div>
+                        <div class="reviewer-details">
+                            <h3 class="reviewer-name">Tawaf Babu</h3>
+                            <p class="review-date">Verified Purchase • 3 weeks ago</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star filled"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                        </div>
+                        <span class="rating-text">3 out of 5</span>
+                    </div>
+                </div>
+
+                <div class="review-content">
+                    <h4 class="review-title">Good, but Expected Better</h4>
+                    <p class="review-text">
+                        The product is decent and works as advertised. However, for the price point,
+                        I was expecting a bit more. It does what it's supposed to do, but nothing
+                        particularly special.
+                    </p>
+                </div>
+
+                <div class="review-attachments">
+                    <div class="attachment-item">
+                        <img src="/img/blog-1.jpg" alt="Side view" class="attachment-image">
+                        <span class="attachment-label">Side view</span>
+                    </div>
+                </div>
+
+                <div class="review-actions">
+                    <button class="action-btn helpful-btn">
+                        <span class="action-icon">👍</span>
+                        <span class="action-text">Helpful (7)</span>
+                    </button>
+                    <button class="action-btn unhelpful-btn">
+                        <span class="action-icon">👎</span>
+                        <span class="action-text">Not Helpful (3)</span>
+                    </button>
+                    <button class="action-btn report-btn">
+                        <span class="action-icon">⚠️</span>
+                        <span class="action-text">Report</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div class="load-more-container">
+            <button class="load-more-btn">Load More Reviews</button>
+        </div>
     </div>
 </div>
-<!-- Contact End -->
+
+<!-- Write Review Modal (Hidden by default) -->
+<div class="modal-overlay" id="reviewModal">
+    <div class="review-modal">
+        <div class="modal-header">
+            <h2>Write Your Review</h2>
+            <button class="modal-close">&times;</button>
+        </div>
+
+        <form class="review-form">
+            <!-- Rating Selection -->
+            <div class="form-group">
+                <label class="form-label">Rate this product:</label>
+                <div class="rating-selector">
+                    <input type="radio" id="star5" name="rating" value="5">
+                    <label for="star5" class="star-label">
+                        <span class="star filled"></span>
+                    </label>
+
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4" class="star-label">
+                        <span class="star filled"></span>
+                    </label>
+
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3" class="star-label">
+                        <span class="star filled"></span>
+                    </label>
+
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2" class="star-label">
+                        <span class="star filled"></span>
+                    </label>
+
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1" class="star-label">
+                        <span class="star filled"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Review Title -->
+            <div class="form-group">
+                <label for="reviewTitle" class="form-label">Review Title:</label>
+                <input type="text"
+                       id="reviewTitle"
+                       name="title"
+                       placeholder="Sum up your experience in a few words"
+                       class="form-input"
+                       required>
+            </div>
+
+            <!-- Review Text -->
+            <div class="form-group">
+                <label for="reviewText" class="form-label">Your Review:</label>
+                <textarea id="reviewText"
+                          name="review"
+                          placeholder="Share your experience with this product. What did you like? What didn't you like?"
+                          class="form-textarea"
+                          rows="6"
+                          required></textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div class="form-group">
+                <label for="attachments" class="form-label">Add Photos or Documents:</label>
+                <div class="file-upload-area">
+                    <input type="file"
+                           id="attachments"
+                           name="attachments"
+                           multiple
+                           accept="image/*,.pdf,.doc,.docx"
+                           class="file-input">
+                    <div class="file-upload-content">
+                        <span class="upload-icon">📎</span>
+                        <p>Drag and drop files here or click to browse</p>
+                        <small>Supported: Images (JPG, PNG), PDF, DOC, DOCX</small>
+                    </div>
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </div>
+
+            <!-- Checkbox -->
+            <div class="form-group checkbox-group">
+                <input type="checkbox"
+                       id="verifiedPurchase"
+                       name="verifiedPurchase"
+                       class="form-checkbox">
+                <label for="verifiedPurchase" class="checkbox-label">
+                    This is a verified purchase
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="submit-review-btn">Submit Review</button>
+                <button type="button" class="cancel-review-btn" onclick="closeReviewModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    // Modal Functions
+    function openReviewModal() {
+      document.getElementById('reviewModal').style.display = 'flex';
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').style.display = 'none';
+    }
+
+    // File upload handling
+    const fileInput = document.getElementById('attachments');
+    const fileList = document.getElementById('fileList');
+
+    fileInput.addEventListener('change', function() {
+      fileList.innerHTML = '';
+      Array.from(this.files).forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+          <span class="file-name">${file.name}</span>
+          <span class="file-size">${(file.size / 1024).toFixed(2)} KB</span>
+        `;
+        fileList.appendChild(fileItem);
+      });
+    });
+
+    // Write review button
+    document.querySelector('.write-review-btn').addEventListener('click', openReviewModal);
+
+    // Close modal when clicking overlay
+    document.getElementById('reviewModal').addEventListener('click', function(e) {
+      if (e.target === this) closeReviewModal();
+    });
+
+    // Close modal button
+    document.querySelector('.modal-close').addEventListener('click', closeReviewModal);
+
+    // Star rating selector
+    const starLabels = document.querySelectorAll('.rating-selector .star-label');
+    starLabels.forEach((label, index) => {
+      label.addEventListener('click', function() {
+        starLabels.forEach((l, i) => {
+          if (i <= index) {
+            l.classList.add('selected');
+          } else {
+            l.classList.remove('selected');
+          }
+        });
+      });
+
+      label.addEventListener('mouseenter', function() {
+        starLabels.forEach((l, i) => {
+          if (i <= index) {
+            l.classList.add('hover');
+          } else {
+            l.classList.remove('hover');
+          }
+        });
+      });
+    });
+
+    document.querySelector('.rating-selector').addEventListener('mouseleave', function() {
+      starLabels.forEach(l => l.classList.remove('hover'));
+    });
+
+    // Form submission
+    document.querySelector('.review-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Review submitted successfully!');
+      this.reset();
+      closeReviewModal();
+    });
+</script>
+
 <!-- JavaScript Libraries -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>

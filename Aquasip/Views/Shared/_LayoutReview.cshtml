@@ -34,6 +34,7 @@
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
 
     var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
+
     var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
 
     var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
@@ -50,6 +51,9 @@
 
     var listDesignedBy = layoutPage.PageContents.Where(x => x.SlugPageContent == "designed_by" && x.IsActive == true).ToList();
 
+    var oBusinessHour = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "business_hours").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "business_hours").First();
+
     var message = TempData["message"] as string;
 }
 
@@ -58,7 +62,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Terapia - Physical Therapy Website Template</title>
+    <title>@ViewData["Title"] - Admin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -239,14 +243,8 @@
                 </div>
                 <div class="col-md-6 col-lg-6 col-xl-3">
                     <div class="footer-item d-flex flex-column">
-                        <h4 class="mb-4 text-white">Our Services</h4>
-                        @foreach (var item in listOurService)
-                        {
-                            if (item.IsActive == true)
-                            {
-                                <a href="@item.Header"><i class="fas fa-angle-right me-2"></i> @item.Title</a>
-                            }
-                        }
+                        <h4 class="mb-4 text-white">@Html.Raw(oBusinessHour.Title)</h4>
+                        @Html.Raw(oBusinessHour.Body)
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6 col-xl-3">
