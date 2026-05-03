@@ -55,8 +55,6 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<SiteSetting> SiteSettings { get; set; }
 
-    public virtual DbSet<Specialist> Specialists { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
@@ -364,15 +362,6 @@ public partial class AquasipContext : DbContext
             entity.HasKey(e => e.SettingKey).HasName("PK__SiteSett__01E719AC6C3C4212");
 
             entity.Property(e => e.SettingKey).HasMaxLength(100);
-        });
-
-        modelBuilder.Entity<Specialist>(entity =>
-        {
-            entity.ToTable("Specialist");
-
-            entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.Designation).HasMaxLength(255);
-            entity.Property(e => e.FullName).HasMaxLength(255);
         });
 
         modelBuilder.Entity<User>(entity =>

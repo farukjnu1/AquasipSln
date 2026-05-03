@@ -3,185 +3,493 @@
     ViewData["Title"] = "Terms | AquaSip";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["terms_condition"];
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+
     var oTerm = viewModel.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "terms_condition").First();
     var term = oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
                         oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
 
-    // var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //     : oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
-
-    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "layout").First();
-    // var listLayout = oContact.PageContents.Where(x => x.SlugPage == "layout").ToList();
-
-    // var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "location").First();
-
-    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
-
-    // var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
-
-    // var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
-
-    // var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
-
-    // var oMobile = layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").First();
-
-    // var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
-
-    // var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
-
-    // var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
-
-    // var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
-
-    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
-
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = oTerm.Title,
+        Slug = oTerm.Slug,
+        Pages = (List<PageVM>)viewModel
+    };
 }
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    .terms {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 40px;
+        color: #333;
+    }
+    .h1 {
+        text-align: center;
+        color:#1f6392;
     }
 
-    .policy-container {
+    .h2 {
+        margin-top: 20px;
+        color: #222;
+    }
+
+    /* ========== TERMS OF SERVICE PAGE STYLES ========== */
+
+    .terms-container {
         max-width: 900px;
         margin: 0 auto;
-        background: white;
-        border-radius: 28px;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-        overflow: hidden;
-        padding: 2rem 1.8rem;
+        padding-bottom: 40px;
     }
 
-    @@media (min-width: 640px) {
-        .policy-container {
-            padding: 2.5rem 2.8rem;
-        }
-    }
-
-    .last-updated {
-        color: #4a627a;
-        font-size: 0.85rem;
-        border-bottom: 1px solid #e2edf2;
-        padding-bottom: 1rem;
-        margin-bottom: 1.8rem;
-    }
-
-
-    .highlight-box {
-        background: #eef4fa;
-        border-left: 4px solid #2c7da0;
-        padding: 1rem 1.2rem;
+    .terms-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #667eea 100%);
+        color: #fff;
+        padding: 40px 24px;
         border-radius: 16px;
-        margin: 1.2rem 0;
+        margin-bottom: 40px;
+        text-align: center;
+        position: relative;
+    }
+
+        .terms-header h1 {
+            margin: 0 0 12px 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .terms-header p {
+            margin: 8px 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .terms-header .intro-text {
+            margin: 16px 0 0 0 !important;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .terms-header .print-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .terms-header .print-btn:hover {
+                background: #fff;
+                color: #4f46e5;
+            }
+
+    /* ===== TABLE OF CONTENTS ===== */
+
+    .terms-toc {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 40px;
+    }
+
+        .terms-toc h2 {
+            margin: 0 0 20px 0;
+            font-size: 1.4rem;
+            color: #1d1d1d;
+        }
+
+        .terms-toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .terms-toc li {
+            padding: 8px 0;
+        }
+
+        .terms-toc a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .terms-toc a:hover {
+                color: #667eea;
+                text-decoration: underline;
+                padding-left: 4px;
+            }
+
+            .terms-toc a::before {
+                content: "→";
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .terms-toc a:hover::before {
+                opacity: 1;
+            }
+
+    /* ===== TERMS CONTENT ===== */
+
+    .terms-content {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .policy-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 32px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+        .policy-section:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .policy-section h2 {
+            margin: 0 0 20px 0;
+            font-size: 1.6rem;
+            color: #1d1d1d;
+            font-weight: 700;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 12px;
+        }
+
+        .policy-section h3 {
+            margin: 24px 0 12px 0;
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .policy-section p {
+            margin: 12px 0;
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .policy-section ul {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .policy-section li {
+            margin: 8px 0;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .policy-section strong {
+            color: #1d1d1d;
+            font-weight: 600;
+        }
+
+        .policy-section a {
+            color: #4f46e5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .policy-section a:hover {
+                text-decoration: underline;
+                color: #667eea;
+            }
+
+    address {
+        font-style: normal;
+        line-height: 1.8;
+    }
+
+    /* ===== CONTACT INFO SECTION ===== */
+
+    .contact-info {
+        background: #f9f8ff;
+        border-left: 4px solid #4f46e5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+        .contact-info h3 {
+            margin: 0 0 16px 0;
+        }
+
+        .contact-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .contact-info li {
+            margin-bottom: 12px;
+            padding-left: 0;
+        }
+
+            .contact-info li::before {
+                content: "";
+                display: none;
+            }
+
+    /* ===== RESPONSIVE DESIGN ===== */
+
+    @@media (max-width: 768px) {
+        .terms-container
+
+    {
+        padding: 20px;
+    }
+
+    .terms-header {
+        padding: 32px 20px;
+    }
+
+        .terms-header h1 {
+            font-size: 2rem;
+        }
+
+        .terms-header p {
+            font-size: 0.95rem;
+        }
+
+        .terms-header .intro-text {
+            font-size: 1rem;
+        }
+
+        .terms-header .print-btn {
+            position: static;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+    .terms-toc {
+        padding: 20px;
+    }
+
+        .terms-toc ul {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+    .policy-section {
+        padding: 24px;
+    }
+
+        .policy-section h2 {
+            font-size: 1.4rem;
+        }
+
+        .policy-section h3 {
+            font-size: 1.1rem;
+        }
+
+    }
+
+    @@media (max-width: 640px) {
+        .terms-header
+
+    {
+        padding: 24px 16px;
+    }
+
+    .terms-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .terms-header .intro-text {
         font-size: 0.95rem;
     }
 
-    .contact-line {
-        background: #fef7e0;
-        padding: 1rem 1.2rem;
-        border-radius: 20px;
-        margin-top: 1.8rem;
-        border: 1px solid #ffecb3;
+    .terms-toc {
+        padding: 16px;
     }
 
+    .policy-section {
+        padding: 20px;
+    }
 
-    .badge-note {
-        background: #f9f2e6;
-        color: #b45309;
-        border-radius: 30px;
-        padding: 0.2rem 0.8rem;
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 500;
-        margin-left: 0.6rem;
-        vertical-align: middle;
+        .policy-section h2 {
+            font-size: 1.3rem;
+        }
+
+        .policy-section h3 {
+            font-size: 1rem;
+        }
+
+        .policy-section ul {
+            padding-left: 20px;
+        }
+
     }
 </style>
-<!-- Navbar & Hero Start -->
-<div class="container-fluid position-relative p-0">
-    <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-        <a href="/" class="navbar-brand p-0">
-            @if (oLogo.IsActive == true)
-            {
-                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
-            }
-            else
-            {
-                <h1 class="text-primary m-0">YOUR-LOGO</h1>
-            }
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="fa fa-bars"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto py-0">
-                <a href="/" class="nav-item nav-link active">Home</a>
-                <a href="/Home/Products" class="nav-item nav-link">Products</a>
-                <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
-                <a href="/Home/Cart" class="nav-item nav-link ">Shopping Cart</a>
-                <a href="/Home/Gallery" class="nav-item nav-link">Gallery</a>
-                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
-                <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
-            </div>
-            <div class="d-none d-xl-flex me-3">
-                <div class="d-flex flex-column pe-3 border-end border-primary">
-                    <span class="text-body">Get Free Delivery</span>
-                    <a href="tel:@oPhone.Header"><span class="text-primary">Free: @oPhone.Header</span></a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5" style="max-width: 900px;">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Terms & Conditions</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active text-primary">Terms</li>
-            </ol>
-        </div>
-    </div>
-    <!-- Header End -->
-</div>
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
 <!-- Navbar & Hero End -->
 
-<div class="policy-container pt-5 pb-5">
+<div class="terms-container">
+    <div class="terms-header">
+        <h1>Terms of Service</h1>
+        <p>Last Updated: May 3, 2026</p>
+        <p class="intro-text">These terms and conditions outline the rules and regulations for the use of our ecommerce website. By accessing this website, you accept these terms and conditions in full.</p>
+        <button class="print-btn" onclick="window.print()">Print Terms</button>
+    </div>
 
-    <h1>Terms & Conditions · <span style="color:#1f6392;">@Html.Raw(term.Title)</span></h1>
+    <div class="terms-toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#1">1. Acceptance of Terms</a></li>
+            <li><a href="#2">2. Use of Service</a></li>
+            <li><a href="#3">3. User Accounts</a></li>
+            <li><a href="#4">4. Products and Services</a></li>
+            <li><a href="#5">5. Payment Terms</a></li>
+            <li><a href="#6">6. Shipping and Delivery</a></li>
+            <li><a href="#7">7. Returns and Refunds</a></li>
+            <li><a href="#8">8. Intellectual Property</a></li>
+            <li><a href="#9">9. Privacy</a></li>
+            <li><a href="#10">10. Disclaimers</a></li>
+            <li><a href="#11">11. Limitation of Liability</a></li>
+            <li><a href="#12">12. Indemnification</a></li>
+            <li><a href="#13">13. Termination</a></li>
+            <li><a href="#14">14. Governing Law</a></li>
+            <li><a href="#15">15. Changes to Terms</a></li>
+            <li><a href="#16">16. Contact Information</a></li>
+        </ul>
+    </div>
 
-    <p>@Html.Raw(term.Header)</p>
+    <div class="terms-content">
+        <section id="1" class="policy-section">
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing and using our ecommerce website, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+        </section>
 
-    <p>@Html.Raw(term.Body)</p>
+        <section id="2" class="policy-section">
+            <h2>2. Use of Service</h2>
+            <p>You agree to use our website only for lawful purposes and in a way that does not infringe the rights of, restrict or inhibit anyone else's use and enjoyment of the website.</p>
+            <p>Prohibited behavior includes but is not limited to:</p>
+            <ul>
+                <li>Hacking or cracking</li>
+                <li>Transmitting viruses or harmful code</li>
+                <li>Attempting to gain unauthorized access</li>
+                <li>Using the service for any illegal purpose</li>
+            </ul>
+        </section>
 
-    <div class="last-updated"><strong>Last updated:</strong> @Html.Raw(term.Footer)</div>
+        <section id="3" class="policy-section">
+            <h2>3. User Accounts</h2>
+            <p>To access certain features of our website, you may be required to create an account. You are responsible for maintaining the confidentiality of your account and password.</p>
+            <p>You agree to:</p>
+            <ul>
+                <li>Provide accurate and complete information</li>
+                <li>Update your information promptly</li>
+                <li>Accept responsibility for all activities under your account</li>
+            </ul>
+        </section>
+
+        <section id="4" class="policy-section">
+            <h2>4. Products and Services</h2>
+            <p>We strive to provide accurate product descriptions and images. However, we do not warrant that product descriptions or other content on this site is accurate, complete, reliable, current, or error-free.</p>
+            <p>All products are subject to availability. We reserve the right to discontinue any product at any time.</p>
+        </section>
+
+        <section id="5" class="policy-section">
+            <h2>5. Payment Terms</h2>
+            <p>All payments must be made through our secure payment gateway. We accept major credit cards and other payment methods as indicated on our website.</p>
+            <p>By providing payment information, you represent and warrant that:</p>
+            <ul>
+                <li>You are authorized to use the payment method</li>
+                <li>The payment information is accurate</li>
+                <li>You will pay all charges incurred</li>
+            </ul>
+        </section>
+
+        <section id="6" class="policy-section">
+            <h2>6. Shipping and Delivery</h2>
+            <p>We will make reasonable efforts to deliver products within the estimated timeframe. However, delivery dates are estimates only and we are not liable for delays.</p>
+            <p>Risk of loss passes to the buyer upon delivery to the carrier. You should inspect packages upon receipt and report any damage immediately.</p>
+        </section>
+
+        <section id="7" class="policy-section">
+            <h2>7. Returns and Refunds</h2>
+            <p>We offer returns within 30 days of purchase for most items, subject to our return policy. Items must be unused and in original packaging.</p>
+            <p>Refunds will be processed within 5-7 business days after receipt and inspection of returned items. Shipping costs are non-refundable unless the return is due to our error.</p>
+        </section>
+
+        <section id="8" class="policy-section">
+            <h2>8. Intellectual Property</h2>
+            <p>The website and its original content, features, and functionality are owned by us and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
+            <p>You may not reproduce, distribute, modify, or create derivative works without our express written permission.</p>
+        </section>
+
+        <section id="9" class="policy-section">
+            <h2>9. Privacy</h2>
+            <p>Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the website, to understand our practices.</p>
+        </section>
+
+        <section id="10" class="policy-section">
+            <h2>10. Disclaimers</h2>
+            <p>The information on this website is provided on an 'as is' basis. To the fullest extent permitted by law, we exclude all representations, warranties, conditions and terms whether express or implied.</p>
+            <p>We do not guarantee that the website will be uninterrupted or error-free, or that defects will be corrected.</p>
+        </section>
+
+        <section id="11" class="policy-section">
+            <h2>11. Limitation of Liability</h2>
+            <p>In no event shall we, nor our directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages.</p>
+            <p>Our total liability shall not exceed the amount paid by you for the products purchased.</p>
+        </section>
+
+        <section id="12" class="policy-section">
+            <h2>12. Indemnification</h2>
+            <p>You agree to indemnify and hold us harmless from any claims, demands, losses, or damages including legal fees arising out of your use of the website or violation of these terms.</p>
+        </section>
+
+        <section id="13" class="policy-section">
+            <h2>13. Termination</h2>
+            <p>We may terminate or suspend your account and access to the website immediately, without prior notice, for conduct that we believe violates these terms or is harmful to other users.</p>
+        </section>
+
+        <section id="14" class="policy-section">
+            <h2>14. Governing Law</h2>
+            <p>These terms shall be interpreted and governed by the laws of the jurisdiction in which our company is incorporated, without regard to conflict of law provisions.</p>
+        </section>
+
+        <section id="15" class="policy-section">
+            <h2>15. Changes to Terms</h2>
+            <p>We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on the website. Your continued use constitutes acceptance of the modified terms.</p>
+        </section>
+
+        <section id="16" class="policy-section">
+            <h2>16. Contact Information</h2>
+            <div class="contact-info">
+                <h3>Get in Touch</h3>
+                <ul>
+                    <li><strong>Email:</strong> legal@ecommerce-store.com</li>
+                    <li><strong>Phone:</strong> 1-800-123-4567</li>
+                    <li><strong>Address:</strong> 123 Commerce Street, Business City, BC 12345</li>
+                </ul>
+            </div>
+        </section>
+    </div>
 </div>
-
-<!-- JavaScript Libraries -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Template Javascript -->
-<script src="~/lib/wow/wow.min.js"></script>
-<script src="~/lib/easing/easing.min.js"></script>
-<script src="~/lib/waypoints/waypoints.min.js"></script>
-<script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
-<script src="~/js/main.js"></script>
-
-

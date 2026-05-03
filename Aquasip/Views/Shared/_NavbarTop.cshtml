@@ -1,0 +1,77 @@
+﻿@model Aquasip.Models.NavbarVM
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var viewModel = Model.Pages;
+
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+        : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+         : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
+
+    string cartActive = Model.Slug == "cart" ? "active" : "";
+    string contactActive = Model.Slug == "contact" ? "active" : "";
+    string faqActive = Model.Slug == "faq" ? "active" : "";
+    string galleryActive = Model.Slug == "gallery" ? "active" : "";
+    string productsActive = Model.Slug == "products" ? "active" : "";
+    string reviewActive = Model.Slug == "review" ? "active" : "";
+    string specActive = Model.Slug == "spec" ? "active" : "";
+    string termsActive = Model.Slug == "terms" ? "active" : "";
+    string homeActive = Model.Slug == "home" ? "active" : "";
+    homeActive = Model.Slug == "checkout" ? "active" : homeActive;
+    homeActive = Model.Slug == "about" ? "active" : homeActive;
+    homeActive = Model.Slug == "privacy_policy" ? "active" : homeActive;
+    homeActive = Model.Slug == "terms_condition" ? "active" : homeActive;
+}
+
+<!-- Navbar & Hero Start -->
+<div class="container-fluid position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+        <a href="/" class="navbar-brand p-0">
+            @if (oLogo.IsActive == true)
+            {
+                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
+            }
+            else
+            {
+                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+            }
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0">
+                <a href="/" class="nav-item nav-link @homeActive">Home</a>
+                <a href="/Home/Products" class="nav-item nav-link @productsActive">Products</a>
+                <a href="javascript:void(0);" class="nav-item nav-link @specActive">Specification</a>
+                <a href="/Home/Cart" class="nav-item nav-link @cartActive">Shopping Cart</a>
+                <a href="/Home/Gallery" class="nav-item nav-link @galleryActive">Gallery</a>
+                <a href="/Home/Contact" class="nav-item nav-link @contactActive">Contact</a>
+                <a href="/Home/Review" class="nav-item nav-link @reviewActive">Review</a>
+                <a href="/Home/Faq" class="nav-item nav-link @faqActive">FAQ</a>
+            </div>
+            <div class="d-none d-xl-flex me-3">
+                <div class="d-flex flex-column pe-3 border-end border-primary">
+                    <span class="text-body">Get Free Delivery</span>
+                    <a href="tel:@oPhone.Header"><span class="text-primary">Free: @oPhone.Header</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Header Start -->
+    <div class="container-fluid bg-breadcrumb">
+        <div class="container text-center py-5" style="max-width: 900px;">
+            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">@Model.Name</h4>
+            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active text-primary">@Model.Name</li>
+            </ol>
+        </div>
+    </div>
+    <!-- Header End -->
+</div>
+<!-- Navbar & Hero End -->

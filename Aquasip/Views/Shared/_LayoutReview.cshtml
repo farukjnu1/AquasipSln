@@ -157,27 +157,8 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fa fa-bars"></span>
             </button>
-            @* <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav ms-auto py-0">
-                    @foreach (var item in listMenu.Where(x => x.Slug != "appointment"))
-                    {
-                        if (item.Slug == "home")
-                        {
-                            <a href="@item.Content" class="nav-item nav-link active">@item.Label</a>
-                        }
-                        else
-                        {
-                            <a href="@item.Content" class="nav-item nav-link">@item.Label</a>
-                        }
-                    }
-                </div>
-                <a href="@appointment.Content" id="appointment" class="btn btn-primary rounded-pill text-white py-2 px-4 flex-wrap flex-sm-shrink-0">@appointment.Title</a>
-            </div> *@
         </nav>
     </div>
-
-
-
     <div style="margin-top:15px">
         @RenderBody()
     </div>
@@ -252,7 +233,7 @@
                         <h4 class="mb-4 text-white">Contact Info</h4>
                         @if (oAddress.IsActive == true)
                         {
-                            <a href="javascript:void(0)"><i class="fa fa-map-marker-alt me-2"></i> @oAddress.Body</a>
+                            <a href="javascript:void(0)"><i class="fa fa-map-marker-alt me-2"></i> @oAddress.Header</a>
                         }
                         @if (oEmail.IsActive == true)
                         {

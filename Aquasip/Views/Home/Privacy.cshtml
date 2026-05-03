@@ -3,187 +3,287 @@
     ViewData["Title"] = "Privacy | AquaSip";
     // Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["privacy_policy"];
-    var oPrivacy = viewModel.Where(x => x.Slug == "privacy_policy").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "privacy_policy").First();
-    var privacy = oPrivacy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        oPrivacy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").First();
-
-    // var map = oContact.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //     : oContact.PageContents.Where(x => x.SlugPageContent == "map").First();
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
 
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "layout").First();
-    // var listLayout = oContact.PageContents.Where(x => x.SlugPage == "layout").ToList();
+    : viewModel.Where(x => x.Slug == "layout").First();
 
-    // var oLocation = layoutPage.PageContents.Where(x => x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "location").First();
+    var oPrivacy = viewModel.Where(x => x.Slug == "privacy_policy").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "privacy_policy").First();
+    var privacyContent = oPrivacy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oPrivacy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").First();
 
-    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = oPrivacy.Title,
+        Slug = oPrivacy.Slug,
+        Pages = (List<PageVM>)viewModel
+    };
 
-    // var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
-
-    // var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
-
-    // var oEmail2 = layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "email_2").First();
-
-    // var oMobile = layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "mobile").First();
-
-    // var oFacebook = layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "facebook").First();
-
-    // var oTwitter = layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "twitter").First();
-
-    // var oInstagram = layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "instagram").First();
-
-    // var oLinkedin = layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.SlugPageContent == "linkedin").First();
-
-    var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
-
-    // var listQuickLink = layoutPage.PageContents.Where(x => x.SlugPageContent == "quick_links").ToList();
-    // var listOurService = layoutPage.PageContents.Where(x => x.SlugPageContent == "our_services").ToList();
 }
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
 
-    .policy-container {
+<style>
+    /* ========== PRIVACY POLICY PAGE STYLES ========== */
+
+    .privacy-container {
         max-width: 900px;
         margin: 0 auto;
-        background: white;
-        border-radius: 28px;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-        overflow: hidden;
-        padding: 2rem 1.8rem;
+        padding-top:20px;
+        padding-bottom: 40px;
     }
 
-    @@media (min-width: 640px) {
-        .policy-container
-
-    {
-        padding: 2.5rem 2.8rem;
-    }
-
-    }
-
-    .last-updated {
-        color: #4a627a;
-        font-size: 0.85rem;
-        border-bottom: 1px solid #e2edf2;
-        padding-bottom: 1rem;
-        margin-bottom: 1.8rem;
-    }
-
-    
-    .highlight-box {
-        background: #eef4fa;
-        border-left: 4px solid #2c7da0;
-        padding: 1rem 1.2rem;
+    .privacy-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #667eea 100%);
+        color: #fff;
+        padding: 40px 24px;
         border-radius: 16px;
-        margin: 1.2rem 0;
-        font-size: 0.95rem;
+        margin-bottom: 40px;
+        text-align: center;
+        position: relative;
     }
 
-    .contact-line {
-        background: #fef7e0;
-        padding: 1rem 1.2rem;
-        border-radius: 20px;
-        margin-top: 1.8rem;
-        border: 1px solid #ffecb3;
+        .privacy-header h1 {
+            margin: 0 0 12px 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .privacy-header p {
+            margin: 8px 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+    .intro-text {
+        margin: 16px 0 0 0 !important;
+        font-size: 1.05rem;
+        line-height: 1.6;
     }
 
-    
-    .badge-note {
-        background: #f9f2e6;
-        color: #b45309;
-        border-radius: 30px;
-        padding: 0.2rem 0.8rem;
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 500;
-        margin-left: 0.6rem;
-        vertical-align: middle;
+    .print-btn {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
+
+        .print-btn:hover {
+            background: #fff;
+            color: #4f46e5;
+        }
+
+    /* ===== TABLE OF CONTENTS ===== */
+
+    .privacy-toc {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 40px;
+    }
+
+        .privacy-toc h2 {
+            margin: 0 0 20px 0;
+            font-size: 1.4rem;
+            color: #1d1d1d;
+        }
+
+        .privacy-toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .privacy-toc li {
+            padding: 8px 0;
+        }
+
+        .privacy-toc a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .privacy-toc a:hover {
+                color: #667eea;
+                text-decoration: underline;
+                padding-left: 4px;
+            }
+
+            .privacy-toc a::before {
+                content: "→";
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .privacy-toc a:hover::before {
+                opacity: 1;
+            }
+
+    /* ===== PRIVACY CONTENT ===== */
+
+    .privacy-content {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .policy-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 75px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        scroll-margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+
+        .policy-section.highlight {
+            background: #fffbeb;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.15);
+            border-left: 4px solid #4f46e5;
+        }
+
+        .policy-section h2 {
+            margin: 0 0 24px 0;
+            font-size: 1.5rem;
+            color: #1d1d1d;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #ececec;
+        }
+
+        .policy-section h3 {
+            margin: 20px 0 12px 0;
+            font-size: 1.15rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .policy-section p {
+            margin: 0 0 16px 0;
+            color: #555;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .policy-section ul {
+            margin: 0 0 16px 0;
+            padding-left: 24px;
+            list-style: none;
+        }
+
+        .policy-section li {
+            margin-bottom: 12px;
+            color: #555;
+            line-height: 1.7;
+            position: relative;
+            padding-left: 16px;
+        }
+
+            .policy-section li::before {
+                content: "▸";
+                position: absolute;
+                left: 0;
+                color: #4f46e5;
+                font-weight: bold;
+            }
+
+        .policy-section strong {
+            color: #1d1d1d;
+            font-weight: 600;
+        }
+
+        .policy-section a {
+            color: #4f46e5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .policy-section a:hover {
+                text-decoration: underline;
+                color: #667eea;
+            }
+
+    address {
+        font-style: normal;
+        line-height: 1.8;
+    }
+
+    /* ===== CONTACT INFO SECTION ===== */
+
+    .contact-info {
+        background: #f9f8ff;
+        border-left: 4px solid #4f46e5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+        .contact-info h3 {
+            margin: 0 0 16px 0;
+        }
+
+        .contact-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .contact-info li {
+            margin-bottom: 12px;
+            padding-left: 0;
+        }
+
+            .contact-info li::before {
+                content: "";
+                display: none;
+            }
 </style>
-<!-- Navbar & Hero Start -->
-<div class="container-fluid position-relative p-0">
-    <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-        <a href="/" class="navbar-brand p-0">
-            @if (oLogo.IsActive == true)
-            {
-                <h1 class="text-primary m-0"><img src="@oLogo.FilePath" /></h1>
-            }
-            else
-            {
-                <h1 class="text-primary m-0">YOUR-LOGO</h1>
-            }
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="fa fa-bars"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto py-0">
-                <a href="/" class="nav-item nav-link active">Home</a>
-                <a href="/Home/Products" class="nav-item nav-link">Products</a>
-                <a href="javascript:void(0);" class="nav-item nav-link">Specification</a>
-                <a href="/Home/Cart" class="nav-item nav-link ">Shopping Cart</a>
-                <a href="/Home/Gallery" class="nav-item nav-link">Gallery</a>
-                <a href="/Home/Faq" class="nav-item nav-link">FAQ</a>
-                <a href="/Home/Contact" class="nav-item nav-link">Contact</a>
-            </div>
-            <div class="d-none d-xl-flex me-3">
-                <div class="d-flex flex-column pe-3 border-end border-primary">
-                    <span class="text-body">Get Free Delivery</span>
-                    <a href="tel:@oPhone.Header"><span class="text-primary">Free: @oPhone.Header</span></a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-breadcrumb">
-        <div class="container text-center py-5" style="max-width: 900px;">
-            <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Privacy Policy</h4>
-            <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active text-primary">Privacy</li>
-            </ol>
-        </div>
-    </div>
-    <!-- Header End -->
-</div>
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
 <!-- Navbar & Hero End -->
 
-<div class="policy-container pt-5 pb-5">
-    
-    <h1>Privacy Policy · <span style="color:#1f6392;">@Html.Raw(privacy.Title)</span></h1>
-    
-    <p>@Html.Raw(privacy.Header)</p>
+<div class="privacy-container">
 
-    <p>@Html.Raw(privacy.Body)</p>
+    @Html.Raw(privacyContent.Header)
 
-    <div class="last-updated"><strong>Last updated:</strong> @Html.Raw(privacy.Footer)</div>
+    @Html.Raw(privacyContent.Body)
+
+    @Html.Raw(privacyContent.Footer)
+
 </div>
 
-<!-- JavaScript Libraries -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('.privacy-toc a').forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth' });
+        target.classList.add('highlight');
+        setTimeout(() => target.classList.remove('highlight'), 1600);
+      });
+    });
 
-<!-- Template Javascript -->
-<script src="~/lib/wow/wow.min.js"></script>
-<script src="~/lib/easing/easing.min.js"></script>
-<script src="~/lib/waypoints/waypoints.min.js"></script>
-<script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
-<script src="~/js/main.js"></script>
+    const printButton = document.createElement('button');
+    printButton.className = 'print-btn';
+    printButton.textContent = 'Print This Policy';
+    printButton.addEventListener('click', () => window.print());
+    document.querySelector('.privacy-header').appendChild(printButton);
+</script>

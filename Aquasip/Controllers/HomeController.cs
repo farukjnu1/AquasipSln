@@ -72,10 +72,10 @@ namespace Aquasip.Controllers
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
-            var homePage = pageRepo.GetBySlug("home");
-            homePage.PageContents = pageContentRepo.GetBySlugPage("home");
+            var productsPage = pageRepo.GetBySlug("products");
+            productsPage.PageContents = pageContentRepo.GetBySlugPage("products");
 
-            homePage.Products = new ProductRepository(_connectionString).GetAll();
+            productsPage.Products = new ProductRepository(_connectionString).GetAll();
 
             //var servicesPage = pageRepo.GetBySlug("services");
             //servicesPage.PageContents = pageContentRepo.GetBySlugPage("services");
@@ -99,16 +99,19 @@ namespace Aquasip.Controllers
             layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
-            listPage.Add(homePage);
+            listPage.Add(layoutPage);
+            listPage.Add(productsPage);
+            ViewData["aquasip"] = listPage;
+
             //listPage.Add(servicesPage);
             //listPage.Add(aboutPage);
             //listPage.Add(appointmentPage);
             //listPage.Add(ourTeamPage);
             //listPage.Add(testimonialPage);
             //listPage.Add(ourBlogPage);
-            listPage.Add(layoutPage);
+            //return View(listPage);
 
-            return View(listPage);
+            return View();
         }
 
         public IActionResult About()
@@ -126,7 +129,7 @@ namespace Aquasip.Controllers
             var listPage = new List<PageVM>();
             listPage.Add(aboutPage);
             listPage.Add(layoutPage);
-            ViewData["about"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             #region Create
@@ -152,7 +155,7 @@ namespace Aquasip.Controllers
             var listPage = new List<PageVM>();
             listPage.Add(contactPage);
             listPage.Add(layoutPage);
-            ViewData["contact"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             #region Create
@@ -188,39 +191,52 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
+            var specPage = pageRepo.GetBySlug("spec");
+            specPage.PageContents = pageContentRepo.GetBySlugPage("spec");
+
+            //
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
-            ViewData["layout"] = listPage;
+            listPage.Add(specPage);
+            ViewData["aquasip"] = listPage;
             #endregion
 
             ProductRepository productRepo = new ProductRepository(_connectionString);
             var model = productRepo.GetById(id);
+
             return View(model);
         }
 
         public IActionResult Gallery()
         {
-            #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var galleryPage = pageRepo.GetBySlug("gallery");
+            galleryPage.PageContents = pageContentRepo.GetBySlugPage("gallery");
+
+            galleryPage.Products = new ProductRepository(_connectionString).GetAll();
 
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var contactPage = pageRepo.GetBySlug("contact");
-            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+            var siteSettingRepo = new SiteSettingRepository(_connectionString);
+            layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
-            listPage.Add(contactPage);
             listPage.Add(layoutPage);
-            ViewData["contact"] = listPage;
-            #endregion
+            listPage.Add(galleryPage);
+            ViewData["aquasip"] = listPage;
 
-            #region Create
-            ContactMessageVM model = new ContactMessageVM();
-            #endregion
+            //listPage.Add(servicesPage);
+            //listPage.Add(aboutPage);
+            //listPage.Add(appointmentPage);
+            //listPage.Add(ourTeamPage);
+            //listPage.Add(testimonialPage);
+            //listPage.Add(ourBlogPage);
+            //return View(listPage);
 
-            return View(model);
+            return View();
         }
 
         public IActionResult Cart()
@@ -238,7 +254,7 @@ namespace Aquasip.Controllers
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
             listPage.Add(cartPage);
-            ViewData["layout"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             var products = HttpContext.Session.GetString("Cart");
@@ -305,7 +321,7 @@ namespace Aquasip.Controllers
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
             listPage.Add(cartPage);
-            ViewData["layout"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             var products = HttpContext.Session.GetString("Cart");
@@ -323,17 +339,13 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            //var contactPage = pageRepo.GetBySlug("contact");
-            //contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+            var reviewPage = pageRepo.GetBySlug("review");
+            reviewPage.PageContents = pageContentRepo.GetBySlugPage("review");
 
             var listPage = new List<PageVM>();
-            //listPage.Add(contactPage);
+            listPage.Add(reviewPage);
             listPage.Add(layoutPage);
-            ViewData["contact"] = listPage;
-            #endregion
-
-            #region Create
-            //ContactMessageVM model = new ContactMessageVM();
+            ViewData["aquasip"] = listPage;
             #endregion
 
             //return View(model);
@@ -349,52 +361,18 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var contactPage = pageRepo.GetBySlug("contact");
-            contactPage.PageContents = pageContentRepo.GetBySlugPage("contact");
+            var faqPage = pageRepo.GetBySlug("faq");
+            faqPage.PageContents = pageContentRepo.GetBySlugPage("faq");
 
             var listPage = new List<PageVM>();
-            listPage.Add(contactPage);
+            listPage.Add(faqPage);
             listPage.Add(layoutPage);
-            ViewData["contact"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
-            #region Create
-            ContactMessageVM model = new ContactMessageVM();
-            #endregion
-
-            return View(model);
+            return View();
         }
         #endregion
-
-
-        public IActionResult Services()
-        {
-            PageRepository pageRepo = new PageRepository(_connectionString);
-            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-
-            var servicePage = pageRepo.GetBySlug("services");
-            servicePage.PageContents = pageContentRepo.GetBySlugPage("services");
-
-            var listPage = new List<PageVM>();
-            listPage.Add(servicePage);
-
-            return View(listPage);
-        }
-
-        public IActionResult Service(int id)
-        {
-            PageRepository pageRepo = new PageRepository(_connectionString);
-            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-
-            var servicePage = pageRepo.GetBySlug("services");
-            var oService = pageContentRepo.GetById(id);
-            servicePage.PageContents.Add(oService);
-
-            var listPage = new List<PageVM>();
-            listPage.Add(servicePage);
-
-            return View(listPage);
-        }
 
         public IActionResult OurTeams()
         {
@@ -449,20 +427,12 @@ namespace Aquasip.Controllers
 
             var listPage = new List<PageVM>();
             listPage.Add(appointmentPage);
-            ViewData["appointment"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             #region Create
             AppointmentVM model = new AppointmentVM();
-            SpecialistRepository specialRepo = new SpecialistRepository();
-            var listSpecialist = specialRepo.GetAll();
-            List<SelectListItem> selectSpecialists = new List<SelectListItem>();
-            foreach (var item in listSpecialist)
-            {
-                selectSpecialists.Add(new SelectListItem { Text = item.FullName, Value = item.SpecialistId.ToString() });
-            }
-            model.SpecialistOptions = selectSpecialists;
-
+            
             DepartmentRepository deptRepo = new DepartmentRepository();
             var listDept = deptRepo.GetAll();
             List<SelectListItem> selectDepts = new List<SelectListItem>();
@@ -473,37 +443,6 @@ namespace Aquasip.Controllers
             model.DepartmentOptions = selectDepts;
             #endregion
             return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult Appointment(AppointmentVM model)
-        {
-            try
-            {
-                AppointmentRepository appointRepo = new AppointmentRepository();
-                TempData["message"] = appointRepo.Add(model);
-            }
-            catch (Exception ex)
-            {
-                ErrorVM error = new ErrorVM(_environment);
-                error.WriteLog(ex.StackTrace);
-                TempData["message"] = "Exception!";
-            }
-            return RedirectToAction("Appointments");
-        }
-
-        public IActionResult Testimonials()
-        {
-            PageRepository pageRepo = new PageRepository(_connectionString);
-            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-
-            var testimonialPage = pageRepo.GetBySlug("testimonial");
-            testimonialPage.PageContents = pageContentRepo.GetBySlugPage("testimonial");
-
-            var listPage = new List<PageVM>();
-            listPage.Add(testimonialPage);
-
-            return View(listPage);
         }
 
         public IActionResult Privacy()
@@ -521,7 +460,7 @@ namespace Aquasip.Controllers
             var listPage = new List<PageVM>();
             listPage.Add(privacyPolicyPage);
             listPage.Add(layoutPage);
-            ViewData["privacy_policy"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             return View(listPage);
@@ -542,7 +481,7 @@ namespace Aquasip.Controllers
             var listPage = new List<PageVM>();
             listPage.Add(privacyPolicyPage);
             listPage.Add(layoutPage);
-            ViewData["terms_condition"] = listPage;
+            ViewData["aquasip"] = listPage;
             #endregion
 
             return View(listPage);
