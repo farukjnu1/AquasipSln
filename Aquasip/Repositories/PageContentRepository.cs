@@ -59,6 +59,8 @@ namespace Aquasip.Repositories
                     var oMedia = (from x in _context.Media where x.MediaId == oPageContent.MediaId select x).FirstOrDefault();
                     if (oMedia != null)
                     {
+                        oMedia.UploadedBy = model.UploadedBy;
+                        oMedia.UploadedAt = oPageContent.UploadedAt;
                         oMedia.Description = model.Description;
                         _context.SaveChanges();
                     }

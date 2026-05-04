@@ -10,7 +10,7 @@
 
     var oTerm = viewModel.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "terms_condition").First();
-    var term = oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+    var termContent = oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
                         oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
 
     var oNavbar = new Aquasip.Models.NavbarVM()
@@ -43,6 +43,7 @@
     .terms-container {
         max-width: 900px;
         margin: 0 auto;
+        padding-top: 20px;
         padding-bottom: 40px;
     }
 
@@ -160,7 +161,10 @@
     .policy-section {
         background: #fff;
         border-radius: 12px;
-        padding: 32px;
+        padding-left: 32px;
+        padding-right: 32px;
+        padding-top: 96px;
+        padding-bottom: 96px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
     }
@@ -350,146 +354,13 @@
 <!-- Navbar & Hero End -->
 
 <div class="terms-container">
-    <div class="terms-header">
-        <h1>Terms of Service</h1>
-        <p>Last Updated: May 3, 2026</p>
-        <p class="intro-text">These terms and conditions outline the rules and regulations for the use of our ecommerce website. By accessing this website, you accept these terms and conditions in full.</p>
-        <button class="print-btn" onclick="window.print()">Print Terms</button>
-    </div>
 
-    <div class="terms-toc">
-        <h2>Table of Contents</h2>
-        <ul>
-            <li><a href="#1">1. Acceptance of Terms</a></li>
-            <li><a href="#2">2. Use of Service</a></li>
-            <li><a href="#3">3. User Accounts</a></li>
-            <li><a href="#4">4. Products and Services</a></li>
-            <li><a href="#5">5. Payment Terms</a></li>
-            <li><a href="#6">6. Shipping and Delivery</a></li>
-            <li><a href="#7">7. Returns and Refunds</a></li>
-            <li><a href="#8">8. Intellectual Property</a></li>
-            <li><a href="#9">9. Privacy</a></li>
-            <li><a href="#10">10. Disclaimers</a></li>
-            <li><a href="#11">11. Limitation of Liability</a></li>
-            <li><a href="#12">12. Indemnification</a></li>
-            <li><a href="#13">13. Termination</a></li>
-            <li><a href="#14">14. Governing Law</a></li>
-            <li><a href="#15">15. Changes to Terms</a></li>
-            <li><a href="#16">16. Contact Information</a></li>
-        </ul>
-    </div>
 
-    <div class="terms-content">
-        <section id="1" class="policy-section">
-            <h2>1. Acceptance of Terms</h2>
-            <p>By accessing and using our ecommerce website, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
-        </section>
+    @Html.Raw(termContent.Header)
 
-        <section id="2" class="policy-section">
-            <h2>2. Use of Service</h2>
-            <p>You agree to use our website only for lawful purposes and in a way that does not infringe the rights of, restrict or inhibit anyone else's use and enjoyment of the website.</p>
-            <p>Prohibited behavior includes but is not limited to:</p>
-            <ul>
-                <li>Hacking or cracking</li>
-                <li>Transmitting viruses or harmful code</li>
-                <li>Attempting to gain unauthorized access</li>
-                <li>Using the service for any illegal purpose</li>
-            </ul>
-        </section>
+    @Html.Raw(termContent.Body)
 
-        <section id="3" class="policy-section">
-            <h2>3. User Accounts</h2>
-            <p>To access certain features of our website, you may be required to create an account. You are responsible for maintaining the confidentiality of your account and password.</p>
-            <p>You agree to:</p>
-            <ul>
-                <li>Provide accurate and complete information</li>
-                <li>Update your information promptly</li>
-                <li>Accept responsibility for all activities under your account</li>
-            </ul>
-        </section>
+    @Html.Raw(termContent.Footer)
 
-        <section id="4" class="policy-section">
-            <h2>4. Products and Services</h2>
-            <p>We strive to provide accurate product descriptions and images. However, we do not warrant that product descriptions or other content on this site is accurate, complete, reliable, current, or error-free.</p>
-            <p>All products are subject to availability. We reserve the right to discontinue any product at any time.</p>
-        </section>
-
-        <section id="5" class="policy-section">
-            <h2>5. Payment Terms</h2>
-            <p>All payments must be made through our secure payment gateway. We accept major credit cards and other payment methods as indicated on our website.</p>
-            <p>By providing payment information, you represent and warrant that:</p>
-            <ul>
-                <li>You are authorized to use the payment method</li>
-                <li>The payment information is accurate</li>
-                <li>You will pay all charges incurred</li>
-            </ul>
-        </section>
-
-        <section id="6" class="policy-section">
-            <h2>6. Shipping and Delivery</h2>
-            <p>We will make reasonable efforts to deliver products within the estimated timeframe. However, delivery dates are estimates only and we are not liable for delays.</p>
-            <p>Risk of loss passes to the buyer upon delivery to the carrier. You should inspect packages upon receipt and report any damage immediately.</p>
-        </section>
-
-        <section id="7" class="policy-section">
-            <h2>7. Returns and Refunds</h2>
-            <p>We offer returns within 30 days of purchase for most items, subject to our return policy. Items must be unused and in original packaging.</p>
-            <p>Refunds will be processed within 5-7 business days after receipt and inspection of returned items. Shipping costs are non-refundable unless the return is due to our error.</p>
-        </section>
-
-        <section id="8" class="policy-section">
-            <h2>8. Intellectual Property</h2>
-            <p>The website and its original content, features, and functionality are owned by us and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
-            <p>You may not reproduce, distribute, modify, or create derivative works without our express written permission.</p>
-        </section>
-
-        <section id="9" class="policy-section">
-            <h2>9. Privacy</h2>
-            <p>Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the website, to understand our practices.</p>
-        </section>
-
-        <section id="10" class="policy-section">
-            <h2>10. Disclaimers</h2>
-            <p>The information on this website is provided on an 'as is' basis. To the fullest extent permitted by law, we exclude all representations, warranties, conditions and terms whether express or implied.</p>
-            <p>We do not guarantee that the website will be uninterrupted or error-free, or that defects will be corrected.</p>
-        </section>
-
-        <section id="11" class="policy-section">
-            <h2>11. Limitation of Liability</h2>
-            <p>In no event shall we, nor our directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages.</p>
-            <p>Our total liability shall not exceed the amount paid by you for the products purchased.</p>
-        </section>
-
-        <section id="12" class="policy-section">
-            <h2>12. Indemnification</h2>
-            <p>You agree to indemnify and hold us harmless from any claims, demands, losses, or damages including legal fees arising out of your use of the website or violation of these terms.</p>
-        </section>
-
-        <section id="13" class="policy-section">
-            <h2>13. Termination</h2>
-            <p>We may terminate or suspend your account and access to the website immediately, without prior notice, for conduct that we believe violates these terms or is harmful to other users.</p>
-        </section>
-
-        <section id="14" class="policy-section">
-            <h2>14. Governing Law</h2>
-            <p>These terms shall be interpreted and governed by the laws of the jurisdiction in which our company is incorporated, without regard to conflict of law provisions.</p>
-        </section>
-
-        <section id="15" class="policy-section">
-            <h2>15. Changes to Terms</h2>
-            <p>We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on the website. Your continued use constitutes acceptance of the modified terms.</p>
-        </section>
-
-        <section id="16" class="policy-section">
-            <h2>16. Contact Information</h2>
-            <div class="contact-info">
-                <h3>Get in Touch</h3>
-                <ul>
-                    <li><strong>Email:</strong> legal@ecommerce-store.com</li>
-                    <li><strong>Phone:</strong> 1-800-123-4567</li>
-                    <li><strong>Address:</strong> 123 Commerce Street, Business City, BC 12345</li>
-                </ul>
-            </div>
-        </section>
-    </div>
+    
 </div>
