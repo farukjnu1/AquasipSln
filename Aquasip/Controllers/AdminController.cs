@@ -7,12 +7,12 @@ using Aquasip.Repositories;
 
 namespace Aquasip.Controllers
 {
-    public class LoginController : Controller
+    public class AdminController : Controller
     {
-        private readonly ILogger<LoginController> _logger;
+        private readonly ILogger<AdminController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
-        public LoginController(ILogger<LoginController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        public AdminController(ILogger<AdminController> logger, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");

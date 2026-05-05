@@ -33,24 +33,24 @@ namespace Aquasip.Fiters
                             }
                             else
                             {
-                                context.Result = new RedirectToActionResult("Index", "Login", null);
+                                context.Result = new RedirectToActionResult("Index", "Admin", null);
                             }
                         }
                         else
                         {
-                            context.Result = new RedirectToActionResult("Index", "Login", null);
+                            context.Result = new RedirectToActionResult("Index", "Admin", null);
                         }
                     }
                     #endregion
                 }
                 else
                 {
-                    context.Result = new RedirectToActionResult("Index", "Login", null);
+                    context.Result = new RedirectToActionResult("Index", "Admin", null);
                 }
             }
             else
             {
-                context.Result = new RedirectToActionResult("Index", "Login", null);
+                context.Result = new RedirectToActionResult("Index", "Admin", null);
             }
             #endregion
         }
