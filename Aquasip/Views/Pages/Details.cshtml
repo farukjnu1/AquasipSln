@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<Aquasip.Models.PageVM>
 @{
     ViewData["Title"] = "Contents";
-    //Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    Layout = "~/Views/Shared/_LayoutReview.cshtml";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    //Layout = "~/Views/Shared/_LayoutReview.cshtml";
 
     var oPage = Model == null ? new PageVM() : Model.First();
     int serial = 0;
 }
 
 <div class="container-fluid">
-    <h4 style="padding-top:100px">Details of</h4>
+    <h4 style="padding-top:10px">Details of</h4>
     <h1 class="text-danger">@oPage.Title PAGE</h1>
     <a href="/Pages">Back to List</a>
     <hr />
@@ -54,5 +54,3 @@
     </div>
     
 </div>
-
-<h4 style="padding:10px">Output:</h4>

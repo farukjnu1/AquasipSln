@@ -1,8 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Aquasip.Utilities
 @{
     var message = TempData["message"] as string;
     int? UserID = Context.Session.GetInt32("UserID");
     string? Username = Context.Session.GetString("Username");
+    var siteSettingRepo = new Aquasip.Repositories.SiteSettingRepository(WebsiteConfig.ConnectionString);
+    var layoutPage = new PageVM();
+    layoutPage.SiteSettings = siteSettingRepo.GetAll();
+    var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
+
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -46,6 +52,9 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="SiteSetting" asp-action="Index">SiteSetting</a>
+                            </li>
                         }
                     </ul>
                     <ul class="navbar-nav flex-grow-0" style="float:right;padding-right:10%">
@@ -85,7 +94,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - MyWebsite @* <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+            &copy; @DateTime.Now.Year - @websiteName.SettingValue
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

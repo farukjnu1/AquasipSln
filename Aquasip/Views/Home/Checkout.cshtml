@@ -8,14 +8,6 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() 
     : viewModel.Where(x => x.Slug == "layout").First();
 
-    // var oPhone = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    // : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "phone").First();
-
-    // var oLogo = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-    //  : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").First();
-
-    // var oMedia0 = Model.ListProductMedia.Count > 0 ? Model.ListProductMedia[0] : new ProductMediumVM();
-
     var cartPage = viewModel.Where(x => x.Slug == "cart").FirstOrDefault() == null ? new PageVM() 
         : viewModel.Where(x => x.Slug == "cart").First();
 
@@ -23,10 +15,11 @@
         : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").First();
     var gateway_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
         : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").First();
-    var vat = cartPage.PageContents.Where(x => x.IsActive==true && x.SlugPageContent == "vat").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    var vat = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").First();
     decimal? grandTotal = 0;
     decimal? subTotal = 0;
+    decimal? vatedValue = 0;
     foreach (var item in Model)
     {
         subTotal += item.Total == null ? 0 : item.Total;
@@ -37,6 +30,8 @@
         if (vat.IsActive == true)
         {
             grandTotal += subTotal * (Convert.ToDecimal(vat.Header) / 100);
+            vatedValue = subTotal * (Convert.ToDecimal(vat.Header) / 100);
+            vatedValue = Math.Round(Convert.ToDecimal(vatedValue), 2);
         }
         if (delivery_charge.IsActive == true)
         {
@@ -610,10 +605,49 @@
 <partial name="_NavbarTop" model="oNavbar" />
 <!-- Navbar & Hero End -->
 
+<div style="padding-left:45px;padding-bottom:10px;padding-right:45px;padding-top:10px">
+    <h1>Checkout</h1>
+    <p>Review your items, input address, or place a order</p>
+</div>
+
 <!-- Main Checkout Content -->
 <main class="checkout-main">
+    
     <!-- Left Column: Checkout Form -->
     <section class="checkout-form-section">
+
+        <div class="checkout-card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        string FilePath = item.ListProductMedia.Count > 0 ? item.ListProductMedia[0].FilePath : "";
+
+                        <tr>
+                            <td><img src="@FilePath" width="90px" /></td>
+                            <td>
+                                @item.ProductName
+                                @item.ProductCode
+                            </td>
+                            <td>@item.Price</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Total</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            
+        </div>
 
         <!-- Shipping Information -->
         <div class="checkout-card">
@@ -754,45 +788,6 @@
         <div class="order-summary-card">
             <h2>Order Summary</h2>
 
-            <!-- Cart Items -->
-            <div class="cart-items">
-                <!-- <div class="cart-item">
-                    <div class="item-image">
-                        <img src="assets/images/product-1.jpg" alt="Product 1">
-                    </div>
-                    <div class="item-details">
-                        <h4>Premium Wireless Headphones</h4>
-                        <p class="item-sku">SKU: WH-1000XM4</p>
-                        <p class="item-qty">Quantity: 1</p>
-                    </div>
-                    <div class="item-price">$349.99</div>
-                </div>
-
-                <div class="cart-item">
-                    <div class="item-image">
-                        <img src="assets/images/product-2.jpg" alt="Product 2">
-                    </div>
-                    <div class="item-details">
-                        <h4>USB-C Cable (2m)</h4>
-                        <p class="item-sku">SKU: USB-C-2M</p>
-                        <p class="item-qty">Quantity: 2</p>
-                    </div>
-                    <div class="item-price">$29.98</div>
-                </div>
-
-                <div class="cart-item">
-                    <div class="item-image">
-                        <img src="assets/images/product-3.jpg" alt="Product 3">
-                    </div>
-                    <div class="item-details">
-                        <h4>Phone Case - Protective</h4>
-                        <p class="item-sku">SKU: CASE-PRO-BK</p>
-                        <p class="item-qty">Quantity: 1</p>
-                    </div>
-                    <div class="item-price">$19.99</div>
-                </div> -->
-            </div>
-
             <!-- Divider -->
             <div class="summary-divider"></div>
 
@@ -800,20 +795,33 @@
             <div class="price-breakdown">
                 <div class="breakdown-row">
                     <span>Subtotal</span>
-                    <span>0.00</span>
+                    <span>@subTotal</span>
                 </div>
-                <div class="breakdown-row">
-                    <span>Shipping</span>
-                    <span>0.00</span>
-                </div>
-                <div class="breakdown-row">
-                    <span>Tax</span>
-                    <span>0.00</span>
-                </div>
-                <div class="breakdown-row discount">
+                @if (vat.IsActive == true)
+                {
+                    <div class="breakdown-row">
+                        <span>@vat.Title @vat.Header</span>
+                        <span>@vatedValue</span>
+                    </div>
+                }
+                @if (delivery_charge.IsActive == true)
+                {
+                    <div class="breakdown-row">
+                        <span>@delivery_charge.Title</span>
+                        <span>@delivery_charge.Header</span>
+                    </div>
+                }
+                @if (gateway_charge.IsActive == true)
+                {
+                    <div class="breakdown-row">
+                        <span>@gateway_charge.Title</span>
+                        <span>@gateway_charge.Header</span>
+                    </div>
+                }
+                <!-- <div class="breakdown-row discount">
                     <span>Discount</span>
                     <span>-0.00</span>
-                </div>
+                </div> -->
             </div>
 
             <!-- Divider -->
@@ -822,18 +830,18 @@
             <!-- Total -->
             <div class="order-total">
                 <span>Total</span>
-                <span class="total-amount">0.00</span>
+                <span class="total-amount">@grandTotal</span>
             </div>
 
             <!-- Checkout Button -->
             <button class="checkout-btn">Place Order</button>
 
             <!-- Continue Shopping -->
-            <button class="continue-shopping-btn">Continue Shopping</button>
+            <button class="continue-shopping-btn" onclick="goToProducts()">Continue Shopping</button>
 
             <!-- Security Info -->
             <div class="security-info">
-                <p>🔒 Secure checkout powered by Stripe</p>
+                <p>🔒 Secure checkout powered by SSL</p>
             </div>
         </div>
     </aside>

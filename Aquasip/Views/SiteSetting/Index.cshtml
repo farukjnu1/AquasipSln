@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Aquasip.Models.SiteSettingVM>
+
+@{
+    ViewData["Title"] = "SiteSetting";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Site Settings</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Key
+            </th>
+            <th>
+                Value
+            </th>
+            <th>#</th>            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SettingKey)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SettingValue)
+                </td>
+                <td>
+                    <a href="javascript:void(0)">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -10,7 +10,7 @@
     var oLogo = layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "logo").First();
 
-    ViewData["Title"] = "Home | AquaSip";
+
     var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
 
     var listSlide = oHome.PageContents.Where(x => x.SlugPageContent == "slides" && x.IsActive == true).ToList();
@@ -49,10 +49,35 @@
     var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
 
-    var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
+    //var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
 
     //var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
     var listProduct = oHome.Products;
+    var section1 = oHome.PageContents.Where(x => x.SlugPageContent == "section1" && x.IsActive == true).FirstOrDefault();
+    var section1_img1 = oHome.PageContents.Where(x => x.SlugPageContent == "section1-img1" && x.IsActive == true).FirstOrDefault();
+    var section1_img2 = oHome.PageContents.Where(x => x.SlugPageContent == "section1-img2" && x.IsActive == true).FirstOrDefault();
+    var section1_img1_Src = section1_img1 == null ? "/img/No_Image_Available.jpg" : section1_img1.FilePath;
+    var section1_img2_Src = section1_img2 == null ? "/img/No_Image_Available.jpg" : section1_img2.FilePath;
+
+    var section2 = oHome.PageContents.Where(x => x.SlugPageContent == "section2" && x.IsActive == true).FirstOrDefault();
+    var section2_img1 = oHome.PageContents.Where(x => x.SlugPageContent == "section2-img1" && x.IsActive == true).FirstOrDefault();
+    var section2_img2 = oHome.PageContents.Where(x => x.SlugPageContent == "section2-img2" && x.IsActive == true).FirstOrDefault();
+    var section2_img3 = oHome.PageContents.Where(x => x.SlugPageContent == "section2-img3" && x.IsActive == true).FirstOrDefault();
+    var section2_img1_Src = section2_img1 == null ? "/img/No_Image_Available.jpg" : section2_img1.FilePath;
+    var section2_img2_Src = section2_img2 == null ? "/img/No_Image_Available.jpg" : section2_img2.FilePath;
+    var section2_img3_Src = section2_img3 == null ? "/img/No_Image_Available.jpg" : section2_img3.FilePath;
+    
+    var section3 = oHome.PageContents.Where(x => x.SlugPageContent == "section3" && x.IsActive == true).FirstOrDefault();
+    var section3_img1 = oHome.PageContents.Where(x => x.SlugPageContent == "section3-img1" && x.IsActive == true).FirstOrDefault();
+    var section3_img2 = oHome.PageContents.Where(x => x.SlugPageContent == "section3-img2" && x.IsActive == true).FirstOrDefault();
+    var section3_img3 = oHome.PageContents.Where(x => x.SlugPageContent == "section3-img3" && x.IsActive == true).FirstOrDefault();
+    var section3_img1_Src = section3_img1 == null ? "/img/No_Image_Available.jpg" : section3_img1.FilePath;
+    var section3_img2_Src = section3_img2 == null ? "/img/No_Image_Available.jpg" : section3_img2.FilePath;
+    var section3_img3_Src = section3_img3 == null ? "/img/No_Image_Available.jpg" : section3_img3.FilePath;
+
+    var productsSection = oHome.PageContents.Where(x => x.SlugPageContent == "products" && x.IsActive == true).FirstOrDefault();
+
+    ViewData["Title"] = "Home";
 }
 
 <!-- Navbar & Hero Start -->
@@ -65,7 +90,7 @@
             }
             else
             {
-                <h1 class="text-primary m-0">YOUR-LOGO</h1>
+                <h1 class="text-primary m-0"><img src="/img/No_Image_Available.jpg" /></h1>
             }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -125,7 +150,7 @@
                             <p class="mb-5 fs-5 text-white fadeInRight animated" data-animation="fadeInRight" data-delay="1.5s" style="animation-delay: 1.5s;">
                                 @oSlide1.Body
                             <div class="carousel-caption-2-content-btn fadeInRight animated" data-animation="fadeInRight" data-delay="1.7s" style="animation-delay: 1.7s;">
-                                <a class="btn btn-primary rounded-pill flex-shrink-0 py-3 px-5 me-2" href="javascript:void(0)">Order Now</a>
+                                @* <a class="btn btn-primary rounded-pill flex-shrink-0 py-3 px-5 me-2" href="javascript:void(0)">Order Now</a> *@
                             </div>
                         </div>
                     </div>
@@ -144,116 +169,157 @@
     <!-- Carousel End -->
 </div>
 <!-- Navbar & Hero End -->
-
-<!-- Products Start -->
-<div class="container-fluid product py-5">
-    <div class="container py-5">
-        <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-            <h4 class="text-uppercase text-primary">Our Products</h4>
-            <h1 class="display-3 text-capitalize mb-3">We Deliver Best Quality Bottle Packs.</h1>
-        </div>
-        <div class="row g-4 justify-content-center">
-            @for (var i = 0; i < listProduct.Count; i++)
-            {
-                var item = listProduct[i];
-                int dela = (i + 1) * 20;
-                double delas = dela / 100.0;
-                string delays = delas.ToString() + "s";
-                string FilePath = item.ListProductMedia.Count > 0 ? item.ListProductMedia[0].FilePath : "";
-                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="@delays">
-                    <div class="product-item">
-                        <img src="@FilePath" class="img-fluid w-100 rounded-top" alt="Image" />
-                        <div class="product-content bg-light text-center rounded-bottom p-4">
-                            <p>@item.ProductCode</p>
-                            <a href="#" class="h4 d-inline-block mb-3">@item.ProductName</a>
-                            <p class="fs-4 text-primary mb-3">BDT. @item.Price</p>
-                            <a href="/Home/Spec?id=@item.ProductId" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
-                            <a href="/Home/Spec?id=@item.ProductId" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
-                            <a href="/Home/Review?id=@item.ProductId" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
-                        </div>
-                        <div class="product-content bg-light text-center rounded-bottom p-4">
-                            @if (item.AverageRating < 2)
-                            {
-                                var starts = "Review: ⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 3)
-                            {
-                                var starts = "Review: ⭐⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 4)
-                            {
-                                var starts = "Review: ⭐⭐⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 5)
-                            {
-                                var starts = "Review: ⭐⭐⭐⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 6)
-                            {
-                                var starts = "Review: ⭐⭐⭐⭐⭐";
-                                @starts
-                            }
-
-                        </div>
+<!-- section 1 -->
+@if (section1 != null)
+{
+    <div class="container-fluid about overflow-hidden py-2">
+        <div class="container py-2">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px; visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+                <h4 class="text-uppercase text-primary" title="section 1">@section1.Title</h4>
+                <h1 class="display-3 text-capitalize mb-3">@section1.Header</h1>
+            </div>
+            <div class="row g-5">
+                <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInLeft;">
+                    <div class="about-item rounded h-100">
+                        <img src="@section1_img1_Src" class="img-fluid rounded h-100 w-100" style="object-fit: cover;" alt="">
                     </div>
                 </div>
-            }
-
-            @* <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
-                <div class="product-item">
-                    <img src="~/img/product-3.png" class="img-fluid w-100 rounded-top" alt="Image" />
-                    <div class="product-content bg-light text-center rounded-bottom p-4">
-                        <p>2L 1 Bottle</p>
-                        <a href="#" class="h4 d-inline-block mb-3">Mineral Water Bottle</a>
-                        <p class="fs-4 text-primary mb-3">$35.00</p>
-                        <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
-                        <a href="#" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
-                        <a href="#" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
-                    </div>
-                    <div class="product-content bg-light text-center rounded-bottom p-4">
-                        Review: ⭐⭐⭐⭐⭐
+                <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInRight;">
+                    <div class="about-item rounded h-100">
+                        <img src="@section1_img2_Src" class="img-fluid rounded h-100 w-100" style="object-fit: cover;" alt="">
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
-                <div class="product-item">
-                    <img src="~/img/product-2.png" class="img-fluid w-100 rounded-top" alt="Image" />
-                    <div class="product-content bg-light text-center rounded-bottom p-4">
-                        <p>4L 2 Bottles</p>
-                        <a href="#" class="h4 d-inline-block mb-3">RO Water Bottle</a>
-                        <p class="fs-4 text-primary mb-3">$70.00</p>
-                        <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
-                        <a href="#" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
-                        <a href="#" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
-                    </div>
-                    <div class="product-content bg-light text-center rounded-bottom p-4">
-                        Review: ⭐⭐⭐⭐⭐
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
-                <div class="product-item">
-                    <img src="~/img/product-1.png" class="img-fluid w-100 rounded-top" alt="Image" />
-                    <div class="product-content bg-light text-center rounded-bottom p-4">
-                        <p>6L 3 Bottles</p>
-                        <a href="#" class="h4 d-inline-block mb-3">UV Water Bottle</a>
-                        <p class="fs-4 text-primary mb-3">$100.00</p>
-                        <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
-                        <a href="#" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
-                        <a href="#" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
-                    </div>
-                    <div class="product-content bg-light text-center rounded-bottom p-4">
-                        Review: ⭐⭐⭐⭐⭐
-                    </div>
-                </div>
-            </div> *@
         </div>
     </div>
-</div>
+}
+<!-- section 1 -->
+<!-- section 2 -->
+@if (section2 != null)
+{
+    <div class="container-fluid service bg-light overflow-hidden py-2">
+        <div class="container py-2">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px; visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+                <h4 class="text-uppercase text-primary">@section2.Title</h4>
+                <h1 class="display-3 text-capitalize mb-3">@section2.Header</h1>
+            </div>
+            <div class="row gx-0 gy-4 align-items-center">
+                <div class="col-lg-6 col-xl-4 wow fadeInLeft" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInLeft;">
+                    <div class="bg-transparent">
+                        <img src="@section2_img1_Src" class="img-fluid w-100" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                    <div class="bg-transparent">
+                        <img src="@section2_img2_Src" class="img-fluid w-100" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-4 wow fadeInRight" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInRight;">
+                    <div class="bg-transparent">
+                        <img src="@section2_img3_Src" class="img-fluid w-100" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- section 2 -->
+<!-- section 3 -->
+@if (section3 != null)
+{
+    <div class="container-fluid service bg-light overflow-hidden py-2">
+        <div class="container py-2">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px; visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+                <h4 class="text-uppercase text-primary">@section3.Title</h4>
+                <h1 class="display-3 text-capitalize mb-3">@section3.Header</h1>
+            </div>
+            <div class="row gx-0 gy-4 align-items-center">
+                <div class="col-lg-6 col-xl-4 wow fadeInLeft" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInLeft;">
+                    <div class="bg-transparent">
+                        <img src="@section3_img1_Src" class="img-fluid w-100" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                    <div class="bg-transparent">
+                        <img src="@section3_img2_Src" class="img-fluid w-100" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-4 wow fadeInRight" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInRight;">
+                    <div class="bg-transparent">
+                        <img src="@section3_img3_Src" class="img-fluid w-100" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- section 3 -->
+<!-- Products Start -->
+@if (productsSection != null)
+{
+    <div class="container-fluid product py-2">
+        <div class="container py-2">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+                <h4 class="text-uppercase text-primary">@productsSection.Title</h4>
+                <h1 class="display-3 text-capitalize mb-3">@productsSection.Header</h1>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @for (var i = 0; i < listProduct.Count; i++)
+                {
+                    var item = listProduct[i];
+                    int dela = (i + 1) * 20;
+                    double delas = dela / 100.0;
+                    string delays = delas.ToString() + "s";
+                    string FilePath = item.ListProductMedia.Count > 0 ? item.ListProductMedia[0].FilePath : "";
+                    <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="@delays">
+                        <div class="product-item">
+                            <img src="@FilePath" class="img-fluid w-100 rounded-top" alt="Image" />
+                            <div class="product-content bg-light text-center rounded-bottom p-4">
+                                <p>@item.ProductCode</p>
+                                <a href="#" class="h4 d-inline-block mb-3">@item.ProductName</a>
+                                <p class="fs-4 text-primary mb-3">BDT. @item.Price</p>
+                                <a href="/Home/Spec?id=@item.ProductId" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
+                                <a href="/Home/Spec?id=@item.ProductId" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
+                                <a href="/Home/Review?id=@item.ProductId" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
+                            </div>
+                            <div class="product-content bg-light text-center rounded-bottom p-4">
+                                @if (item.AverageRating < 2)
+                                {
+                                    var starts = "Review: ⭐";
+                                    @starts
+                                }
+                                else if (item.AverageRating < 3)
+                                {
+                                    var starts = "Review: ⭐⭐";
+                                    @starts
+                                }
+                                else if (item.AverageRating < 4)
+                                {
+                                    var starts = "Review: ⭐⭐⭐";
+                                    @starts
+                                }
+                                else if (item.AverageRating < 5)
+                                {
+                                    var starts = "Review: ⭐⭐⭐⭐";
+                                    @starts
+                                }
+                                else if (item.AverageRating < 6)
+                                {
+                                    var starts = "Review: ⭐⭐⭐⭐⭐";
+                                    @starts
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+    </div>
+}
 <!-- Products End -->
 
 <!-- JavaScript Libraries -->

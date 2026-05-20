@@ -3,15 +3,15 @@
     var pageRepo = new Aquasip.Repositories.PageRepository(WebsiteConfig.ConnectionString);
     var pageContentRepo = new Aquasip.Repositories.PageContentRepository(WebsiteConfig.ConnectionString);
     var menuRepo = new Aquasip.Repositories.MenuRepository(WebsiteConfig.ConnectionString);
-    
+    var siteSettingRepo = new Aquasip.Repositories.SiteSettingRepository(WebsiteConfig.ConnectionString);
+
     var layoutPage = pageRepo.GetBySlug("layout");
     layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+    layoutPage.SiteSettings = siteSettingRepo.GetAll();
+    var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
 
     var listMenu = menuRepo.GetAll();
     string? urL = Context.Session.GetString("urL");
-
-    // var appointment = (from x in listMenu where x.Slug == "appointment" select x).FirstOrDefault() == null ? new MenuVM()
-    //                     : (from x in listMenu where x.Slug == "appointment" select x).First();
 
     var oLocation = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "location").First();
@@ -71,7 +71,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>AquaSip</title>
+    <title>@websiteName.SettingValue</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">

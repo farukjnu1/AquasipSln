@@ -18,6 +18,7 @@
     : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").First();
     decimal? grandTotal = 0;
     decimal? subTotal = 0;
+    decimal? vatedValue = 0;
     foreach (var item in Model)
     {
         subTotal += item.Total == null ? 0 : item.Total;
@@ -28,6 +29,8 @@
         if (vat.IsActive == true)
         {
             grandTotal += subTotal * (Convert.ToDecimal(vat.Header) / 100);
+            vatedValue = subTotal * (Convert.ToDecimal(vat.Header) / 100);
+            vatedValue = Math.Round(Convert.ToDecimal(vatedValue), 2);
         }
         if (delivery_charge.IsActive == true)
         {
@@ -229,8 +232,8 @@
 <!-- Navbar & Hero End -->
 
 <!-- cart Start -->
-<div class="container-fluid contact bg-light py-5">
-    <div class="container py-5">
+<div class="container-fluid contact bg-light py-1">
+    <div class="container py-1">
 
         <main class="cart-page">
             <header class="cart-header">
@@ -254,6 +257,9 @@
 
                         <div class="cart-item">
                             <div class="item-product">
+                                <a href="javascript:void(0)" class="text-danger" onclick="clearCart(@item.ProductId)" title="Remove from cart">
+                                    <i class="fas fa-times"></i>
+                                </a>
                                 <img src="@FilePath" alt="Product 1" />
                                 <div>
                                     <h2>@item.ProductName</h2>
@@ -262,12 +268,15 @@
                             </div>
                             <div class="item-price">@item.Price</div>
                             <div class="item-qty">
-                                <input type="number" min="1" value="@item.Quantity" readonly />
+                                <a href="javascript:void(0)" class="text-danger" onclick="updateCart(@item.ProductId, @item.Quantity, '-')">
+                                    <i class="fas fa-minus"></i>
+                                </a>
+                                <input type="number" name="Quantity" id="Quantity_@item.ProductId" min="1" value="@item.Quantity" readonly />
+                                <a href="javascript:void(0)" class="text-success" onclick="updateCart(@item.ProductId, @item.Quantity, '+')">
+                                    <i class="fas fa-plus"></i>
+                                </a>
                             </div>
                             <div class="item-total">@item.Total</div>
-                            <div class="item-remove">
-                                <button class="remove-btn" onclick="clearCart(@item.ProductId)" title="Remove from cart">Remove</button>
-                            </div>
                         </div>
                     }
 
@@ -282,6 +291,7 @@
                     </div>
                 </div>
 
+                <input type="hidden" id="subTotal" value="@subTotal" />
                 <aside class="order-summary">
                     <h2>Order Summary</h2>
                     <div class="summary-row">
@@ -291,8 +301,8 @@
                     @if (vat.IsActive == true)
                     {
                         <div class="summary-row">
-                            <span>@vat.Title</span>
-                            <span>@vat.Header</span>
+                            <span>@vat.Title @vat.Header</span>
+                            <span>@vatedValue</span>
                         </div>
                     }
                     @if (delivery_charge.IsActive == true)
@@ -336,6 +346,20 @@
     }
 
     function gotToCheckout(){
-        location.href='/Home/Checkout';
+        var subTotal = parseFloat(document.getElementById('subTotal').value);
+        if(subTotal>0){
+            location.href='/Home/Checkout';
+        }
+    }
+
+    function updateCart(id, qty, operator){
+        if(operator == '+') {
+            qty += 1;
+            location.href='/Home/CartUpdate?productId='+id+'&quantity='+qty;
+        } else if(operator == '-' && qty > 1){
+            qty -= 1;
+            location.href='/Home/CartUpdate?productId='+id+'&quantity='+qty;
+        }
+        
     }
 </script>

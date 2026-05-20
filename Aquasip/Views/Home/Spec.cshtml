@@ -34,7 +34,7 @@
 
     body {
         margin: 0;
-        padding: 20px;
+        padding: 2px;
     }
 
     .product-page {
@@ -177,8 +177,8 @@
 <!-- Navbar & Hero End -->
 
 <!-- Spec Start -->
-<div class="container-fluid contact bg-light py-5">
-    <div class="container py-5">
+<div class="container-fluid contact bg-light py-2">
+    <div class="container py-2">
         <main class="product-page">
             <section class="product-gallery">
                 <div class="main-image">
@@ -208,7 +208,14 @@
                 <div class="actions">
                     <form asp-action="Cart" asp-controller="Home" method="post">
                         <input type="hidden" name="productId" value="@Model.ProductId" />
-                        Quantity: <input type="number" name="quantity" value="1" min="1" style="width:120px;height:48px" />
+                        Quantity: 
+                        <a href="javascript:void(0)" class="text-danger" onclick="countQty('-')">
+                            <i class="fas fa-minus"></i>
+                        </a>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" style="width:120px;height:48px" />
+                        <a href="javascript:void(0)" class="text-success" onclick="countQty('+')">
+                            <i class="fas fa-plus"></i>
+                        </a>
                         <button class="buy-btn">Add to Cart</button> 
                         @* <button class="wishlist-btn">Add to Wishlist</button> *@
                     </form>
@@ -235,4 +242,15 @@
         currentImage.src = thumb.dataset.src;
       });
     });
+
+    function countQty(operator){
+        console.log(document.getElementById('quantity').nodeValue);
+        if(operator == '+'){
+            document.getElementById('quantity').value = parseInt(document.getElementById('quantity').value) + 1;
+        }else if(operator == '-'){
+            if(parseInt(document.getElementById('quantity').value) > 1){
+                document.getElementById('quantity').value = parseInt(document.getElementById('quantity').value) - 1;
+            }
+        }
+    }
 </script>

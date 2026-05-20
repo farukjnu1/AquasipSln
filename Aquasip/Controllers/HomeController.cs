@@ -6,6 +6,7 @@ using Aquasip.Utilities;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Tasks.Deployment.Bootstrapper;
 using System.Diagnostics;
 
 namespace Aquasip.Controllers
@@ -22,6 +23,7 @@ namespace Aquasip.Controllers
             _connectionString = configuration.GetConnectionString("AquasipContext");
             _environment = environment;
         }
+
         #region Requirement from Client
         public IActionResult Index()
         {
@@ -36,8 +38,8 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var siteSettingRepo = new SiteSettingRepository(_connectionString);
-            layoutPage.SiteSettings = siteSettingRepo.GetAll();
+            //var siteSettingRepo = new SiteSettingRepository(_connectionString);
+            //layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
             listPage.Add(homePage);
@@ -59,8 +61,8 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var siteSettingRepo = new SiteSettingRepository(_connectionString);
-            layoutPage.SiteSettings = siteSettingRepo.GetAll();
+            //var siteSettingRepo = new SiteSettingRepository(_connectionString);
+            //layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
@@ -170,8 +172,8 @@ namespace Aquasip.Controllers
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
 
-            var siteSettingRepo = new SiteSettingRepository(_connectionString);
-            layoutPage.SiteSettings = siteSettingRepo.GetAll();
+            //var siteSettingRepo = new SiteSettingRepository(_connectionString);
+            //layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
@@ -213,15 +215,24 @@ namespace Aquasip.Controllers
             {
                 var products = HttpContext.Session.GetString("Cart");
                 var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
-                listProduct.Add(new ProductVM
+                var oProduct = (from x in listProduct where x.ProductId == productId select x).FirstOrDefault();
+                if (oProduct == null)
                 {
-                    ProductId = product.ProductId,
-                    ProductName = product.ProductName,
-                    Price = product.Price,
-                    Quantity = quantity,
-                    Total = product.Price * quantity,
-                    ListProductMedia = product.ListProductMedia
-                });
+                    listProduct.Add(new ProductVM
+                    {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        Price = product.Price,
+                        Quantity = quantity,
+                        Total = product.Price * quantity,
+                        ListProductMedia = product.ListProductMedia
+                    });
+                }
+                else
+                {
+                    oProduct.Quantity += quantity;
+                    oProduct.Total = product.Price * oProduct.Quantity;
+                }
                 HttpContext.Session.SetString("Cart", JsonConversion.SerializeObject(listProduct));
             }
             return RedirectToAction("Cart");
@@ -244,6 +255,21 @@ namespace Aquasip.Controllers
                 listProduct.Remove(productToRemove);
                 HttpContext.Session.SetString("Cart", JsonConversion.SerializeObject(listProduct));
             }
+            return RedirectToAction("Cart");
+        }
+
+        public IActionResult CartUpdate(long productId, int quantity)
+        {
+            ProductRepository productRepo = new ProductRepository(_connectionString);
+            var products = HttpContext.Session.GetString("Cart");
+            var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
+            var oProduct = (from x in listProduct where x.ProductId == productId select x).FirstOrDefault();
+            if (oProduct != null)
+            {
+                oProduct.Quantity = quantity;
+                oProduct.Total = oProduct.Price * oProduct.Quantity;
+            }
+            HttpContext.Session.SetString("Cart", JsonConversion.SerializeObject(listProduct));
             return RedirectToAction("Cart");
         }
 
