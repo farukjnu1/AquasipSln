@@ -11,10 +11,13 @@ namespace Aquasip.Repositories
     public class UserRepository
     {
         private readonly string _connectionString = "";
+        #region constructor
         public UserRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
+        #endregion
+
         // Create
         public string? Add(UserVM user)
         {

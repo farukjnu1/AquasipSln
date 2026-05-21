@@ -297,6 +297,82 @@ namespace Aquasip.Controllers
             return View(listProduct);
         }
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult Checkout(OrderVM order)
+        {
+            var products = HttpContext.Session.GetString("Cart");
+            var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
+            
+            #region order-details
+            listProduct.ForEach(x =>
+            {
+                order.OrderDetails.Add(new OrderVM.OrderDetailVM
+                {
+                    ProductId = x.ProductId,
+                    Qty = (int)x.Quantity,
+                    UnitPrice = x.Price ?? 0,
+                    TotalPrice = x.Price ?? 0 * x.Quantity ?? 0
+                });
+            });
+            #endregion
+            #region order-summary
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+            var cartPage = pageRepo.GetBySlug("cart");
+            cartPage.PageContents = pageContentRepo.GetBySlugPage("cart");
+            var delivery_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+                : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").First();
+            var gateway_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+                : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").First();
+            var vat = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+                : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").First();
+
+            decimal? grandTotal = 0;
+            decimal? subTotal = 0;
+            decimal? vatedValue = 0;
+            foreach (var item in listProduct)
+            {
+                subTotal += item.Total == null ? 0 : item.Total;
+            }
+            grandTotal += subTotal;
+            if (grandTotal > 0)
+            {
+                if (vat.IsActive == true)
+                {
+                    grandTotal += subTotal * (Convert.ToDecimal(vat.Header) / 100);
+                    vatedValue = subTotal * (Convert.ToDecimal(vat.Header) / 100);
+                    vatedValue = Math.Round(Convert.ToDecimal(vatedValue), 2);
+                }
+                if (delivery_charge.IsActive == true)
+                {
+                    grandTotal += Convert.ToDecimal(delivery_charge.Header);
+
+                }
+                if (gateway_charge.IsActive == true)
+                {
+                    grandTotal += Convert.ToDecimal(gateway_charge.Header);
+                }
+                grandTotal = Math.Round(Convert.ToDecimal(grandTotal), 2);
+            }
+            order.SubTotal = subTotal ?? 0;
+            order.VatPercent = vat.IsActive == true ? Convert.ToDecimal(vat.Header) : 0;
+            order.VatAmount = vatedValue ?? 0;
+            order.DeliveryCharge = delivery_charge.IsActive == true ? Convert.ToDecimal(delivery_charge.Header) : 0;
+            order.GatewayCharge = gateway_charge.IsActive == true ? Convert.ToDecimal(gateway_charge.Header) : 0;
+            order.GrandTotal = grandTotal ?? 0;
+            order.Notes = string.Join(", ", listProduct.Select(x => $"{x.ProductName} (Qty: {x.Quantity})"));
+            #endregion
+            #region save
+            if (grandTotal > 0)
+            {
+                OrderRepository orderRepo = new OrderRepository(_connectionString);
+                orderRepo.Add(order);
+            }
+            #endregion
+            return RedirectToAction("Checkout");
+        }
+
         public IActionResult Review()
         {
             #region Read

@@ -21,6 +21,8 @@ public partial class Product
 
     public DateTime? UploadedAt { get; set; }
 
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+
     public virtual ProductRatingSummary? ProductRatingSummary { get; set; }
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();

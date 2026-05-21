@@ -29,9 +29,21 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<Menu> Menus { get; set; }
 
+    public virtual DbSet<Order> Orders { get; set; }
+
+    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+
+    public virtual DbSet<OrderState> OrderStates { get; set; }
+
     public virtual DbSet<Page> Pages { get; set; }
 
     public virtual DbSet<PageContent> PageContents { get; set; }
+
+    public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+
+    public virtual DbSet<PaymentStatus> PaymentStatuses { get; set; }
+
+    public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
@@ -52,6 +64,8 @@ public partial class AquasipContext : DbContext
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<RolePermission> RolePermissions { get; set; }
+
+    public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; }
 
     public virtual DbSet<SiteSetting> SiteSettings { get; set; }
 
@@ -123,7 +137,9 @@ public partial class AquasipContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.CustomerCode).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(150);
+            entity.Property(e => e.FullName).HasMaxLength(200);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(30);
         });
 
         modelBuilder.Entity<Department>(entity =>
@@ -172,6 +188,70 @@ public partial class AquasipContext : DbContext
                 .HasConstraintName("FK__Menus__ParentID__5BE2A6F2");
         });
 
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCFD1FCEEB7");
+
+            entity.HasIndex(e => e.OrderNumber, "IX_Orders_OrderNumber");
+
+            entity.HasIndex(e => e.OrderNumber, "UQ__Orders__CAC5E743E8E86ECE").IsUnique();
+
+            entity.Property(e => e.DeliveryCharge).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.GatewayCharge).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.OrderDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.OrderNumber).HasMaxLength(50);
+            entity.Property(e => e.OrderStateId).HasDefaultValue(1);
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.VatAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.VatPercent).HasColumnType("decimal(5, 2)");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_Customers");
+
+            entity.HasOne(d => d.PaymentMethod).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.PaymentMethodId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_PaymentMethods");
+
+            entity.HasOne(d => d.ShippingAddress).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.ShippingAddressId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_ShippingAddresses");
+        });
+
+        modelBuilder.Entity<OrderDetail>(entity =>
+        {
+            entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D36C29543BE6");
+
+            entity.HasIndex(e => e.OrderId, "IX_OrderDetails_OrderId");
+
+            entity.HasIndex(e => e.ProductId, "IX_OrderDetails_ProductId");
+
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderDetails_Orders");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderDetails_Products");
+        });
+
+        modelBuilder.Entity<OrderState>(entity =>
+        {
+            entity.Property(e => e.OrderStateId).ValueGeneratedNever();
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.OrderStatus).HasMaxLength(50);
+            entity.Property(e => e.Remark).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Page>(entity =>
         {
             entity.HasKey(e => e.PageId).HasName("PK__Pages__C565B12425CF940C");
@@ -206,6 +286,55 @@ public partial class AquasipContext : DbContext
             entity.Property(e => e.UploadedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<PaymentMethod>(entity =>
+        {
+            entity.HasKey(e => e.PaymentMethodId).HasName("PK__PaymentM__DC31C1D32E2EC19A");
+
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.PaymentMethodName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<PaymentStatus>(entity =>
+        {
+            entity.HasKey(e => e.PaymentStateId);
+
+            entity.ToTable("PaymentStatus");
+
+            entity.Property(e => e.PaymentStateId).ValueGeneratedNever();
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.PaymentStatus1)
+                .HasMaxLength(50)
+                .HasColumnName("PaymentStatus");
+            entity.Property(e => e.Remark).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<PaymentTransaction>(entity =>
+        {
+            entity.HasKey(e => e.PaymentTransactionId).HasName("PK__PaymentT__C22AEFE0547916C4");
+
+            entity.HasIndex(e => e.OrderId, "IX_PaymentTransactions_OrderId");
+
+            entity.Property(e => e.PaidAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PaymentStatusId).HasDefaultValue(1);
+            entity.Property(e => e.Remarks).HasMaxLength(500);
+            entity.Property(e => e.TransactionNumber).HasMaxLength(100);
+
+            entity.HasOne(d => d.Order).WithMany(p => p.PaymentTransactions)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PaymentTransactions_Orders");
+
+            entity.HasOne(d => d.PaymentMethod).WithMany(p => p.PaymentTransactions)
+                .HasForeignKey(d => d.PaymentMethodId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PaymentTransactions_PaymentMethods");
+
+            entity.HasOne(d => d.PaymentStatus).WithMany(p => p.PaymentTransactions)
+                .HasForeignKey(d => d.PaymentStatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PaymentTransactions_PaymentStatus");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -355,6 +484,27 @@ public partial class AquasipContext : DbContext
             entity.Property(e => e.Controller)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<ShippingAddress>(entity =>
+        {
+            entity.HasKey(e => e.ShippingAddressId).HasName("PK__Shipping__EC10DC39668204E2");
+
+            entity.Property(e => e.City).HasMaxLength(100);
+            entity.Property(e => e.CountryCode).HasMaxLength(5);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.EmailAddress).HasMaxLength(255);
+            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(30);
+            entity.Property(e => e.PostalCode).HasMaxLength(20);
+            entity.Property(e => e.StateProvince).HasMaxLength(100);
+            entity.Property(e => e.StreetAddress).HasMaxLength(500);
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.ShippingAddresses)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ShippingAddresses_Customers");
         });
 
         modelBuilder.Entity<SiteSetting>(entity =>
