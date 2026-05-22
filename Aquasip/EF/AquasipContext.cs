@@ -494,8 +494,7 @@ public partial class AquasipContext : DbContext
             entity.Property(e => e.CountryCode).HasMaxLength(5);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.EmailAddress).HasMaxLength(255);
-            entity.Property(e => e.FirstName).HasMaxLength(100);
-            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(250);
             entity.Property(e => e.PhoneNumber).HasMaxLength(30);
             entity.Property(e => e.PostalCode).HasMaxLength(20);
             entity.Property(e => e.StateProvince).HasMaxLength(100);

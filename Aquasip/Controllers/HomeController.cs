@@ -312,7 +312,7 @@ namespace Aquasip.Controllers
                     ProductId = x.ProductId,
                     Qty = (int)x.Quantity,
                     UnitPrice = x.Price ?? 0,
-                    TotalPrice = x.Price ?? 0 * x.Quantity ?? 0
+                    TotalPrice = x.Total ?? 0
                 });
             });
             #endregion
@@ -367,7 +367,19 @@ namespace Aquasip.Controllers
             if (grandTotal > 0)
             {
                 OrderRepository orderRepo = new OrderRepository(_connectionString);
-                orderRepo.Add(order);
+                var response = orderRepo.Add(order);
+                if (response != null)
+                {
+                    if (response.Success == true)
+                    {
+                        HttpContext.Session.Remove("Cart");
+                        TempData["message"] = response.Message;
+                    }
+                    else
+                    {
+                        TempData["message"] = response.Message;
+                    }
+                }
             }
             #endregion
             return RedirectToAction("Checkout");

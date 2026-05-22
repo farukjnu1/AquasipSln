@@ -1,5 +1,6 @@
 ﻿using Aquasip.EF;
 using Aquasip.Models;
+using Aquasip.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
@@ -18,17 +19,16 @@ namespace Aquasip.Repositories
         #endregion
 
         // Create
-        public string? Add(OrderVM order)
+        public ResponseVM? Add(OrderVM order)
         {
-            string message = "operation failed.";
-            
+            ResponseVM response = new ResponseVM();
             using (var _context = new AquasipContext())
             {
                 // Begin Transaction
                 using var transaction = _context.Database.BeginTransaction();
-
                 try
                 {
+                    #region customer
                     var oCustomer = (from x in _context.Customers where x.Email == order.Customer.Email select x).FirstOrDefault();
                     if (oCustomer == null)
                     {
@@ -41,7 +41,8 @@ namespace Aquasip.Repositories
                         _context.Customers.Add(oCustomer);
                         _context.SaveChanges();
                     }
-
+                    #endregion
+                    #region shipping-address
                     var oShippingAddress = (from x in _context.ShippingAddresses
                                             where x.CustomerId == oCustomer.CustomerId
                                             && x.City == order.ShippingAddress.City
@@ -57,12 +58,18 @@ namespace Aquasip.Repositories
                             City = order.ShippingAddress.City,
                             StateProvince = order.ShippingAddress.StateProvince,
                             PostalCode = order.ShippingAddress.PostalCode,
-                            CountryCode = order.ShippingAddress.CountryCode
+                            CountryCode = order.ShippingAddress.CountryCode,
+                            StreetAddress = order.ShippingAddress.StreetAddress,
+                            FullName = oCustomer.FullName ?? "",
+                            EmailAddress = oCustomer.Email,
+                            PhoneNumber = oCustomer.PhoneNumber
                         };
                         _context.ShippingAddresses.Add(oShippingAddress);
                         _context.SaveChanges();
                     }
-
+                    #endregion
+                    #region order-summery
+                    order.OrderNumber = CodeGenerate.SalesOrderNumber(DateTime.Now, oCustomer.PhoneNumber ?? "");
                     var oOrder = new Order
                     {
                         CustomerId = oCustomer.CustomerId,
@@ -79,20 +86,19 @@ namespace Aquasip.Repositories
                         VatAmount = order.VatAmount,
                         VatPercent = order.VatPercent,
                     };
-
                     // =========================
                     // Save Order Header
                     // =========================
                     _context.Orders.Add(oOrder);
                     _context.SaveChanges();
-
+                    #endregion
+                    #region order-details
                     // =========================
                     // Save Order Details
                     // =========================
                     foreach (var item in order.OrderDetails)
                     {
                         item.OrderId = oOrder.OrderId;
-
                         var orderDetail = new OrderDetail
                         {
                             OrderId = item.OrderId,
@@ -102,41 +108,37 @@ namespace Aquasip.Repositories
                             TotalPrice = item.TotalPrice
                         };
                         _context.OrderDetails.Add(orderDetail);
-
                     }
-
                     _context.SaveChanges();
-
+                    #endregion
                     // =========================
                     // Commit Transaction
                     // =========================
                     transaction.Commit();
-
-                    message = "data has been added successfully.";
+                    response.Success = true;
+                    response.Message = "Order has been submit successfully.";
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // =========================
                     // Rollback Transaction
                     // =========================
                     transaction.Rollback();
-
-                    throw;
+                    response.Message = "order submition failed.";
                 }
-
             }
-            return message;
+            return response;
         }
 
-        public string? Update(OrderVM order)
+        public ResponseVM? Update(OrderVM order)
         {
-            return "";
+            return null;
         }
 
         // Delete
-        public string? Delete(int userId)
+        public ResponseVM? Delete(int userId)
         {
-            return "";
+            return null;
         }
 
         // Read all

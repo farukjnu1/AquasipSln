@@ -7,7 +7,7 @@ public partial class Customer
 {
     public long CustomerId { get; set; }
 
-    public string CustomerCode { get; set; } = null!;
+    public string? CustomerCode { get; set; }
 
     public string? FullName { get; set; }
 
@@ -15,7 +15,7 @@ public partial class Customer
 
     public string Email { get; set; } = null!;
 
-    public string PasswordHash { get; set; } = null!;
+    public string? PasswordHash { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
