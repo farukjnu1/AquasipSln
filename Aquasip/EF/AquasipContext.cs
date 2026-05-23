@@ -247,6 +247,7 @@ public partial class AquasipContext : DbContext
         modelBuilder.Entity<OrderState>(entity =>
         {
             entity.Property(e => e.OrderStateId).ValueGeneratedNever();
+            entity.Property(e => e.ColorCode).HasMaxLength(20);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.OrderStatus).HasMaxLength(50);
             entity.Property(e => e.Remark).HasMaxLength(100);

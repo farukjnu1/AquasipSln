@@ -1,79 +1,83 @@
-﻿@model Aquasip.EF.Order
+﻿@model Aquasip.Models.OrderVM
 
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>Edit Order</h1>
 
-<h4>Order</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
+        <h4>Order-Summery</h4>
+        <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="OrderId" />
             <div class="form-group">
+                <label asp-for="OrderStateId" class="control-label"></label>
+                <select asp-for="OrderStateId" class="form-control" asp-items="ViewBag.OrderStateId"></select>
+                <span asp-validation-for="OrderStateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="OrderNumber" class="control-label"></label>
-                <input asp-for="OrderNumber" class="form-control" />
+                <input asp-for="OrderNumber" class="form-control" readonly />
                 <span asp-validation-for="OrderNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
+                <label asp-for="CustomerName" class="control-label"></label>
+                <input asp-for="CustomerName" class="form-control" readonly />
+                <input type="hidden" asp-for="CustomerId" />
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ShippingAddressId" class="control-label"></label>
-                <select asp-for="ShippingAddressId" class="form-control" asp-items="ViewBag.ShippingAddressId"></select>
+                <input asp-for="StreetAddress" class="form-control" readonly />
+                <input type="hidden" asp-for="ShippingAddressId" />
                 <span asp-validation-for="ShippingAddressId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PaymentMethodId" class="control-label"></label>
-                <select asp-for="PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
+                <input asp-for="PaymentMethod" class="form-control" readonly />
+                <input type="hidden" asp-for="PaymentMethodId" />
                 <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
+                <input asp-for="OrderDate" class="form-control" readonly />
                 <span asp-validation-for="OrderDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SubTotal" class="control-label"></label>
-                <input asp-for="SubTotal" class="form-control" />
+                <input asp-for="SubTotal" class="form-control" readonly />
                 <span asp-validation-for="SubTotal" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VatPercent" class="control-label"></label>
-                <input asp-for="VatPercent" class="form-control" />
+                <input asp-for="VatPercent" class="form-control" readonly />
                 <span asp-validation-for="VatPercent" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VatAmount" class="control-label"></label>
-                <input asp-for="VatAmount" class="form-control" />
+                <input asp-for="VatAmount" class="form-control" readonly />
                 <span asp-validation-for="VatAmount" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DeliveryCharge" class="control-label"></label>
-                <input asp-for="DeliveryCharge" class="form-control" />
+                <input asp-for="DeliveryCharge" class="form-control" readonly />
                 <span asp-validation-for="DeliveryCharge" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GatewayCharge" class="control-label"></label>
-                <input asp-for="GatewayCharge" class="form-control" />
+                <input asp-for="GatewayCharge" class="form-control" readonly />
                 <span asp-validation-for="GatewayCharge" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GrandTotal" class="control-label"></label>
-                <input asp-for="GrandTotal" class="form-control" />
+                <input asp-for="GrandTotal" class="form-control" readonly />
                 <span asp-validation-for="GrandTotal" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderStateId" class="control-label"></label>
-                <input asp-for="OrderStateId" class="form-control" />
-                <span asp-validation-for="OrderStateId" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"></label>
                 <input asp-for="Notes" class="form-control" />
@@ -84,12 +88,40 @@
             </div>
         </form>
     </div>
+    <div class="col-md-6">
+        <h4>Order-Summery</h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.Qty</td>
+                        <td>@item.TotalPrice</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
 </div>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
+@* @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+ *@

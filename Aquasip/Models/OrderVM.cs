@@ -34,14 +34,20 @@ namespace Aquasip.Models
         public virtual ICollection<OrderDetailVM> OrderDetails { get; set; } = new List<OrderDetailVM>();
 
         public virtual CustomerVM Customer { get; set; } = null!;
+        public string? CustomerName { get; set; }
+        public string? OrderStatus { get; set; }
+        public string? PaymentMethod { get; set; }
+        public string? StreetAddress { get; set; }
+        public string? ColorCode { get; set; }
 
         //public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-        //public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+        public virtual PaymentMethodVM PaymentMethodVm { get; set; } = null!;
 
-        //public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+        public virtual ICollection<PaymentTransactionVM> PaymentTransactions { get; set; } = new List<PaymentTransactionVM>();
 
         public virtual ShippingAddressVM ShippingAddress { get; set; } = null!;
+        public virtual PaymentTransactionVM PaymentTransaction { get; set; } = null!;
         public enum QueryType
         {
             GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4
@@ -64,8 +70,9 @@ namespace Aquasip.Models
             public virtual Order Order { get; set; } = null!;
 
             public virtual Product Product { get; set; } = null!;
-        }
+            public string ProductName { get; set; } = null!;
 
+        }
     }
 }
 

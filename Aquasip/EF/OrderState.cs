@@ -13,5 +13,7 @@ public partial class OrderState
 
     public int? Sequence { get; set; }
 
+    public string? ColorCode { get; set; }
+
     public bool? IsActive { get; set; }
 }

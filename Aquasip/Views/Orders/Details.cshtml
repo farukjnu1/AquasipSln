@@ -1,97 +1,241 @@
-﻿@model Aquasip.EF.Order
+﻿@model Aquasip.Models.OrderVM
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    decimal TotalPaidAmount = 0;
 }
 
-<h1>Details</h1>
+<h1>Sales Order</h1>
+<div class="row">
+    <div class="col-md-7">
+        <h4>Order-Summery</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OrderNumber)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OrderNumber)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OrderDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SubTotal)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SubTotal)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.VatPercent)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.VatPercent)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.VatAmount)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.VatAmount)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.DeliveryCharge)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.DeliveryCharge)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.GatewayCharge)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.GatewayCharge)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.GrandTotal)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.GrandTotal)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OrderStatus)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OrderStatus)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CustomerName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CustomerName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PaymentMethod)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PaymentMethod)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ShippingAddress)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StreetAddress)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-5">
+        <h4>
+            Order-Details 
+            <!-- Button trigger modal -->
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#OpenPayment">
+                Open Payment
+            </button>
+        </h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.Qty</td>
+                        <td>@item.TotalPrice</td>
+                    </tr>
+                }
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubTotal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SubTotal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VatPercent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VatPercent)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VatAmount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VatAmount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeliveryCharge)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeliveryCharge)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GatewayCharge)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GatewayCharge)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GrandTotal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GrandTotal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderStateId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderStateId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.CustomerId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentMethod)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentMethod.PaymentMethodId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShippingAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShippingAddress.ShippingAddressId)
-        </dd>
-    </dl>
+            </tbody>
+        </table>
+        <h4>
+            Payment Transactions
+        </h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>PaymentDate</th>
+                    <th>PaymentStatus</th>
+                    <th>PaymentMethod</th>
+                    <th align="right">PaidAmount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PaymentTransactions)
+                {
+                    TotalPaidAmount += item.PaidAmount;
+                    <tr>
+                        <td>@item.PaymentDate</td>
+                        <td>@item.PaymentStatus</td>
+                        <td>@item.PaymentMethod</td>
+                        <td align="right">@item.PaidAmount</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>Total:</th>
+                    <th style="text-align:right">@TotalPaidAmount</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.OrderId">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade"
+     id="OpenPayment"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Payment Information
+                </h1>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form asp-action="Create" asp-controller="PaymentTransactions" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="OrderNumber" class="control-label"></label>
+                        <input asp-for="OrderNumber" class="form-control" readonly />
+                        <input type="hidden" asp-for="PaymentTransaction.OrderId" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PaymentTransaction.PaymentMethodId" class="control-label"></label>
+                        <select asp-for="PaymentTransaction.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PaymentTransaction.PaymentStatusId" class="control-label"></label>
+                        <select asp-for="PaymentTransaction.PaymentStatusId" class="form-control" asp-items="ViewBag.PaymentStatusId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PaymentTransaction.TransactionNumber" class="control-label"></label>
+                        <input asp-for="PaymentTransaction.TransactionNumber" class="form-control" required />
+                        <span asp-validation-for="PaymentTransaction.TransactionNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PaymentTransaction.PaidAmount" class="control-label"></label>
+                        <input asp-for="PaymentTransaction.PaidAmount" class="form-control" required />
+                        <span asp-validation-for="PaymentTransaction.PaidAmount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PaymentTransaction.PaymentDate" class="control-label"></label>
+                        <input asp-for="PaymentTransaction.PaymentDate" class="form-control" required />
+                        <span asp-validation-for="PaymentTransaction.PaymentDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PaymentTransaction.Remarks" class="control-label"></label>
+                        <input asp-for="PaymentTransaction.Remarks" class="form-control" />
+                        <span asp-validation-for="PaymentTransaction.Remarks" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
 </div>
