@@ -1,0 +1,93 @@
+﻿@model Aquasip.Models.CustomerVM
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+
+    // var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+
+    var homePage = viewModel.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "home").First();
+    //var oMedia0 = Model.ListProductMedia.Count > 0 ? Model.ListProductMedia[0] : new ProductMediumVM();
+
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = homePage.Title,
+        Slug = homePage.Slug,
+        Pages = (List<PageVM>)viewModel
+    };
+}
+
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
+<!-- Navbar & Hero End -->
+<div class="container">
+    <h1>Sign-up</h1>
+
+    <h4>Customer</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Signup">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                @* <div class="form-group">
+                    <label asp-for="CustomerCode" class="control-label"></label>
+                    <input asp-for="CustomerCode" class="form-control" />
+                    <span asp-validation-for="CustomerCode" class="text-danger"></span>
+                </div> *@
+                <div class="form-group">
+                    <label asp-for="FullName" class="control-label"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="PasswordHash" class="control-label">Password</label>
+                    <input asp-for="PasswordHash" type="password" class="form-control" />
+                    <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="control-label"></label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group pt-2">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <h3>Password Policy</h3>
+            <ul>
+                <li>Password must be at least 8 characters long.</li>
+                <li>Password must contain at least one uppercase letter.</li>
+                <li>Password must contain at least one lowercase letter.</li>
+                <li>Password must contain at least one number.</li>
+                <li>Password must contain at least one special character.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Signin">Back to Sign-in</a>
+    </div>
+
+</div>
+
+@* @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@

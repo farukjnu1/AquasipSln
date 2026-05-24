@@ -547,5 +547,106 @@ namespace Aquasip.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        #region customer-signin-signup
+        public IActionResult Signup()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var homePage = pageRepo.GetBySlug("home");
+            homePage.PageContents = pageContentRepo.GetBySlugPage("home");
+
+            //
+            var listPage = new List<PageVM>();
+            listPage.Add(layoutPage);
+            listPage.Add(homePage);
+            ViewData["aquasip"] = listPage;
+            #endregion
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Signup(UserVM model)
+        {
+            try
+            {
+                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                UserRepository userRepo = new UserRepository(_connectionString);
+                TempData["message"] = userRepo.Add(model);
+            }
+            catch (Exception ex)
+            {
+                ErrorVM error = new ErrorVM(_environment);
+                error.WriteLog(ex.StackTrace);
+                TempData["message"] = "Exception!";
+            }
+            return RedirectToAction("Signup");
+        }
+
+        public IActionResult Signin()
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var homePage = pageRepo.GetBySlug("home");
+            homePage.PageContents = pageContentRepo.GetBySlugPage("home");
+
+            //
+            var listPage = new List<PageVM>();
+            listPage.Add(layoutPage);
+            listPage.Add(homePage);
+            ViewData["aquasip"] = listPage;
+            #endregion
+
+            return View();
+        }
+        
+
+        [HttpPost]
+        public IActionResult Signin(UserVM model)
+        {
+            try
+            {
+                UserRepository userRepo = new UserRepository(_connectionString);
+                UserVM oUser = userRepo.Login(model);
+                if (oUser != null)
+                {
+                    if (oUser.IsActive == true)
+                    {
+                        HttpContext.Session.SetInt32("UserID", oUser.UserID);
+                        HttpContext.Session.SetString("Username", oUser.Username);
+                        return RedirectToAction("Index", "Orders");
+                    }
+                    else
+                    {
+                        TempData["message"] = "User not valid.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Signout(int? UserID)
+        {
+            HttpContext.Session.Remove("UserID");
+            HttpContext.Session.Remove("Username");
+            return RedirectToAction("Index");
+        }
+        
+        #endregion
+
     }
 }

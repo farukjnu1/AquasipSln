@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Aquasip.EF;
+using Aquasip.Fiters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Aquasip.EF;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Aquasip.Controllers
 {
+    [AdminFilter]
     public class PaymentTransactionsController : Controller
     {
         private readonly ILogger<PaymentTransactionsController> _logger;

@@ -1,15 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using Aquasip.Utilities
 @{
-    var message = TempData["message"] as string;
-    //var message = ViewData["message"] as string;
     int? UserID = Context.Session.GetInt32("UserID");
     string? Username = Context.Session.GetString("Username");
     var siteSettingRepo = new Aquasip.Repositories.SiteSettingRepository(WebsiteConfig.ConnectionString);
     var layoutPage = new PageVM();
     layoutPage.SiteSettings = siteSettingRepo.GetAll();
     var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
-
+    
+    var message = TempData["message"] as string;
+    //var message = ViewData["message"] as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +88,12 @@
         </main>
     </div>
 
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - @websiteName.SettingValue
+        </div>
+    </footer>
+
     @if (message != null)
     {
         TempData["message"] = null;
@@ -96,13 +102,6 @@
             alert('@message');
         </script> *@
     }
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; @DateTime.Now.Year - @websiteName.SettingValue
-        </div>
-    </footer>
-
     <!-- Modal -->
     <input type="hidden" id="message" value="@message" />
     <div class="modal fade"
@@ -155,6 +154,7 @@
             }
         });
     </script>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

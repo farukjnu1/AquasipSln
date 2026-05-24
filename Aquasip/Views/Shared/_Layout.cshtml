@@ -111,14 +111,6 @@
         @RenderBody()
     </div>
 
-    @if (message != null)
-    {
-        TempData["message"] = null;
-        <script>
-            alert('@message');
-        </script>
-    }
-
     <!-- Footer Start -->
     <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.2s">
         <div class="container py-5">
@@ -235,6 +227,66 @@
     <!-- Back to Top -->
     <a href="#" class="btn btn-secondary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
 
+    @if (message != null)
+    {
+        TempData["message"] = null;
+        //ViewData["message"] = null;
+        @* <script>
+            alert('@message');
+        </script> *@
+    }
+    <!-- Modal -->
+    <input type="hidden" id="message" value="@message" />
+    <div class="modal fade"
+         id="OpenMessage"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Information
+                    </h1>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    @message
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function openMessage(){
+            const myModal = new bootstrap.Modal(
+            document.getElementById('OpenMessage')
+            );
+            myModal.show();
+        }
+
+        // Equivalent to jQuery $(document).ready()
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Document is ready!");
+            // Your code here
+            var message = document.getElementById('message').value;
+            if(message !=null && message !=''){
+                openMessage();
+            }
+        });
+    </script>
 
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -246,7 +298,6 @@
     <script src="~/lib/waypoints/waypoints.min.js"></script>
     <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
-
 </body>
 
 </html>
