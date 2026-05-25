@@ -20,9 +20,14 @@ namespace Aquasip.Models
         public string PasswordHash { get; set; } = null!;
 
         public DateTime? CreatedAt { get; set; }
+        public bool IsActive { get; set; } = false;
 
         [StringLength(255)]
         [Compare("PasswordHash")]
         public string ConfirmPassword { get; set; } = string.Empty;
+        public enum QueryType
+        {
+            GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4, UpdateEmailVerify = 5, Signin = 6, GetByEmail = 7
+        }
     }
 }

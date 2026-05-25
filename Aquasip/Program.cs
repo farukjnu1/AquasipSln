@@ -1,4 +1,8 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Aquasip.Models;
+using Aquasip.Services.EmailServices;
+using Aquasip.Services.TokenServices;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -13,6 +17,15 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+builder.Services.AddDataProtection();
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 string connectionString = builder.Configuration["ConnectionStrings:AquasipContext"];
 

@@ -2,11 +2,15 @@ using Aquasip.EF;
 using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Repositories;
+using Aquasip.Services.EmailServices;
+using Aquasip.Services.TokenServices;
 using Aquasip.Utilities;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Build.Tasks.Deployment.Bootstrapper;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using NuGet.Common;
 using System.Diagnostics;
 
 namespace Aquasip.Controllers
@@ -17,11 +21,15 @@ namespace Aquasip.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        private readonly IEmailService _emailService;
+        private readonly ITokenService _tokenService;
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration, IWebHostEnvironment environment, IEmailService emailService, ITokenService tokenService)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");
             _environment = environment;
+            _emailService = emailService;
+            _tokenService = tokenService;
         }
 
         #region Requirement from Client
@@ -572,13 +580,13 @@ namespace Aquasip.Controllers
         }
 
         [HttpPost]
-        public IActionResult Signup(UserVM model)
+        public IActionResult Signup(CustomerVM model)
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
-                UserRepository userRepo = new UserRepository(_connectionString);
-                TempData["message"] = userRepo.Add(model);
+                CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+                TempData["message"] = customerRepo.Add(model);
+                return RedirectToAction("Signin");
             }
             catch (Exception ex)
             {
@@ -601,7 +609,6 @@ namespace Aquasip.Controllers
             var homePage = pageRepo.GetBySlug("home");
             homePage.PageContents = pageContentRepo.GetBySlugPage("home");
 
-            //
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
             listPage.Add(homePage);
@@ -613,36 +620,110 @@ namespace Aquasip.Controllers
         
 
         [HttpPost]
-        public IActionResult Signin(UserVM model)
+        public IActionResult Signin(CustomerVM model)
         {
             try
             {
-                UserRepository userRepo = new UserRepository(_connectionString);
-                UserVM oUser = userRepo.Login(model);
-                if (oUser != null)
+                CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+                CustomerVM oCustomer = customerRepo.Signin(model);
+                if (oCustomer != null)
                 {
-                    if (oUser.IsActive == true)
+                    if (oCustomer.IsActive == true)
                     {
-                        HttpContext.Session.SetInt32("UserID", oUser.UserID);
-                        HttpContext.Session.SetString("Username", oUser.Username);
-                        return RedirectToAction("Index", "Orders");
+                        HttpContext.Session.SetString("CustomerId", oCustomer.CustomerId.ToString());
+                        HttpContext.Session.SetString("Email", oCustomer.Email ?? "");
+                        HttpContext.Session.SetString("FullName", oCustomer.FullName ?? "");
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {
-                        TempData["message"] = "User not valid.";
+                        TempData["message"] = "e-mail not verified.";
+                        return RedirectToAction("Signin");
                     }
+                }
+                else
+                {
+                    TempData["message"] = "User not valid.";
+                    return RedirectToAction("Signin");
                 }
             }
             catch (Exception ex)
             {
+                ErrorVM error = new ErrorVM(_environment);
+                error.WriteLog(ex.StackTrace);
+                TempData["message"] = "Exception!";
             }
             return RedirectToAction("Index");
         }
 
-        public IActionResult Signout(int? UserID)
+        [HttpPost]
+        public async Task<IActionResult> SendVerification(string Email)
         {
-            HttpContext.Session.Remove("UserID");
-            HttpContext.Session.Remove("Username");
+            try 
+            {
+                CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+                CustomerVM oCustomer = customerRepo.GetByEmail(Email);
+                if(oCustomer == null)
+                {
+                    TempData["message"] = "Email not found.";
+                    return RedirectToAction("Signin");
+                }
+                if (oCustomer.IsActive == true)
+                {
+                    TempData["message"] = "Email already verified.";
+                    return RedirectToAction("Signin");
+                }
+
+                string token = _tokenService.Encrypt(Email);
+                string verificationLink = $"{GetBaseUrl()}home/verify?token={token}";
+                await _emailService.SendEmailAsync(
+                Email,
+                "Verification of Customer",
+                "<h2>Welcome from Aquasip</h2>" +
+                "<a href='" + verificationLink + "' target='_blank'>Verify</a>");
+                TempData["message"] = "Verification link is sent to your e-mail.";
+                return RedirectToAction("Signin");
+            }
+            catch (Exception ex)
+            {
+                ErrorVM error = new ErrorVM(_environment);
+                error.WriteLog(ex.StackTrace);
+                TempData["message"] = ex.Message;
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Verify(string token)
+        {
+            string email = _tokenService.Decrypt(token);
+            CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+            CustomerVM oCustomer = customerRepo.GetByEmail(email);
+            if (oCustomer == null)
+            {
+                TempData["message"] = "Email verification failed.";
+                return RedirectToAction("Signin");
+            }
+            else
+            {
+                oCustomer.IsActive = true;
+                customerRepo.UpdateEmailVerify(oCustomer);
+                TempData["message"] = "Verified successfully. Sign in to check bills or write reviews.";
+            }
+            return RedirectToAction("Signin");
+        }
+
+        private string GetBaseUrl()
+        {
+            var request = HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}/";
+            return baseUrl;
+        }
+
+        public IActionResult Signout(int? CustomerId)
+        {
+            HttpContext.Session.Remove("CustomerId");
+            HttpContext.Session.Remove("Email");
+            HttpContext.Session.Remove("FullName");
             return RedirectToAction("Index");
         }
         

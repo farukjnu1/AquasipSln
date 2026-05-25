@@ -25,6 +25,10 @@
     homeActive = Model.Slug == "about" ? "active" : homeActive;
     homeActive = Model.Slug == "privacy_policy" ? "active" : homeActive;
     homeActive = Model.Slug == "terms_condition" ? "active" : homeActive;
+
+    string? CustomerId = Context.Session.GetString("CustomerId");
+    string? Email = Context.Session.GetString("Email");
+    string? FullName = Context.Session.GetString("FullName");
 }
 
 <!-- Navbar & Hero Start -->
@@ -60,7 +64,20 @@
                     <a href="tel:@oPhone.Header"><span class="text-primary">Free: @oPhone.Header</span></a>
                 </div>
                 <div class="d-flex flex-column pe-3" style="padding-left:10px">
-                    <a href="/Home/Signin"><span class="text-body">Signin</span></a>
+                    @if (CustomerId == null || CustomerId == "")
+                    {
+                        <a href="/Home/Signin"><span class="text-body">Signin</span></a>
+                    }
+                    else
+                    {
+                        <div>
+                            <a href="/Home/Signout"><span class="text-body">Signout</span></a>
+                        </div>
+                        <div>
+                            <a href="javascript:void(0)"><span class="text-primary">@FullName</span></a>
+                        </div>
+
+                    }
                 </div>
             </div>
         </div>
