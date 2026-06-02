@@ -29,12 +29,6 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<Menu> Menus { get; set; }
 
-    public virtual DbSet<Order> Orders { get; set; }
-
-    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
-
-    public virtual DbSet<OrderState> OrderStates { get; set; }
-
     public virtual DbSet<Page> Pages { get; set; }
 
     public virtual DbSet<PageContent> PageContents { get; set; }
@@ -53,6 +47,16 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<ProductRatingSummary> ProductRatingSummaries { get; set; }
 
+    public virtual DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+
+    public virtual DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+
+    public virtual DbSet<PurchaseReturn> PurchaseReturns { get; set; }
+
+    public virtual DbSet<PurchaseReturnDetail> PurchaseReturnDetails { get; set; }
+
+    public virtual DbSet<ReferenceType> ReferenceTypes { get; set; }
+
     public virtual DbSet<Review> Reviews { get; set; }
 
     public virtual DbSet<ReviewComment> ReviewComments { get; set; }
@@ -65,9 +69,27 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<RolePermission> RolePermissions { get; set; }
 
+    public virtual DbSet<SalesOrder> SalesOrders { get; set; }
+
+    public virtual DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }
+
+    public virtual DbSet<SalesOrderState> SalesOrderStates { get; set; }
+
+    public virtual DbSet<SalesReturn> SalesReturns { get; set; }
+
+    public virtual DbSet<SalesReturnDetail> SalesReturnDetails { get; set; }
+
     public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; }
 
     public virtual DbSet<SiteSetting> SiteSettings { get; set; }
+
+    public virtual DbSet<StockTransaction> StockTransactions { get; set; }
+
+    public virtual DbSet<Store> Stores { get; set; }
+
+    public virtual DbSet<Supplier> Suppliers { get; set; }
+
+    public virtual DbSet<TransactionType> TransactionTypes { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -186,71 +208,6 @@ public partial class AquasipContext : DbContext
             entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK__Menus__ParentID__5BE2A6F2");
-        });
-
-        modelBuilder.Entity<Order>(entity =>
-        {
-            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCFD1FCEEB7");
-
-            entity.HasIndex(e => e.OrderNumber, "IX_Orders_OrderNumber");
-
-            entity.HasIndex(e => e.OrderNumber, "UQ__Orders__CAC5E743E8E86ECE").IsUnique();
-
-            entity.Property(e => e.DeliveryCharge).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.GatewayCharge).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.OrderDate).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.OrderNumber).HasMaxLength(50);
-            entity.Property(e => e.OrderStateId).HasDefaultValue(1);
-            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.VatAmount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.VatPercent).HasColumnType("decimal(5, 2)");
-
-            entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_Customers");
-
-            entity.HasOne(d => d.PaymentMethod).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.PaymentMethodId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_PaymentMethods");
-
-            entity.HasOne(d => d.ShippingAddress).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.ShippingAddressId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_ShippingAddresses");
-        });
-
-        modelBuilder.Entity<OrderDetail>(entity =>
-        {
-            entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D36C29543BE6");
-
-            entity.HasIndex(e => e.OrderId, "IX_OrderDetails_OrderId");
-
-            entity.HasIndex(e => e.ProductId, "IX_OrderDetails_ProductId");
-
-            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
-
-            entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
-                .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_OrderDetails_Orders");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_OrderDetails_Products");
-        });
-
-        modelBuilder.Entity<OrderState>(entity =>
-        {
-            entity.Property(e => e.OrderStateId).ValueGeneratedNever();
-            entity.Property(e => e.ColorCode).HasMaxLength(20);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.OrderStatus).HasMaxLength(50);
-            entity.Property(e => e.Remark).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Page>(entity =>
@@ -386,6 +343,110 @@ public partial class AquasipContext : DbContext
                 .HasConstraintName("FK_Summary_Product");
         });
 
+        modelBuilder.Entity<PurchaseOrder>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseOrderId).HasName("PK__Purchase__036BACA406E7EFE7");
+
+            entity.ToTable("PurchaseOrder");
+
+            entity.HasIndex(e => e.Ponumber, "UQ__Purchase__69B9A84165F4B915").IsUnique();
+
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Podate)
+                .HasColumnType("datetime")
+                .HasColumnName("PODate");
+            entity.Property(e => e.Ponumber)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("PONumber");
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Supplier).WithMany(p => p.PurchaseOrders)
+                .HasForeignKey(d => d.SupplierId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PurchaseO__Suppl__1B9317B3");
+        });
+
+        modelBuilder.Entity<PurchaseOrderDetail>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseOrderDetailId).HasName("PK__Purchase__5026B698719BBE57");
+
+            entity.ToTable("PurchaseOrderDetail");
+
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.LineTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Qty).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UnitCost).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.PurchaseOrderDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PurchaseO__Produ__2334397B");
+
+            entity.HasOne(d => d.PurchaseOrder).WithMany(p => p.PurchaseOrderDetails)
+                .HasForeignKey(d => d.PurchaseOrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PurchaseO__Purch__22401542");
+        });
+
+        modelBuilder.Entity<PurchaseReturn>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseReturnId).HasName("PK__Purchase__2C33C6E87D773480");
+
+            entity.ToTable("PurchaseReturn");
+
+            entity.HasIndex(e => e.ReturnNumber, "UQ__Purchase__2739D7BBA1037D70").IsUnique();
+
+            entity.Property(e => e.ReturnDate).HasColumnType("datetime");
+            entity.Property(e => e.ReturnNumber)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.PurchaseOrder).WithMany(p => p.PurchaseReturns)
+                .HasForeignKey(d => d.PurchaseOrderId)
+                .HasConstraintName("FK__PurchaseR__Purch__27F8EE98");
+
+            entity.HasOne(d => d.Supplier).WithMany(p => p.PurchaseReturns)
+                .HasForeignKey(d => d.SupplierId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PurchaseR__Suppl__2704CA5F");
+        });
+
+        modelBuilder.Entity<PurchaseReturnDetail>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseReturnDetailId).HasName("PK__Purchase__4CB914C590E96DF9");
+
+            entity.ToTable("PurchaseReturnDetail");
+
+            entity.Property(e => e.LineTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Qty).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UnitCost).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.PurchaseReturnDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PurchaseR__Produ__2F9A1060");
+
+            entity.HasOne(d => d.PurchaseReturn).WithMany(p => p.PurchaseReturnDetails)
+                .HasForeignKey(d => d.PurchaseReturnId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PurchaseR__Purch__2EA5EC27");
+        });
+
+        modelBuilder.Entity<ReferenceType>(entity =>
+        {
+            entity.ToTable("ReferenceType");
+
+            entity.Property(e => e.ReferenceTypeId).ValueGeneratedNever();
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Review>(entity =>
         {
             entity.HasKey(e => e.ReviewId).HasName("PK__Reviews__74BC79CE355DC824");
@@ -487,6 +548,120 @@ public partial class AquasipContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<SalesOrder>(entity =>
+        {
+            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCFD1FCEEB7");
+
+            entity.ToTable("SalesOrder");
+
+            entity.HasIndex(e => e.OrderNumber, "IX_Orders_OrderNumber");
+
+            entity.HasIndex(e => e.OrderNumber, "UQ__Orders__CAC5E743E8E86ECE").IsUnique();
+
+            entity.Property(e => e.DeliveryCharge).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.GatewayCharge).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.OrderDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.OrderNumber).HasMaxLength(50);
+            entity.Property(e => e.OrderStateId).HasDefaultValue(1);
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.VatAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.VatPercent).HasColumnType("decimal(5, 2)");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.SalesOrders)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_Customers");
+
+            entity.HasOne(d => d.PaymentMethod).WithMany(p => p.SalesOrders)
+                .HasForeignKey(d => d.PaymentMethodId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_PaymentMethods");
+
+            entity.HasOne(d => d.ShippingAddress).WithMany(p => p.SalesOrders)
+                .HasForeignKey(d => d.ShippingAddressId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Orders_ShippingAddresses");
+        });
+
+        modelBuilder.Entity<SalesOrderDetail>(entity =>
+        {
+            entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D36C29543BE6");
+
+            entity.HasIndex(e => e.OrderId, "IX_OrderDetails_OrderId");
+
+            entity.HasIndex(e => e.ProductId, "IX_OrderDetails_ProductId");
+
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.SalesOrderDetails)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderDetails_Orders");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.SalesOrderDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderDetails_Products");
+        });
+
+        modelBuilder.Entity<SalesOrderState>(entity =>
+        {
+            entity.HasKey(e => e.OrderStateId).HasName("PK_OrderStates");
+
+            entity.Property(e => e.OrderStateId).ValueGeneratedNever();
+            entity.Property(e => e.ColorCode).HasMaxLength(20);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.OrderStatus).HasMaxLength(50);
+            entity.Property(e => e.Remark).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<SalesReturn>(entity =>
+        {
+            entity.HasKey(e => e.SalesReturnId).HasName("PK__SalesRet__E0906C383382472F");
+
+            entity.ToTable("SalesReturn");
+
+            entity.HasIndex(e => e.ReturnNumber, "UQ__SalesRet__2739D7BBADD6E687").IsUnique();
+
+            entity.Property(e => e.ReturnDate).HasColumnType("datetime");
+            entity.Property(e => e.ReturnNumber)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Customer).WithMany(p => p.SalesReturns)
+                .HasForeignKey(d => d.CustomerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SalesRetu__Custo__0F2D40CE");
+
+            entity.HasOne(d => d.SalesOrder).WithMany(p => p.SalesReturns)
+                .HasForeignKey(d => d.SalesOrderId)
+                .HasConstraintName("FK__SalesRetu__Sales__10216507");
+        });
+
+        modelBuilder.Entity<SalesReturnDetail>(entity =>
+        {
+            entity.HasKey(e => e.SalesReturnDetailId).HasName("PK__SalesRet__B6BCC9488BE9C713");
+
+            entity.ToTable("SalesReturnDetail");
+
+            entity.Property(e => e.LineTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Qty).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.SalesReturnDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SalesRetu__Produ__13F1F5EB");
+
+            entity.HasOne(d => d.SalesReturn).WithMany(p => p.SalesReturnDetails)
+                .HasForeignKey(d => d.SalesReturnId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SalesRetu__Sales__12FDD1B2");
+        });
+
         modelBuilder.Entity<ShippingAddress>(entity =>
         {
             entity.HasKey(e => e.ShippingAddressId).HasName("PK__Shipping__EC10DC39668204E2");
@@ -512,6 +687,72 @@ public partial class AquasipContext : DbContext
             entity.HasKey(e => e.SettingKey).HasName("PK__SiteSett__01E719AC6C3C4212");
 
             entity.Property(e => e.SettingKey).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<StockTransaction>(entity =>
+        {
+            entity.HasKey(e => e.StockTransactionId).HasName("PK__StockTra__C6E6C5CA3C3AACCF");
+
+            entity.ToTable("StockTransaction");
+
+            entity.Property(e => e.QtyIn)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.QtyOut)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TransactionDate).HasColumnType("datetime");
+            entity.Property(e => e.UnitCost).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.StockTransactions)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__StockTran__Produ__345EC57D");
+        });
+
+        modelBuilder.Entity<Store>(entity =>
+        {
+            entity.ToTable("Store");
+
+            entity.Property(e => e.StoreId).ValueGeneratedNever();
+            entity.Property(e => e.StoreCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.StoreName).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Supplier>(entity =>
+        {
+            entity.HasKey(e => e.SupplierId).HasName("PK__Supplier__4BE666B4AD590C23");
+
+            entity.ToTable("Supplier");
+
+            entity.HasIndex(e => e.SupplierCode, "UQ__Supplier__44BE981B8C9FD968").IsUnique();
+
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Phone)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SupplierCode)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.SupplierName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<TransactionType>(entity =>
+        {
+            entity.ToTable("TransactionType");
+
+            entity.Property(e => e.TransactionTypeId).ValueGeneratedNever();
+            entity.Property(e => e.Code)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Name).HasMaxLength(20);
         });
 
         modelBuilder.Entity<User>(entity =>

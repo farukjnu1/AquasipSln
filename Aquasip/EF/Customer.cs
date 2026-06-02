@@ -19,13 +19,17 @@ public partial class Customer
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public bool? IsActive { get; set; }
 
     public virtual ICollection<ReviewComment> ReviewComments { get; set; } = new List<ReviewComment>();
 
     public virtual ICollection<ReviewVote> ReviewVotes { get; set; } = new List<ReviewVote>();
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public virtual ICollection<SalesOrder> SalesOrders { get; set; } = new List<SalesOrder>();
+
+    public virtual ICollection<SalesReturn> SalesReturns { get; set; } = new List<SalesReturn>();
 
     public virtual ICollection<ShippingAddress> ShippingAddresses { get; set; } = new List<ShippingAddress>();
 }

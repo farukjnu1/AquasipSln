@@ -5,21 +5,22 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using System.Data;
+using System.Net.Mail;
 
 namespace Aquasip.Repositories
 {
-    public class OrderRepository
+    public class SalesOrderRepository
     {
         private readonly string _connectionString = "";
         #region constructor
-        public OrderRepository(string connectionString)
+        public SalesOrderRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
         #endregion
 
         // Create
-        public ResponseVM? Add(OrderVM order)
+        public ResponseVM? Add(SalesOrderVM order)
         {
             ResponseVM response = new ResponseVM();
             using (var _context = new AquasipContext())
@@ -43,12 +44,15 @@ namespace Aquasip.Repositories
                     }
                     #endregion
                     #region shipping-address
-                    var oShippingAddress = (from x in _context.ShippingAddresses
+                    /*var oShippingAddress = (from x in _context.ShippingAddresses
                                             where x.CustomerId == oCustomer.CustomerId
                                             && x.City == order.ShippingAddress.City
                                             && x.StateProvince == order.ShippingAddress.StateProvince
                                             && x.PostalCode == order.ShippingAddress.PostalCode
                                             && x.CountryCode == order.ShippingAddress.CountryCode
+                                            select x).FirstOrDefault();*/
+                    var oShippingAddress = (from x in _context.ShippingAddresses
+                                            where x.CustomerId == oCustomer.CustomerId
                                             select x).FirstOrDefault();
                     if (oShippingAddress == null)
                     {
@@ -67,10 +71,21 @@ namespace Aquasip.Repositories
                         _context.ShippingAddresses.Add(oShippingAddress);
                         _context.SaveChanges();
                     }
+                    else 
+                    {
+                        oShippingAddress.City = order.ShippingAddress.City;
+                        oShippingAddress.StateProvince = order.ShippingAddress.StateProvince;
+                        oShippingAddress.PostalCode = order.ShippingAddress.PostalCode;
+                        oShippingAddress.CountryCode = order.ShippingAddress.CountryCode;
+                        oShippingAddress.StreetAddress = order.ShippingAddress.StreetAddress;
+                        oShippingAddress.FullName = oCustomer.FullName ?? "";
+                        oShippingAddress.EmailAddress = oCustomer.Email;
+                        oShippingAddress.PhoneNumber = oCustomer.PhoneNumber;
+                    }
                     #endregion
                     #region order-summery
-                    order.OrderNumber = CodeGenerate.SalesOrderNumber(DateTime.Now, oCustomer.PhoneNumber ?? "");
-                    var oOrder = new Order
+                        order.OrderNumber = CodeGenerate.SalesOrderNumber(DateTime.Now, oCustomer.PhoneNumber ?? "");
+                    var oOrder = new SalesOrder
                     {
                         CustomerId = oCustomer.CustomerId,
                         DeliveryCharge = order.DeliveryCharge,
@@ -89,7 +104,7 @@ namespace Aquasip.Repositories
                     // =========================
                     // Save Order Header
                     // =========================
-                    _context.Orders.Add(oOrder);
+                    _context.SalesOrders.Add(oOrder);
                     _context.SaveChanges();
                     #endregion
                     #region order-details
@@ -99,7 +114,7 @@ namespace Aquasip.Repositories
                     foreach (var item in order.OrderDetails)
                     {
                         item.OrderId = oOrder.OrderId;
-                        var orderDetail = new OrderDetail
+                        var orderDetail = new SalesOrderDetail
                         {
                             OrderId = item.OrderId,
                             ProductId = item.ProductId,
@@ -107,7 +122,7 @@ namespace Aquasip.Repositories
                             UnitPrice = item.UnitPrice,
                             TotalPrice = item.TotalPrice
                         };
-                        _context.OrderDetails.Add(orderDetail);
+                        _context.SalesOrderDetails.Add(orderDetail);
                     }
                     _context.SaveChanges();
                     #endregion
@@ -130,7 +145,7 @@ namespace Aquasip.Repositories
             return response;
         }
 
-        public ResponseVM? Update(OrderVM order)
+        public ResponseVM? Update(SalesOrderVM order)
         {
             return null;
         }

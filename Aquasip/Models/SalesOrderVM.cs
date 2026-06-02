@@ -2,7 +2,7 @@
 
 namespace Aquasip.Models
 {
-    public class OrderVM
+    public class SalesOrderVM
     {
         public long OrderId { get; set; }
 
@@ -31,7 +31,7 @@ namespace Aquasip.Models
         public int OrderStateId { get; set; }
 
         public string? Notes { get; set; }
-        public virtual ICollection<OrderDetailVM> OrderDetails { get; set; } = new List<OrderDetailVM>();
+        public virtual ICollection<SalesOrderDetailVM> OrderDetails { get; set; } = new List<SalesOrderDetailVM>();
 
         public virtual CustomerVM Customer { get; set; } = null!;
         public string? CustomerName { get; set; }
@@ -53,7 +53,7 @@ namespace Aquasip.Models
             GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4
         }
 
-        public class OrderDetailVM
+        public class SalesOrderDetailVM
         {
             public long OrderDetailId { get; set; }
 

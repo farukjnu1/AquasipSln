@@ -20,7 +20,7 @@ namespace Aquasip.Models
 
         public string? Remarks { get; set; }
 
-        public virtual OrderVM Order { get; set; } = null!;
+        public virtual SalesOrderVM Order { get; set; } = null!;
 
         //public virtual PaymentMethod PaymentMethod { get; set; } = null!;
 

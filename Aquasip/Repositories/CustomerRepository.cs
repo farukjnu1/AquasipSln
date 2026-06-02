@@ -203,33 +203,40 @@ namespace Aquasip.Repositories
         public CustomerVM Signin(CustomerVM model)
         {
             CustomerVM? oCustomer = null;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@Email", model.Email);
-                    cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
-                    cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Signin);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
                     {
-                        while (reader.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@Email", model.Email);
+                        cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
+                        cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Signin);
+
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            oCustomer = new CustomerVM();
-                            oCustomer.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
-                            oCustomer.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            oCustomer.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
-                            oCustomer.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt64("CustomerId");
-                            oCustomer.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
-                            oCustomer.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
-                            oCustomer.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                            while (reader.Read())
+                            {
+                                oCustomer = new CustomerVM();
+                                oCustomer.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
+                                oCustomer.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
+                                oCustomer.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
+                                oCustomer.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt64("CustomerId");
+                                oCustomer.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
+                                oCustomer.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
+                                oCustomer.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
+            }
+            catch 
+            {
+                oCustomer = null;
             }
             return oCustomer;
         }

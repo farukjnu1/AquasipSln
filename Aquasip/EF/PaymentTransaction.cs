@@ -21,7 +21,7 @@ public partial class PaymentTransaction
 
     public string? Remarks { get; set; }
 
-    public virtual Order Order { get; set; } = null!;
+    public virtual SalesOrder Order { get; set; } = null!;
 
     public virtual PaymentMethod PaymentMethod { get; set; } = null!;
 

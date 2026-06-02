@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Aquasip.Models
 {
-    public class CustomerVM
+    public class CustomerVM:ResponseVM
     {
         public long CustomerId { get; set; }
 
         public string CustomerCode { get; set; } = null!;
 
         public string? FullName { get; set; }
+        public string? ShortName { get; set; }
 
         public string? PhoneNumber { get; set; }
         [Required]

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Build.Tasks.Deployment.Bootstrapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Common;
 using System.Diagnostics;
@@ -307,7 +308,7 @@ namespace Aquasip.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public IActionResult Checkout(OrderVM order)
+        public IActionResult Checkout(SalesOrderVM order)
         {
             var products = HttpContext.Session.GetString("Cart");
             var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
@@ -315,7 +316,7 @@ namespace Aquasip.Controllers
             #region order-details
             listProduct.ForEach(x =>
             {
-                order.OrderDetails.Add(new OrderVM.OrderDetailVM
+                order.OrderDetails.Add(new SalesOrderVM.SalesOrderDetailVM
                 {
                     ProductId = x.ProductId,
                     Qty = (int)x.Quantity,
@@ -374,7 +375,7 @@ namespace Aquasip.Controllers
             #region save
             if (grandTotal > 0)
             {
-                OrderRepository orderRepo = new OrderRepository(_connectionString);
+                SalesOrderRepository orderRepo = new SalesOrderRepository(_connectionString);
                 var response = orderRepo.Add(order);
                 if (response != null)
                 {
@@ -393,7 +394,7 @@ namespace Aquasip.Controllers
             return RedirectToAction("Checkout");
         }
 
-        public IActionResult Review()
+        public IActionResult Review(int? id)
         {
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
@@ -411,8 +412,27 @@ namespace Aquasip.Controllers
             ViewData["aquasip"] = listPage;
             #endregion
 
-            //return View(model);
-            return View();
+            AquasipContext _context = new AquasipContext();
+            var listProduct = (from x in _context.Products select x).ToList();
+            List<SelectListItem> selectList = new List<SelectListItem>();
+            foreach (var item in listProduct)
+            {
+                selectList.Add(new SelectListItem { Text = item.ProductName, Value = item.ProductId.ToString() });
+            }
+            ViewData["ProductId"] = selectList;
+            var oReview = new ReviewVM
+            {
+                ProductId = id ?? 0,
+                CustomerId = Convert.ToInt64(HttpContext.Session.GetString("CustomerId") ?? "0")
+            };
+
+            ReviewRepository reviewRepo = new ReviewRepository(_connectionString);
+            var listReview = reviewRepo.GetAll();
+            ViewData["Reviews"] = listReview;
+            //var aquasipContext = _context.Reviews.Include(r => r.Customer).Include(r => r.Product);
+            //ViewData["Reviews"] = aquasipContext.ToList();
+
+            return View(oReview);
         }
 
         public IActionResult Faq()
@@ -597,7 +617,7 @@ namespace Aquasip.Controllers
             return RedirectToAction("Signup");
         }
 
-        public IActionResult Signin()
+        public IActionResult Signin(string callbackAction, string callbackController)
         {
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
@@ -614,13 +634,13 @@ namespace Aquasip.Controllers
             listPage.Add(homePage);
             ViewData["aquasip"] = listPage;
             #endregion
-
-            return View();
+            var model = new CustomerVM { CallbackAction = callbackAction, CallbackController = callbackController };
+            return View(model);
         }
         
 
         [HttpPost]
-        public IActionResult Signin(CustomerVM model)
+        public IActionResult Signin([FromForm] CustomerVM model)
         {
             try
             {
@@ -633,6 +653,10 @@ namespace Aquasip.Controllers
                         HttpContext.Session.SetString("CustomerId", oCustomer.CustomerId.ToString());
                         HttpContext.Session.SetString("Email", oCustomer.Email ?? "");
                         HttpContext.Session.SetString("FullName", oCustomer.FullName ?? "");
+                        if (model.CallbackAction == "Review" && model.CallbackController == "Home")
+                        {
+                            return RedirectToAction("Review", "Home");
+                        }
                         return RedirectToAction("Index", "Home");
                     }
                     else

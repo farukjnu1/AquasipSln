@@ -29,5 +29,5 @@ public partial class ShippingAddress
 
     public virtual Customer Customer { get; set; } = null!;
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<SalesOrder> SalesOrders { get; set; } = new List<SalesOrder>();
 }

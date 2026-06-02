@@ -1,4 +1,4 @@
-﻿
+﻿@model Aquasip.Models.ReviewVM
 @{
     ViewData["Title"] = "AquaSip | Contact";
     // Layout = "~/Views/Shared/_Layout.cshtml";
@@ -20,9 +20,26 @@
         Pages = (List<PageVM>)viewModel
     };
 
+    var reviews = (IEnumerable<Aquasip.Models.ReviewVM>)ViewData["Reviews"];
+
 }
 
 <style>
+    .estar-rating {
+        font-size: 40px;
+        cursor: pointer;
+        margin-bottom: 5px;
+    }
+
+    .estar {
+        color: #ccc;
+        transition: color 0.2s;
+    }
+
+        .estar.active {
+            color: #ffc107;
+        }
+
     /* ========== REVIEWS PAGE STYLES ========== */
 
     .reviews-container {
@@ -961,166 +978,83 @@
 
         <!-- Review Cards -->
         <div class="reviews-list">
-            <!-- Review Item 1 -->
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="reviewer-info">
-                        <div class="reviewer-avatar">LM</div>
-                        <div class="reviewer-details">
-                            <h3 class="reviewer-name">Lopa Mudra</h3>
-                            <p class="review-date">Verified Purchase • 2 weeks ago</p>
+
+            @foreach (var item in reviews)
+            {
+                <!-- Review Item 1 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">@item.Customer.ShortName</div>
+                            <div class="reviewer-details">
+                                <h3 class="reviewer-name">@item.Customer.FullName</h3>
+                                <p class="review-date">@item.CreatedAtPast</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="stars">
+                                @for (var i = 0; i < item.Rating; i++)
+                                {
+                                    <span class="star filled"></span>
+                                }
+                                @for (var i = 0; i < 5 - item.Rating; i++)
+                                {
+                                    <span class="star"></span>
+                                }
+                                @* <span class="star filled"></span>
+                                <span class="star filled"></span>
+                                <span class="star filled"></span>
+                                <span class="star filled"></span>
+                                <span class="star filled"></span> *@
+                            </div>
+                            <span class="rating-text">@item.Rating out of 5</span>
                         </div>
                     </div>
-                    <div class="review-rating">
-                        <div class="stars">
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
+
+                    <div class="review-content">
+                        <h4 class="review-title">@item.Title</h4>
+                        <p class="review-text">
+                            @item.ReviewText
+                        </p>
+                    </div>
+
+                    <!-- Attachments -->
+                    <div class="review-attachments">
+                        @foreach (var media in item.ReviewMedia)
+                        {
+                            <div class="attachment-item">
+                                <img src="@media.MediaUrl" alt="@media.MediaType" class="attachment-image">
+                                <span class="attachment-label">@media.MediaType</span>
+                            </div>
+                        }
+                        @* <div class="attachment-item">
+                            <img src="/img/water3.png" alt="Product in use" class="attachment-image">
+                            <span class="attachment-label">Product in use</span>
                         </div>
-                        <span class="rating-text">5 out of 5</span>
+                        <div class="attachment-item">
+                            <img src="/img/water4.png" alt="Packaging" class="attachment-image">
+                            <span class="attachment-label">Packaging</span>
+                        </div> *@
+                    </div>
+
+                    <!-- Review Actions -->
+                    <div class="review-actions">
+                        <button class="action-btn helpful-btn">
+                            <span class="action-icon">👍</span>
+                            <span class="action-text">Helpful (24)</span>
+                        </button>
+                        <button class="action-btn unhelpful-btn">
+                            <span class="action-icon">👎</span>
+                            <span class="action-text">Not Helpful (2)</span>
+                        </button>
+                        @* <button class="action-btn report-btn">
+                            <span class="action-icon">⚠️</span>
+                            <span class="action-text">Report</span>
+                        </button> *@
                     </div>
                 </div>
+            }
 
-                <div class="review-content">
-                    <h4 class="review-title">Excellent Product Quality!</h4>
-                    <p class="review-text">
-                        This product exceeded my expectations in every way. The quality is outstanding,
-                        and it arrived in perfect condition. I've already recommended it to all my friends
-                        and family. Highly recommend!
-                    </p>
-                </div>
-
-                <!-- Attachments -->
-                <div class="review-attachments">
-                    <div class="attachment-item">
-                        <img src="/img/water3.png" alt="Product in use" class="attachment-image">
-                        <span class="attachment-label">Product in use</span>
-                    </div>
-                    <div class="attachment-item">
-                        <img src="/img/water4.png" alt="Packaging" class="attachment-image">
-                        <span class="attachment-label">Packaging</span>
-                    </div>
-                </div>
-
-                <!-- Review Actions -->
-                <div class="review-actions">
-                    <button class="action-btn helpful-btn">
-                        <span class="action-icon">👍</span>
-                        <span class="action-text">Helpful (24)</span>
-                    </button>
-                    <button class="action-btn unhelpful-btn">
-                        <span class="action-icon">👎</span>
-                        <span class="action-text">Not Helpful (2)</span>
-                    </button>
-                    <button class="action-btn report-btn">
-                        <span class="action-icon">⚠️</span>
-                        <span class="action-text">Report</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Review Item 2 -->
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="reviewer-info">
-                        <div class="reviewer-avatar">FS</div>
-                        <div class="reviewer-details">
-                            <h3 class="reviewer-name">Fabia Tus Safa</h3>
-                            <p class="review-date">Verified Purchase • 1 month ago</p>
-                        </div>
-                    </div>
-                    <div class="review-rating">
-                        <div class="stars">
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star"></span>
-                        </div>
-                        <span class="rating-text">4 out of 5</span>
-                    </div>
-                </div>
-
-                <div class="review-content">
-                    <h4 class="review-title">Great Quality, Minor Issue</h4>
-                    <p class="review-text">
-                        Overall, this is a fantastic product. The only minor issue I encountered was with
-                        the packaging, but the product itself is excellent. Customer service was very
-                        responsive in helping me resolve the issue.
-                    </p>
-                </div>
-
-                <div class="review-actions">
-                    <button class="action-btn helpful-btn">
-                        <span class="action-icon">👍</span>
-                        <span class="action-text">Helpful (18)</span>
-                    </button>
-                    <button class="action-btn unhelpful-btn">
-                        <span class="action-icon">👎</span>
-                        <span class="action-text">Not Helpful (1)</span>
-                    </button>
-                    <button class="action-btn report-btn">
-                        <span class="action-icon">⚠️</span>
-                        <span class="action-text">Report</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Review Item 3 -->
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="reviewer-info">
-                        <div class="reviewer-avatar">TB</div>
-                        <div class="reviewer-details">
-                            <h3 class="reviewer-name">Tawaf Babu</h3>
-                            <p class="review-date">Verified Purchase • 3 weeks ago</p>
-                        </div>
-                    </div>
-                    <div class="review-rating">
-                        <div class="stars">
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star filled"></span>
-                            <span class="star"></span>
-                            <span class="star"></span>
-                        </div>
-                        <span class="rating-text">3 out of 5</span>
-                    </div>
-                </div>
-
-                <div class="review-content">
-                    <h4 class="review-title">Good, but Expected Better</h4>
-                    <p class="review-text">
-                        The product is decent and works as advertised. However, for the price point,
-                        I was expecting a bit more. It does what it's supposed to do, but nothing
-                        particularly special.
-                    </p>
-                </div>
-
-                <div class="review-attachments">
-                    <div class="attachment-item">
-                        <img src="/img/blog-1.jpg" alt="Side view" class="attachment-image">
-                        <span class="attachment-label">Side view</span>
-                    </div>
-                </div>
-
-                <div class="review-actions">
-                    <button class="action-btn helpful-btn">
-                        <span class="action-icon">👍</span>
-                        <span class="action-text">Helpful (7)</span>
-                    </button>
-                    <button class="action-btn unhelpful-btn">
-                        <span class="action-icon">👎</span>
-                        <span class="action-text">Not Helpful (3)</span>
-                    </button>
-                    <button class="action-btn report-btn">
-                        <span class="action-icon">⚠️</span>
-                        <span class="action-text">Report</span>
-                    </button>
-                </div>
-            </div>
         </div>
 
         <!-- Load More Button -->
@@ -1138,44 +1072,32 @@
             <button class="modal-close">&times;</button>
         </div>
 
-        <form class="review-form">
-            <!-- Rating Selection -->
+        <form asp-action="Create" asp-controller="Reviews" method="post" enctype="multipart/form-data" class="review-form">
+            <input type="hidden" id="CustomerId" asp-for="CustomerId" />
             <div class="form-group">
-                <label class="form-label">Rate this product:</label>
-                <div class="rating-selector">
-                    <input type="radio" id="star5" name="rating" value="5">
-                    <label for="star5" class="star-label">
-                        <span class="star filled"></span>
-                    </label>
-
-                    <input type="radio" id="star4" name="rating" value="4">
-                    <label for="star4" class="star-label">
-                        <span class="star filled"></span>
-                    </label>
-
-                    <input type="radio" id="star3" name="rating" value="3">
-                    <label for="star3" class="star-label">
-                        <span class="star filled"></span>
-                    </label>
-
-                    <input type="radio" id="star2" name="rating" value="2">
-                    <label for="star2" class="star-label">
-                        <span class="star filled"></span>
-                    </label>
-
-                    <input type="radio" id="star1" name="rating" value="1">
-                    <label for="star1" class="star-label">
-                        <span class="star filled"></span>
-                    </label>
-                </div>
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
             </div>
+            <!-- Rating Selection -->
+            
+
+            <div class="estar-rating">
+                <span class="estar" data-value="1">&#9733;</span>
+                <span class="estar" data-value="2">&#9733;</span>
+                <span class="estar" data-value="3">&#9733;</span>
+                <span class="estar" data-value="4">&#9733;</span>
+                <span class="estar" data-value="5">&#9733;</span>
+            </div>
+
+            <p id="ratingText">No rating selected</p>
+
+            <input type="hidden" id="Rating" value="0" asp-for="Rating">
 
             <!-- Review Title -->
             <div class="form-group">
                 <label for="reviewTitle" class="form-label">Review Title:</label>
                 <input type="text"
-                       id="reviewTitle"
-                       name="title"
+                       asp-for="Title"
                        placeholder="Sum up your experience in a few words"
                        class="form-input"
                        required>
@@ -1185,7 +1107,7 @@
             <div class="form-group">
                 <label for="reviewText" class="form-label">Your Review:</label>
                 <textarea id="reviewText"
-                          name="review"
+                          asp-for="ReviewText"
                           placeholder="Share your experience with this product. What did you like? What didn't you like?"
                           class="form-textarea"
                           rows="6"
@@ -1194,8 +1116,14 @@
 
             <!-- File Upload -->
             <div class="form-group">
-                <label for="attachments" class="form-label">Add Photos or Documents:</label>
-                <div class="file-upload-area">
+                <label for="attachments" class="form-label" title="click to browse file(s)">Click to Add Photos or Documents:</label>
+                <input type="file"
+                       asp-for="Attachments"
+                       id="attachments"
+                       multiple
+                       accept="image/*,.pdf,.doc,.docx"
+                       class="file-input" />
+                @* <div class="file-upload-area">
                     <input type="file"
                            id="attachments"
                            name="attachments"
@@ -1207,12 +1135,12 @@
                         <p>Drag and drop files here or click to browse</p>
                         <small>Supported: Images (JPG, PNG), PDF, DOC, DOCX</small>
                     </div>
-                </div>
+                </div> *@
                 <div class="file-list" id="fileList"></div>
             </div>
 
             <!-- Checkbox -->
-            <div class="form-group checkbox-group">
+            @* <div class="form-group checkbox-group">
                 <input type="checkbox"
                        id="verifiedPurchase"
                        name="verifiedPurchase"
@@ -1220,7 +1148,7 @@
                 <label for="verifiedPurchase" class="checkbox-label">
                     This is a verified purchase
                 </label>
-            </div>
+            </div> *@
 
             <!-- Submit Button -->
             <div class="form-actions">
@@ -1228,13 +1156,22 @@
                 <button type="button" class="cancel-review-btn" onclick="closeReviewModal()">Cancel</button>
             </div>
         </form>
+
     </div>
 </div>
 
 <script>
     // Modal Functions
     function openReviewModal() {
-      document.getElementById('reviewModal').style.display = 'flex';
+        var Email = document.getElementById('customerEmail').value;
+        if(Email == '' || Email == null){
+            alert('To review a product, Please Sign in first.');
+            location.href = '/Home/Signin?callbackAction=Review&callbackController=Home';
+            return;
+        }
+        var CustomerId = document.getElementById('customerCustomerId').value;
+        document.getElementById('CustomerId').value = CustomerId;
+        document.getElementById('reviewModal').style.display = 'flex';
     }
 
     function closeReviewModal() {
@@ -1293,15 +1230,70 @@
       });
     });
 
-    document.querySelector('.rating-selector').addEventListener('mouseleave', function() {
+    /*document.querySelector('.rating-selector').addEventListener('mouseleave', function() {
       starLabels.forEach(l => l.classList.remove('hover'));
-    });
+    });*/
+
+    function countStars() {
+        var Rating = document.getElementById('Rating').value;
+        console.log(Rating);
+    }
 
     // Form submission
-    document.querySelector('.review-form').addEventListener('submit', function(e) {
+    /*document.querySelector('.review-form').addEventListener('submit', function(e) {
       e.preventDefault();
       alert('Review submitted successfully!');
       this.reset();
       closeReviewModal();
+    });*/
+
+
+    const estars = document.querySelectorAll('.estar');
+    const ratingInput = document.getElementById('Rating');
+    const ratingText = document.getElementById('ratingText');
+
+    let selectedRating = 0;
+
+    estars.forEach(star => {
+
+        star.addEventListener('mouseover', function () {
+            const value = parseInt(this.dataset.value);
+            highlightStars(value);
+        });
+
+        star.addEventListener('mouseout', function () {
+            highlightStars(selectedRating);
+        });
+
+        star.addEventListener('click', function () {
+            selectedRating = parseInt(this.dataset.value);
+
+            ratingInput.value = selectedRating;
+
+            highlightStars(selectedRating);
+
+            ratingText.innerHTML = `You selected ${selectedRating} star${selectedRating > 1 ? 's' : ''}`;
+
+            countStars();
+        });
+
     });
+
+    function highlightStars(rating) {
+
+        estars.forEach(star => {
+
+            const value = parseInt(star.dataset.value);
+
+            if (value <= rating) {
+                star.classList.add('active');
+            }
+            else {
+                star.classList.remove('active');
+            }
+
+        });
+    }
+
+   
 </script>

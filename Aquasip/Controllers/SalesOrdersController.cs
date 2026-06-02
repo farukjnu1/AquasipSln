@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 namespace Aquasip.Controllers
 {
     [AdminFilter]
-    public class OrdersController : Controller
+    public class SalesOrdersController : Controller
     {
-        private readonly ILogger<OrdersController> _logger;
+        private readonly ILogger<SalesOrdersController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
         private readonly AquasipContext _context;
-        public OrdersController(ILogger<OrdersController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        public SalesOrdersController(ILogger<SalesOrdersController> logger, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");
@@ -31,7 +31,7 @@ namespace Aquasip.Controllers
         {
             var listOrderStatus = new List<SelectListItem>();
             listOrderStatus.Add(new SelectListItem { Value = "0", Text = "All" });
-            listOrderStatus.AddRange(_context.OrderStates.OrderBy(x => x.Sequence)
+            listOrderStatus.AddRange(_context.SalesOrderStates.OrderBy(x => x.Sequence)
                 .Select(x => new SelectListItem
                 {
                     Value = x.OrderStateId.ToString(),
@@ -40,10 +40,10 @@ namespace Aquasip.Controllers
                 .ToList());
             ViewData["OrderStateId"] = listOrderStatus;
 
-            var aquasipContext = (from o in _context.Orders.Include(o => o.Customer)
-                                 join os in _context.OrderStates on o.OrderStateId equals os.OrderStateId
+            var aquasipContext = (from o in _context.SalesOrders.Include(o => o.Customer)
+                                 join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
                                  where o.OrderStateId == (OrderStateId == 0 ? o.OrderStateId : OrderStateId)
-                                 select new OrderVM 
+                                 select new SalesOrderVM 
                                  {
                                      CustomerName = o.Customer.FullName,
                                      GrandTotal = o.GrandTotal,
@@ -65,11 +65,11 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var order = await (from o in _context.Orders.Include(o => o.Customer)
-                               join os in _context.OrderStates on o.OrderStateId equals os.OrderStateId
+            var order = await (from o in _context.SalesOrders.Include(o => o.Customer)
+                               join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
                                join pm in _context.PaymentMethods on o.PaymentMethodId equals pm.PaymentMethodId
                                where o.OrderId == id
-                               select new OrderVM
+                               select new SalesOrderVM
                                {
                                    CustomerName = o.Customer.FullName,
                                    GrandTotal = o.GrandTotal,
@@ -88,10 +88,10 @@ namespace Aquasip.Controllers
                                    SubTotal = o.SubTotal,
                                    VatAmount = o.VatAmount,
                                    VatPercent = o.VatPercent,
-                                   OrderDetails = (from od in _context.OrderDetails.Include(pp => pp.Product)
+                                   OrderDetails = (from od in _context.SalesOrderDetails.Include(pp => pp.Product)
                                                    join p in _context.Products on od.ProductId equals p.ProductId
                                                    where od.OrderId == o.OrderId
-                                                   select new OrderVM.OrderDetailVM
+                                                   select new SalesOrderVM.SalesOrderDetailVM
                                                    {
                                                        OrderDetailId = od.OrderDetailId,
                                                        OrderId = od.OrderId,
@@ -153,7 +153,7 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,OrderNumber,CustomerId,ShippingAddressId,PaymentMethodId,OrderDate,SubTotal,VatPercent,VatAmount,DeliveryCharge,GatewayCharge,GrandTotal,OrderStateId,Notes")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderId,OrderNumber,CustomerId,ShippingAddressId,PaymentMethodId,OrderDate,SubTotal,VatPercent,VatAmount,DeliveryCharge,GatewayCharge,GrandTotal,OrderStateId,Notes")] SalesOrder order)
         {
             if (ModelState.IsValid)
             {
@@ -175,11 +175,11 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var order = await (from o in _context.Orders.Include(o => o.Customer)
-                               join os in _context.OrderStates on o.OrderStateId equals os.OrderStateId
+            var order = await (from o in _context.SalesOrders.Include(o => o.Customer)
+                               join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
                                join pm in _context.PaymentMethods on o.PaymentMethodId equals pm.PaymentMethodId
                                where o.OrderId == id
-                               select new OrderVM
+                               select new SalesOrderVM
                                {
                                    CustomerName = o.Customer.FullName,
                                    GrandTotal = o.GrandTotal,
@@ -198,24 +198,24 @@ namespace Aquasip.Controllers
                                    SubTotal = o.SubTotal,
                                    VatAmount = o.VatAmount,
                                    VatPercent = o.VatPercent,
-                                   OrderDetails = (from od in _context.OrderDetails.Include(pp=>pp.Product) 
+                                   OrderDetails = (from od in _context.SalesOrderDetails.Include(pp=>pp.Product) 
                                                    join p in _context.Products on od.ProductId equals p.ProductId
                                                    where od.OrderId == o.OrderId
-                                                   select new OrderVM.OrderDetailVM {
+                                                   select new SalesOrderVM.SalesOrderDetailVM {
                                                        OrderDetailId = od.OrderDetailId,
                                                        OrderId = od.OrderId,
                                                        ProductId = od.ProductId,
                                                        Qty = od.Qty,
                                                        UnitPrice = od.UnitPrice,
                                                        TotalPrice = od.TotalPrice,
-                                                       ProductName = od.Product.ProductName                                                   }).ToList()
+                                                       ProductName = od.Product.ProductName}).ToList()
                                }).FirstOrDefaultAsync();
             if (order == null)
             {
                 return NotFound();
             }
             //ViewData["OrderStateId"] = new SelectList(_context.OrderStates, "OrderStateId", "OrderStateId", order.OrderStateId);
-            ViewData["OrderStateId"] = _context.OrderStates.OrderBy(x=>x.Sequence)
+            ViewData["OrderStateId"] = _context.SalesOrderStates.OrderBy(x=>x.Sequence)
                 .Select(x => new SelectListItem
                 {
                     Value = x.OrderStateId.ToString(),
@@ -233,7 +233,7 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("OrderId,OrderNumber,CustomerId,ShippingAddressId,PaymentMethodId,OrderDate,SubTotal,VatPercent,VatAmount,DeliveryCharge,GatewayCharge,GrandTotal,OrderStateId,Notes")] Order order)
+        public async Task<IActionResult> Edit(long id, [Bind("OrderId,OrderNumber,CustomerId,ShippingAddressId,PaymentMethodId,OrderDate,SubTotal,VatPercent,VatAmount,DeliveryCharge,GatewayCharge,GrandTotal,OrderStateId,Notes")] SalesOrder order)
         {
             if (id != order.OrderId)
             {
@@ -242,7 +242,7 @@ namespace Aquasip.Controllers
 
             try
             {
-                var oOrder = await (from x in _context.Orders where x.OrderId == order.OrderId select x).FirstOrDefaultAsync();
+                var oOrder = await (from x in _context.SalesOrders where x.OrderId == order.OrderId select x).FirstOrDefaultAsync();
                 if (oOrder != null)
                 {
                     oOrder.OrderStateId = order.OrderStateId;
@@ -252,7 +252,7 @@ namespace Aquasip.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(order.OrderId))
+                if (!SalesOrderExists(order.OrderId))
                 {
                     return NotFound();
                 }
@@ -276,7 +276,7 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
+            var order = await _context.SalesOrders
                 .Include(o => o.Customer)
                 .Include(o => o.PaymentMethod)
                 .Include(o => o.ShippingAddress)
@@ -294,19 +294,19 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.SalesOrders.FindAsync(id);
             if (order != null)
             {
-                _context.Orders.Remove(order);
+                _context.SalesOrders.Remove(order);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderExists(long id)
+        private bool SalesOrderExists(long id)
         {
-            return _context.Orders.Any(e => e.OrderId == id);
+            return _context.SalesOrders.Any(e => e.OrderId == id);
         }
     }
 }

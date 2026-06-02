@@ -37,7 +37,7 @@ namespace Aquasip.Controllers
                     {
                         HttpContext.Session.SetInt32("UserID", oUser.UserID);
                         HttpContext.Session.SetString("Username", oUser.Username);
-                        return RedirectToAction("Index", "Orders");
+                        return RedirectToAction("Index", "SalesOrders");
                     }
                     else
                     {
