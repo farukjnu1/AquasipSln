@@ -2,7 +2,7 @@
 {
     public class FileValidation
     {
-        public static bool IsValidFileExtension(string fileName)
+        public static bool IsValidFileForReview(string fileName)
         {
             string[] allowedExtensions =
             {

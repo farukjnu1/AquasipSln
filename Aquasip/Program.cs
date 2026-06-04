@@ -1,6 +1,8 @@
-﻿using Aquasip.Models;
+﻿using Aquasip.EF;
+using Aquasip.Models;
 using Aquasip.Services.EmailServices;
 using Aquasip.Services.TokenServices;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,10 @@ builder.Services.AddDataProtection();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 string connectionString = builder.Configuration["ConnectionStrings:AquasipContext"];
+
+builder.Services.AddDbContext<AquasipContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("AquasipContext")));
 
 var app = builder.Build();
 

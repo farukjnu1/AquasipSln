@@ -66,7 +66,6 @@
         <tr>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.OrderId">Details</a> |
                 <a asp-action="Details" asp-route-id="@item.OrderId">Payments</a>
             </td>
             <td style="font-weight:bolder;color:@item.ColorCode">
@@ -97,6 +96,6 @@
     function search(){
         var OrderStateId = document.getElementById('OrderStateId').value;
         var PageSize = document.getElementById('PageSize').value;
-        location.href = '/Orders/Index?OrderStateId='+OrderStateId + '&PageSize=' + PageSize;
+        location.href = '/SalesOrders/Index?OrderStateId='+OrderStateId + '&PageSize=' + PageSize;
     }
 </script>

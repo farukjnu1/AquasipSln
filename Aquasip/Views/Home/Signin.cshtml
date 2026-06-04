@@ -52,16 +52,29 @@
                     Don't have an account? <a asp-action="Signup">Sign-up</a>
                 </div>
             </form>
-            <div id="Verification" style="display:none">
-                <form asp-action="SendVerification">
+            <div id="EmailVerify" style="display:none">
+                <form asp-action="RequestEmailVerify">
                     <div class="form-group">
                         <label asp-for="Email" class="control-label"></label>
                         <input type="email" asp-for="Email" class="form-control" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group pt-2">
-                        <input type="submit" value="Send Verification" class="btn btn-primary" />
-                        <a href="javascript:void(0)" onclick="hideVerification()">Close Verification</a> 
+                        <input type="submit" value="Request Email Verification" class="btn btn-primary" />
+                        <a href="javascript:void(0)" onclick="hideEmailVerify()">Close Email Verification</a>
+                    </div>
+                </form>
+            </div>
+            <div id="PasswordReset" style="display:none">
+                <form asp-action="RequestPasswordReset">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input type="email" asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group pt-2">
+                        <input type="submit" value="Request Password Reset" class="btn btn-primary" />
+                        <a href="javascript:void(0)" onclick="hidePasswordReset()">Close Password Reset</a>
                     </div>
                 </form>
             </div>
@@ -69,7 +82,10 @@
     </div>
 
     <div>
-        Verified? <a href="javascript:void(0)" onclick="showVerification()">Verification</a>
+        Verified Account? <a href="javascript:void(0)" onclick="showEmailVerify()">Request Verification</a>
+    </div>
+    <div>
+        Forget Password? <a href="javascript:void(0)" onclick="showPasswordReset()">Request Reset Password</a>
     </div>
 
 </div>
@@ -82,16 +98,23 @@
     
     function documentReady(){
         $(document).ready(function () {
-            //hideVerification();
         });
     }
 
-    function hideVerification(){
-        $('#Verification').hide();
+    function showEmailVerify(){
+        $('#EmailVerify').show();
     }
 
-    function showVerification(){
-        $('#Verification').show();
+    function hideEmailVerify(){
+        $('#EmailVerify').hide();
+    }
+
+    function showPasswordReset(){
+        $('#PasswordReset').show();
+    }
+
+    function hidePasswordReset(){
+        $('#PasswordReset').hide();
     }
 
     setTimeout(() => {

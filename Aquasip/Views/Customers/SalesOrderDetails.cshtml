@@ -1,0 +1,181 @@
+﻿@model Aquasip.Models.SalesOrderVM
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = "Order-Details",
+        Slug = "OrderDetails",
+        Pages = (List<PageVM>)viewModel
+    };
+    string? CustomerId = Context.Session.GetString("CustomerId");
+    string? Email = Context.Session.GetString("Email");
+    string? FullName = Context.Session.GetString("FullName");
+
+    decimal totalPaidAmount = 0;
+    string? paymentStatus = "undefined";
+    totalPaidAmount = Model.PaymentTransactions.Sum(x => x.PaidAmount);
+    paymentStatus = totalPaidAmount < Model.GrandTotal ? "DUE" : "PAID";
+    string paymentStatusColor = totalPaidAmount < Model.GrandTotal ? "badge bg-danger" : "badge bg-success";
+}
+
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
+<!-- Navbar & Hero End -->
+<div class="container-fluid">
+    <h3>Sales Order <span class="@paymentStatusColor">@paymentStatus</span></h3>
+    <div class="row">
+        <div class="col-md-7">
+            <h4>Order-Summery</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.OrderNumber)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.OrderNumber)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.OrderDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.OrderDate)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.SubTotal)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.SubTotal)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.VatPercent) (%)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.VatPercent)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.VatAmount)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.VatAmount)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.DeliveryCharge)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.DeliveryCharge)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.GatewayCharge)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.GatewayCharge)
+                </dd>
+                <dt class="col-sm-2 text-danger">
+                    @Html.DisplayNameFor(model => model.GrandTotal)
+                </dt>
+                <dd class="col-sm-10 text-danger">
+                    @Html.DisplayFor(model => model.GrandTotal)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.OrderStatus)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.OrderStatus)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Notes)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Notes)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.CustomerName)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.PaymentMethod)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.PaymentMethod)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ShippingAddress)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.StreetAddress)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-5">
+            <h4>Order-Details</h4>
+            <hr />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderDetails)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.UnitPrice</td>
+                            <td>@item.Qty</td>
+                            <td>@item.TotalPrice</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            <h4>
+                Payment Transactions
+            </h4>
+            <hr />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>PaymentDate</th>
+                        <th>PaymentStatus</th>
+                        <th>PaymentMethod</th>
+                        <th align="right" class="text-success">PaidAmount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PaymentTransactions)
+                    {
+                        <tr>
+                            <td>@item.PaymentDate</td>
+                            <td>@item.PaymentStatus</td>
+                            <td>@item.PaymentMethod</td>
+                            <td align="right">@item.PaidAmount</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th class="text-success">Payment Total:</th>
+                        <th class="text-success" style="text-align:right">@totalPaidAmount</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+    <div>
+        <a asp-action="SalesOrders" asp-controller="Customers">Back to List</a>
+    </div>
+</div>
+

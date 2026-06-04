@@ -1039,13 +1039,13 @@
 
                     <!-- Review Actions -->
                     <div class="review-actions">
-                        <button class="action-btn helpful-btn">
+                        <button class="action-btn helpful-btn" onclick="sendIsHelpful(true, @item.ReviewId)">
                             <span class="action-icon">👍</span>
-                            <span class="action-text">Helpful (24)</span>
+                            <span class="action-text">Helpful (@item.Helpful)</span>
                         </button>
-                        <button class="action-btn unhelpful-btn">
+                        <button class="action-btn unhelpful-btn" onclick="sendIsHelpful(false, @item.ReviewId)">
                             <span class="action-icon">👎</span>
-                            <span class="action-text">Not Helpful (2)</span>
+                            <span class="action-text">Not Helpful (@item.NotHelpful)</span>
                         </button>
                         @* <button class="action-btn report-btn">
                             <span class="action-icon">⚠️</span>
@@ -1174,6 +1174,29 @@
         document.getElementById('reviewModal').style.display = 'flex';
     }
 
+    function sendIsHelpful(isHelpful, reviewId) {
+        var Email = document.getElementById('customerEmail').value;
+        if(Email == '' || Email == null){
+            alert('To review a product, Please Sign in first.');
+            location.href = '/Home/Signin?callbackAction=Review&callbackController=Home';
+            return;
+        }
+        var CustomerId = document.getElementById('customerCustomerId').value;
+        document.getElementById('CustomerId').value = CustomerId;
+
+        location.href='/Home/SendIsHelpful?isHelpful='+isHelpful+'&reviewId='+reviewId+'&customerId='+CustomerId;
+        // Send the feedback
+        @* var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/Home/SendIsHelpful", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log("Feedback sent successfully!");
+            }
+        };
+        xhr.send(JSON.stringify({ isHelpful: isHelpful, reviewId: reviewId, customerId: CustomerId })); *@
+    }
+
     function closeReviewModal() {
       document.getElementById('reviewModal').style.display = 'none';
     }
@@ -1246,7 +1269,6 @@
       this.reset();
       closeReviewModal();
     });*/
-
 
     const estars = document.querySelectorAll('.estar');
     const ratingInput = document.getElementById('Rating');

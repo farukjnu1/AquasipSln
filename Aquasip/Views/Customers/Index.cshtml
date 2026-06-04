@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+    var oNavbar = new Aquasip.Models.NavbarVM()
+        {
+            Name = "Dashboard",
+            Slug = "Dashboard",
+            Pages = (List<PageVM>)viewModel
+        };
+    string? CustomerId = Context.Session.GetString("CustomerId");
+    string? Email = Context.Session.GetString("Email");
+    string? FullName = Context.Session.GetString("FullName");
+}
+
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
+<!-- Navbar & Hero End -->
+
+<div class="container">
+    <h3>Welcome, <span style="color:#00d1f9">@FullName</span></h3>
+</div>
+
+

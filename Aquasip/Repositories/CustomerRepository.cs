@@ -21,80 +21,137 @@ namespace Aquasip.Repositories
         // Create
         public string? Add(CustomerVM model)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("Customer_Modify", conn);
+            string? messageSQL = null;
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("Customer_Modify", conn);
 
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
-            cmd.Parameters.AddWithValue("@CustomerCode", model.CustomerCode);
-            cmd.Parameters.AddWithValue("@FullName", model.FullName);
-            cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
-            cmd.Parameters.AddWithValue("@Email", model.Email);
-            cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
-            cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
-            cmd.Parameters.AddWithValue("@IsActive", model.IsActive);
-            cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Insert);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
+                cmd.Parameters.AddWithValue("@CustomerCode", model.CustomerCode);
+                cmd.Parameters.AddWithValue("@FullName", model.FullName);
+                cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
+                cmd.Parameters.AddWithValue("@Email", model.Email);
+                cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
+                cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
+                cmd.Parameters.AddWithValue("@IsActive", model.IsActive);
+                cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Insert);
 
-            conn.Open();
-            string? messageSQL = Convert.ToString(cmd.ExecuteScalar());
+                conn.Open();
+                messageSQL = Convert.ToString(cmd.ExecuteScalar());
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
             return messageSQL;
         }
 
         public string? Update(CustomerVM model)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("Customer_Modify", conn);
+            string? messageSQL = null;
+            try 
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("Customer_Modify", conn);
 
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
-            cmd.Parameters.AddWithValue("@CustomerCode", model.CustomerCode);
-            cmd.Parameters.AddWithValue("@FullName", model.FullName);
-            cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
-            cmd.Parameters.AddWithValue("@Email", model.Email);
-            cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
-            cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
-            cmd.Parameters.AddWithValue("@IsActive", model.IsActive);
-            cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Update);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
+                cmd.Parameters.AddWithValue("@CustomerCode", model.CustomerCode);
+                cmd.Parameters.AddWithValue("@FullName", model.FullName);
+                cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
+                cmd.Parameters.AddWithValue("@Email", model.Email);
+                cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
+                cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
+                cmd.Parameters.AddWithValue("@IsActive", model.IsActive);
+                cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Update);
 
-            conn.Open();
-            string? messageSQL = Convert.ToString(cmd.ExecuteScalar());
+                conn.Open();
+                messageSQL = Convert.ToString(cmd.ExecuteScalar());
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            return messageSQL;
+        }
+
+        public string? UpdatePassword(CustomerVM model)
+        {
+            string? messageSQL = null;
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("Customer_Modify", conn);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
+                cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
+                cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
+                cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.UpdatePassword);
+
+                conn.Open();
+                messageSQL = Convert.ToString(cmd.ExecuteScalar());
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
             return messageSQL;
         }
 
         // Delete
         public string? Delete(int customerId)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("Customer_Modify", conn);
+            string? messageSQL = null;
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("Customer_Modify", conn);
 
-            cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@CustomerId", customerId);
-            cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Delete);
+                cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.Delete);
 
-            conn.Open();
-            string? messageSQL = Convert.ToString(cmd.ExecuteScalar());
+                conn.Open();
+                messageSQL = Convert.ToString(cmd.ExecuteScalar());
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
             return messageSQL;
         }
 
         public string? UpdateEmailVerify(CustomerVM model)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("Customer_Modify", conn);
+            string? messageSQL = null;
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("Customer_Modify", conn);
 
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
-            cmd.Parameters.AddWithValue("@CustomerCode", model.CustomerCode);
-            cmd.Parameters.AddWithValue("@FullName", model.FullName);
-            cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
-            cmd.Parameters.AddWithValue("@Email", model.Email);
-            cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
-            cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
-            cmd.Parameters.AddWithValue("@IsActive", model.IsActive);
-            cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.UpdateEmailVerify);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-            conn.Open();
-            string? messageSQL = Convert.ToString(cmd.ExecuteScalar());
+                cmd.Parameters.AddWithValue("@CustomerId", model.CustomerId);
+                cmd.Parameters.AddWithValue("@CustomerCode", model.CustomerCode);
+                cmd.Parameters.AddWithValue("@FullName", model.FullName);
+                cmd.Parameters.AddWithValue("@PhoneNumber", model.PhoneNumber);
+                cmd.Parameters.AddWithValue("@Email", model.Email);
+                cmd.Parameters.AddWithValue("@PasswordHash", model.PasswordHash);
+                cmd.Parameters.AddWithValue("@ConfirmPassword", model.ConfirmPassword);
+                cmd.Parameters.AddWithValue("@IsActive", model.IsActive);
+                cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.UpdateEmailVerify);
+
+                conn.Open();
+                messageSQL = Convert.ToString(cmd.ExecuteScalar());
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }   
             return messageSQL;
         }
 
@@ -102,67 +159,80 @@ namespace Aquasip.Repositories
         public List<CustomerVM> GetAll()
         {
             var list = new List<CustomerVM>();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try 
             {
-                using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.GetAll);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
                     {
-                        while (reader.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.GetAll);
+
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            CustomerVM model = new CustomerVM();
-                            model.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
-                            model.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt32("CustomerId");
-                            model.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
-                            model.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
-                            
-                            list.Add(model);
+                            while (reader.Read())
+                            {
+                                CustomerVM model = new CustomerVM();
+                                model.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
+                                model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
+                                model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
+                                model.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt32("CustomerId");
+                                model.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
+                                model.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
+            }
+            catch
+            {
             }
             return list;
         }
 
         // Read one
-        public CustomerVM? GetById(int customerId)
+        public CustomerVM? GetById(long customerId)
         {
             CustomerVM? model = null;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try 
             {
-                using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@CustomerId", customerId);
-                    cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.GetById);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
                     {
-                        while (reader.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                        cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.GetById);
+
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            model = new CustomerVM();
-                            model.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
-                            model.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt32("CustomerId");
-                            model.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
-                            model.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                            while (reader.Read())
+                            {
+                                model = new CustomerVM();
+                                model.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
+                                model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
+                                model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
+                                model.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt64("CustomerId");
+                                model.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
+                                model.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
+            }
+            catch
+            {
+                model = null;
             }
             return model;
         }
@@ -170,37 +240,44 @@ namespace Aquasip.Repositories
         public CustomerVM? GetByEmail(string email)
         {
             CustomerVM? model = null;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.GetByEmail);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("Customer_Read", conn))
                     {
-                        while (reader.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        cmd.Parameters.AddWithValue("@QueryType", CustomerVM.QueryType.GetByEmail);
+
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            model = new CustomerVM();
-                            model.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
-                            model.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt64("CustomerId");
-                            model.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
-                            model.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                            while (reader.Read())
+                            {
+                                model = new CustomerVM();
+                                model.CustomerCode = reader.GetValue("CustomerCode") == DBNull.Value ? string.Empty : reader.GetString("CustomerCode");
+                                model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
+                                model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
+                                model.CustomerId = reader.GetValue("CustomerId") == DBNull.Value ? 0 : reader.GetInt64("CustomerId");
+                                model.FullName = reader.GetValue("FullName") == DBNull.Value ? string.Empty : reader.GetString("FullName");
+                                model.PhoneNumber = reader.GetValue("PhoneNumber") == DBNull.Value ? string.Empty : reader.GetString("PhoneNumber");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
+            }
+            catch
+            {
+                model = null;
             }
             return model;
         }
 
-        public CustomerVM Signin(CustomerVM model)
+        public CustomerVM? Signin(CustomerVM model)
         {
             CustomerVM? oCustomer = null;
             try

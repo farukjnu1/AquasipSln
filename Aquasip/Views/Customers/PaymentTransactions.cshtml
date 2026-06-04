@@ -1,0 +1,113 @@
+﻿@model IEnumerable<Aquasip.EF.PaymentTransaction>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = "My Payments",
+        Slug = "MyPayments",
+        Pages = (List<PageVM>)viewModel
+    };
+    string? CustomerId = Context.Session.GetString("CustomerId");
+    string? Email = Context.Session.GetString("Email");
+    string? FullName = Context.Session.GetString("FullName");
+
+    decimal totalPaidAmount = 0;
+    totalPaidAmount = Model.Sum(x => x.PaidAmount);
+}
+
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
+<!-- Navbar & Hero End -->
+
+<div class="container-fluid">
+    <h3>My Payments</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="text-align:right">
+                    @Html.DisplayNameFor(model => model.PaidAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentMethod.PaymentMethodName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TransactionNumber)
+                </th>
+                
+                <th>
+                    @Html.DisplayNameFor(model => model.Remarks)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Order.OrderNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Order.OrderDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="right">
+                        @item.PaidAmount
+                    </td>
+                    <td>
+                        @item.PaymentDate
+                    </td>
+                    <td>
+                        @item.PaymentMethod.PaymentMethodName
+                    </td>
+                    <td>
+                        @item.TransactionNumber
+                    </td>
+                    
+                    <td>
+                        @item.Remarks
+                    </td>
+                    <td>
+                        @item.Order.OrderNumber
+                    </td>
+                    <td>
+                        @item.Order.OrderDate
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td align="right">
+                    = @totalPaidAmount
+                </td>
+                <td>
+                    
+                </td>
+                <td>
+                    
+                </td>
+                <td>
+                    
+                </td>
+
+                <td>
+                    
+                </td>
+                <td>
+                    
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

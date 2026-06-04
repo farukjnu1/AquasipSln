@@ -14,5 +14,23 @@
             // Calculate total seconds since epoch
             return (long)(utcDateTime - epoch).TotalSeconds;
         }
+
+        public static DateTime UnixTimestampToDateTime(long unixSeconds)
+        {
+            // Convert to UTC DateTime
+            // DateTime utcDateTime = DateTimeOffset.FromUnixTimeSeconds(unixSeconds).UtcDateTime;
+
+            // Convert to Local System DateTime
+            DateTime localDateTime = DateTimeOffset.FromUnixTimeSeconds(unixSeconds).LocalDateTime;
+
+            return localDateTime;
+        }
+
+        public static double DateDifferenceInMinutes(DateTime startDate, DateTime endDate)
+        {
+            // Calculate the absolute difference in minutes
+            return Math.Abs((endDate - startDate).TotalMinutes);
+        }
+
     }
 }

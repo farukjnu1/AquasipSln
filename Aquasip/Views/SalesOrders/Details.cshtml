@@ -3,10 +3,15 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    decimal TotalPaidAmount = 0;
+    
+    decimal totalPaidAmount = 0;
+    string? paymentStatus = "undefined";
+    totalPaidAmount = Model.PaymentTransactions.Where(y=>y.PaymentStatusId == 2).Sum(x => x.PaidAmount);
+    paymentStatus = totalPaidAmount < Model.GrandTotal ? "DUE" : "PAID";
+    string paymentStatusColor = totalPaidAmount < Model.GrandTotal ? "badge bg-danger" : "badge bg-success";
 }
 
-<h1>Sales Order</h1>
+<h3>Sales Order <span class="@paymentStatusColor">@paymentStatus</span></h3>
 <div class="row">
     <div class="col-md-7">
         <h4>Order-Summery</h4>
@@ -31,7 +36,7 @@
                 @Html.DisplayFor(model => model.SubTotal)
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.VatPercent)
+                @Html.DisplayNameFor(model => model.VatPercent)  (%)
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.VatPercent)
@@ -54,10 +59,10 @@
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.GatewayCharge)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-2 text-danger">
                 @Html.DisplayNameFor(model => model.GrandTotal)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-10 text-danger">
                 @Html.DisplayFor(model => model.GrandTotal)
             </dd>
             <dt class="col-sm-2">
@@ -142,10 +147,9 @@
             <tbody>
                 @foreach (var item in Model.PaymentTransactions)
                 {
-                    TotalPaidAmount += item.PaidAmount;
                     <tr>
                         <td>@item.PaymentDate</td>
-                        <td>@item.PaymentStatus</td>
+                        <td><a href="/PaymentTransactions/Edit/@item.PaymentTransactionId">@item.PaymentStatus</a></td>
                         <td>@item.PaymentMethod</td>
                         <td align="right">@item.PaidAmount</td>
                     </tr>
@@ -155,8 +159,8 @@
                 <tr>
                     <th></th>
                     <th></th>
-                    <th>Total:</th>
-                    <th style="text-align:right">@TotalPaidAmount</th>
+                    <th class="text-success">Payment Total:</th>
+                    <th class="text-success" style="text-align:right">@totalPaidAmount</th>
                 </tr>
             </tfoot>
         </table>

@@ -84,7 +84,7 @@ namespace Aquasip.Repositories
                     }
                     #endregion
                     #region order-summery
-                        order.OrderNumber = CodeGenerate.SalesOrderNumber(DateTime.Now, oCustomer.PhoneNumber ?? "");
+                    order.OrderNumber = CodeGenerate.SalesOrderNumber(DateTime.Now, oCustomer.PhoneNumber ?? "");
                     var oOrder = new SalesOrder
                     {
                         CustomerId = oCustomer.CustomerId,
@@ -100,6 +100,7 @@ namespace Aquasip.Repositories
                         SubTotal = order.SubTotal,
                         VatAmount = order.VatAmount,
                         VatPercent = order.VatPercent,
+                        IsActive = true
                     };
                     // =========================
                     // Save Order Header
@@ -157,29 +158,33 @@ namespace Aquasip.Repositories
         }
 
         // Read all
-        public List<UserVM> GetAll()
+        public List<SalesOrderVM> GetAll(int orderStateId = 0, int pageSize = 10)
         {
-            var list = new List<UserVM>();
+            var list = new List<SalesOrderVM>();
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("User_Read", conn))
+                using (SqlCommand cmd = new SqlCommand("SalesOrder_Read", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@QueryType", UserVM.QueryType.GetAll);
+                    //@OrderStateId
+                    cmd.Parameters.AddWithValue("@OrderStateId", orderStateId);
+                    cmd.Parameters.AddWithValue("@PageSize", pageSize);
+                    cmd.Parameters.AddWithValue("@QueryType", SalesOrderVM.QueryType.GetAll);
 
                     conn.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            UserVM model = new UserVM();
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
-                            model.UserID = reader.GetValue("UserID") == DBNull.Value ? 0 : reader.GetInt32("UserID");
-                            model.Username = reader.GetValue("Username") == DBNull.Value ? string.Empty : reader.GetString("Username");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
-                            model.RoleName = reader.GetValue("Description") == DBNull.Value ? string.Empty : reader.GetString("Description");
+                            SalesOrderVM model = new SalesOrderVM();
+                            model.GrandTotal = reader.GetValue("GrandTotal") == DBNull.Value ? 0: reader.GetDecimal("GrandTotal");
+                            model.Notes = reader.GetValue("Notes") == DBNull.Value ? "" : reader.GetString("Notes");
+                            model.OrderId = reader.GetValue("OrderId") == DBNull.Value ? 0 : reader.GetInt64("OrderId");
+                            model.OrderNumber = reader.GetValue("OrderNumber") == DBNull.Value ? "" : reader.GetString("OrderNumber");
+                            model.OrderDate = reader.GetValue("OrderDate") == DBNull.Value ? DateTime.Now : reader.GetDateTime("OrderDate");
+                            
+                            model.Customer = reader.GetValue("Customer") == DBNull.Value ? new CustomerVM() : JsonConversion.DeserializeObject<CustomerVM>(reader.GetString("Customer")); 
+                            
 
                             list.Add(model);
                         }
@@ -201,7 +206,7 @@ namespace Aquasip.Repositories
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@QueryType", UserVM.QueryType.GetById);
+                    cmd.Parameters.AddWithValue("@QueryType", SalesOrderVM.QueryType.GetById);
 
                     conn.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())

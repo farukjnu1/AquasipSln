@@ -1,6 +1,7 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
 using Aquasip.Models;
+using Aquasip.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,7 @@ namespace Aquasip.Controllers
                 })
                 .ToList());
             ViewData["OrderStateId"] = listOrderStatus;
-
+            
             var aquasipContext = (from o in _context.SalesOrders.Include(o => o.Customer)
                                  join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
                                  where o.OrderStateId == (OrderStateId == 0 ? o.OrderStateId : OrderStateId)
@@ -54,6 +55,11 @@ namespace Aquasip.Controllers
                                      OrderStatus = os.OrderStatus,
                                      ColorCode = os.ColorCode
                                  }).OrderByDescending(x=>x.OrderId).Take(PageSize);
+            //return View(await aquasipContext.ToListAsync());
+
+            SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
+            var list = soRepo.GetAll(0, 20);
+
             return View(await aquasipContext.ToListAsync());
         }
 

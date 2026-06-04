@@ -16,7 +16,9 @@
             <input type="hidden" asp-for="PaymentTransactionId" />
             <div class="form-group">
                 <label asp-for="OrderId" class="control-label"></label>
-                <select asp-for="OrderId" class="form-control" asp-items="ViewBag.OrderId"></select>
+                @* <select asp-for="OrderId" class="form-control" asp-items="ViewBag.OrderId"></select> *@
+                <input type="hidden" asp-for="OrderId" />
+                <input type="text" class="form-control" value="@Model.Order.OrderNumber" readonly disabled />
                 <span asp-validation-for="OrderId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -26,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="TransactionNumber" class="control-label"></label>
-                <input asp-for="TransactionNumber" class="form-control" />
+                <input asp-for="TransactionNumber" class="form-control" readonly disabled />
                 <span asp-validation-for="TransactionNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -57,9 +59,9 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Details" asp-controller="SalesOrders" asp-route-id="@Model.OrderId">Back to List</a>
 </div>
 
-@section Scripts {
+@* @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+} *@

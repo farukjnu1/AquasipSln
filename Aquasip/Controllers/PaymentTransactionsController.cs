@@ -99,9 +99,24 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId", paymentTransaction.OrderId);
-            ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
-            ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
+            //ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId", paymentTransaction.OrderId);
+            //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
+            //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
+            ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodId)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.PaymentMethodId.ToString(),
+                    Text = x.PaymentMethodName
+                })
+                .ToList();
+            ViewData["PaymentStatusId"] = _context.PaymentStatuses.OrderBy(x => x.Sequence)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.PaymentStateId.ToString(),
+                    Text = x.PaymentStatus1
+                })
+                .ToList();
+            paymentTransaction.Order = _context.SalesOrders.Find(paymentTransaction.OrderId);
             return View(paymentTransaction);
         }
 
@@ -117,30 +132,30 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(paymentTransaction);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PaymentTransactionExists(paymentTransaction.PaymentTransactionId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(paymentTransaction);
+                await _context.SaveChangesAsync();
+                TempData["message"] = "Data saved successfully.";
             }
-            ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId", paymentTransaction.OrderId);
-            ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
-            ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
-            return View(paymentTransaction);
+            catch (DbUpdateConcurrencyException ex)
+            {
+                TempData["message"] = ex.Message;
+                if (!PaymentTransactionExists(paymentTransaction.PaymentTransactionId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            
+            //ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId", paymentTransaction.OrderId);
+            //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
+            //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
+            //return View(paymentTransaction);
+            return RedirectToAction("Details", "SalesOrders", new { id = paymentTransaction.OrderId });
         }
 
         // GET: PaymentTransactions/Delete/5

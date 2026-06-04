@@ -1,0 +1,126 @@
+﻿@model IEnumerable<Aquasip.Models.SalesOrderVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = "My Orders",
+        Slug = "MyOrders",
+        Pages = (List<PageVM>)viewModel
+    };
+    string? CustomerId = Context.Session.GetString("CustomerId");
+    string? Email = Context.Session.GetString("Email");
+    string? FullName = Context.Session.GetString("FullName");
+
+}
+
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
+<!-- Navbar & Hero End -->
+
+<div class="container">
+    <h3>Orders</h3>
+
+    @* <p>
+    <a asp-action="Create">Create New</a>
+</p> *@
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="OrderStateId" class="control-label">Order Status</label>
+                <select id="OrderStateId" class="form-control" asp-items="ViewBag.OrderStateId"></select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="PageSize" class="control-label">Row</label>
+                <select id="PageSize" class="form-control">
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group" style="padding:28px">
+                <button onclick="search()">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.GrandTotal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="SalesOrderDetails" asp-route-id="@item.OrderId">Details</a> |
+                        <a asp-action="SalesOrderDetails" asp-route-id="@item.OrderId">Payments</a>
+                    </td>
+                    <td style="font-weight:bolder;color:@item.ColorCode">
+                        @Html.DisplayFor(modelItem => item.OrderStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GrandTotal)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Notes)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CustomerName)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script>
+        function search(){
+            var OrderStateId = document.getElementById('OrderStateId').value;
+            var PageSize = document.getElementById('PageSize').value;
+            location.href = '/Customers/SalesOrders?OrderStateId='+OrderStateId + '&PageSize=' + PageSize;
+        }
+    </script>
+
+</div>
+
+
+

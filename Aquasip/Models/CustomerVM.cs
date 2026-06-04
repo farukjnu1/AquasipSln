@@ -28,7 +28,7 @@ namespace Aquasip.Models
         public string ConfirmPassword { get; set; } = string.Empty;
         public enum QueryType
         {
-            GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4, UpdateEmailVerify = 5, Signin = 6, GetByEmail = 7
+            GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4, UpdateEmailVerify = 5, Signin = 6, GetByEmail = 7, UpdatePassword = 8
         }
     }
 }

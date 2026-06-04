@@ -595,7 +595,6 @@ namespace Aquasip.Controllers
             listPage.Add(homePage);
             ViewData["aquasip"] = listPage;
             #endregion
-
             return View();
         }
 
@@ -657,7 +656,7 @@ namespace Aquasip.Controllers
                         {
                             return RedirectToAction("Review", "Home");
                         }
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Customers");
                     }
                     else
                     {
@@ -681,12 +680,12 @@ namespace Aquasip.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendVerification(string Email)
+        public async Task<IActionResult> RequestEmailVerify(string email)
         {
             try 
             {
                 CustomerRepository customerRepo = new CustomerRepository(_connectionString);
-                CustomerVM oCustomer = customerRepo.GetByEmail(Email);
+                CustomerVM oCustomer = customerRepo.GetByEmail(email);
                 if(oCustomer == null)
                 {
                     TempData["message"] = "Email not found.";
@@ -697,14 +696,16 @@ namespace Aquasip.Controllers
                     TempData["message"] = "Email already verified.";
                     return RedirectToAction("Signin");
                 }
-
-                string token = _tokenService.Encrypt(Email);
-                string verificationLink = $"{GetBaseUrl()}home/verify?token={token}";
+                string plaintText = "email=" + email + "&minit=" + TokenValidation.VerifyEmailInMinutes + "&expir=" + TimeConversion.DateTimeToUnixTimestamp(DateTime.Now);
+                string token = _tokenService.Encrypt(plaintText);
+                string verificationLink = $"{GetBaseUrl()}home/verifyemail?token={token}";
                 await _emailService.SendEmailAsync(
-                Email,
-                "Verification of Customer",
-                "<h2>Welcome from Aquasip</h2>" +
-                "<a href='" + verificationLink + "' target='_blank'>Verify</a>");
+                email,
+                "Customer Profile Verification",
+                "<div>Dear "+oCustomer.FullName+",</div>" +
+                "<div>Verify your email to activate your profile.</div>" +
+                "<div>Please, click the link below.</div>" +
+                "<a href='" + verificationLink + "' target='_blank'>Verify Aquasip</a>");
                 TempData["message"] = "Verification link is sent to your e-mail.";
                 return RedirectToAction("Signin");
             }
@@ -717,9 +718,18 @@ namespace Aquasip.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Verify(string token)
+        public IActionResult VerifyEmail(string token)
         {
-            string email = _tokenService.Decrypt(token);
+            string plaintText = _tokenService.Decrypt(token);
+            string email = TokenValidation.ParseTokenEmailVerify(plaintText, "email");
+            string minit = TokenValidation.ParseTokenEmailVerify(plaintText, "minit");
+            string expir = TokenValidation.ParseTokenEmailVerify(plaintText, "expir");
+            var diffMinit = TimeConversion.DateDifferenceInMinutes(DateTime.Now, TimeConversion.UnixTimestampToDateTime(Convert.ToInt64(expir)));
+            if(diffMinit > Convert.ToInt32(minit))
+            {
+                TempData["message"] = "Verification link expired.";
+                return RedirectToAction("Signin");
+            }
             CustomerRepository customerRepo = new CustomerRepository(_connectionString);
             CustomerVM oCustomer = customerRepo.GetByEmail(email);
             if (oCustomer == null)
@@ -743,6 +753,60 @@ namespace Aquasip.Controllers
             return baseUrl;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RequestPasswordReset(string email)
+        {
+            try
+            {
+                CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+                CustomerVM oCustomer = customerRepo.GetByEmail(email);
+                if (oCustomer == null)
+                {
+                    TempData["message"] = "Email not found.";
+                    return RedirectToAction("Signin");
+                }
+                string plaintText = "email=" + email + "&minit=" + TokenValidation.VerifyEmailInMinutes + "&expir="+TimeConversion.DateTimeToUnixTimestamp(DateTime.Now);
+                string token = _tokenService.Encrypt(plaintText);
+                string verificationLink = $"{GetBaseUrl()}home/VerifyCustomerPass?token={token}";
+                await _emailService.SendEmailAsync(
+                email,
+                "Password Reset",
+                "<div>Dear " + oCustomer.FullName + ",</div>" +
+                "<div>Verify your email to reset your password.</div>" +
+                "<div>Please, click the link below.</div>" +
+                "<a href='" + verificationLink + "' target='_blank'>Verify Aquasip</a>");
+                TempData["message"] = "Password reset link is sent to your e-mail.";
+                return RedirectToAction("Signin");
+            }
+            catch (Exception ex)
+            {
+                ErrorVM error = new ErrorVM(_environment);
+                error.WriteLog(ex.StackTrace);
+                TempData["message"] = ex.Message;
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult VerifyCustomerPass(string token)
+        {
+            string plaintText = _tokenService.Decrypt(token);
+            string email = TokenValidation.ParseTokenEmailVerify(plaintText, "email");
+            string minit = TokenValidation.ParseTokenEmailVerify(plaintText, "minit");
+            string expir = TokenValidation.ParseTokenEmailVerify(plaintText, "expir");
+            var diffMinit = TimeConversion.DateDifferenceInMinutes(DateTime.Now, TimeConversion.UnixTimestampToDateTime(Convert.ToInt64(expir)));
+            if (diffMinit > Convert.ToInt32(minit))
+            {
+                TempData["message"] = "Verification link expired.";
+                return RedirectToAction("Signin");
+            }
+            else
+            {
+                TempData["message"] = "e-mail veried successfully.";
+                return RedirectToAction("PassReset", new { token = token });
+            }
+        }
+
+
         public IActionResult Signout(int? CustomerId)
         {
             HttpContext.Session.Remove("CustomerId");
@@ -750,7 +814,89 @@ namespace Aquasip.Controllers
             HttpContext.Session.Remove("FullName");
             return RedirectToAction("Index");
         }
-        
+
+        [HttpGet]
+        public IActionResult SendIsHelpful([FromQuery]bool isHelpful, long reviewId, long CustomerId)
+        {
+            ReviewRepository reviewRepo = new ReviewRepository(_connectionString);
+            ReviewVM review = reviewRepo.GetById(reviewId);
+            if (review == null)
+            {
+                TempData["message"] = "Customer verification failed.";
+                return RedirectToAction("Review");
+            }
+            else
+            {
+                ReviewVoteVM reviewVote = new ReviewVoteVM
+                {
+                    ReviewId = reviewId,
+                    CustomerId = CustomerId,
+                    IsHelpful = isHelpful
+                };
+                var isSave = reviewRepo.UpdateReviewVote(reviewVote);
+                TempData["message"] = isSave == true ?  "Data saved successfully." : "Operation failed.";
+            }
+            return RedirectToAction("Review");
+        }
+
+        public IActionResult PassReset(string token)
+        {
+            #region Read
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var homePage = pageRepo.GetBySlug("home");
+            homePage.PageContents = pageContentRepo.GetBySlugPage("home");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(layoutPage);
+            listPage.Add(homePage);
+            ViewData["aquasip"] = listPage;
+            #endregion
+
+            string plaintText = _tokenService.Decrypt(token);
+            string email = TokenValidation.ParseTokenEmailVerify(plaintText, "email");
+            string minit = TokenValidation.ParseTokenEmailVerify(plaintText, "minit");
+            string expir = TokenValidation.ParseTokenEmailVerify(plaintText, "expir");
+            var diffMinit = TimeConversion.DateDifferenceInMinutes(DateTime.Now, TimeConversion.UnixTimestampToDateTime(Convert.ToInt64(expir)));
+            if (diffMinit > Convert.ToInt32(minit))
+            {
+                TempData["message"] = "Verification link expired.";
+                return RedirectToAction("Signin");
+            }
+            CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+            CustomerVM oCustomer = customerRepo.GetByEmail(email);
+            if (oCustomer == null)
+            {
+                TempData["message"] = "Email verification failed.";
+                return RedirectToAction("Signin");
+            }
+            else
+            {
+                return View(oCustomer);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult PassReset(CustomerVM model)
+        {
+            try
+            {
+                CustomerRepository customerRepo = new CustomerRepository(_connectionString);
+                TempData["message"] = customerRepo.UpdatePassword(model);
+                return RedirectToAction("Signin");
+            }
+            catch (Exception ex)
+            {
+                ErrorVM error = new ErrorVM(_environment);
+                error.WriteLog(ex.StackTrace);
+                TempData["message"] = "Exception!";
+            }
+            return RedirectToAction("Signup");
+        }
         #endregion
 
     }

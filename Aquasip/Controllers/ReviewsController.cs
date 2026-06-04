@@ -110,7 +110,7 @@ namespace Aquasip.Controllers
                 if (attch != null && attch.Length > 0)
                 {
                     #region Create File
-                    if (!FileValidation.IsValidFileExtension(attch.FileName))
+                    if (!FileValidation.IsValidFileForReview(attch.FileName))
                     {
                         TempData["message"] = "Media file not supported.";
                         return RedirectToAction("Review", "Home");

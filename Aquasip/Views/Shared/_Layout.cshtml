@@ -11,7 +11,7 @@
     var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
 
     var listMenu = menuRepo.GetAll();
-    string? urL = Context.Session.GetString("urL");
+    //string? urL = Context.Session.GetString("urL");
 
     var oLocation = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "location").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "location").First();
