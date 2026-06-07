@@ -59,7 +59,7 @@
             <tr>
                 <th></th>
                 <th>
-                    @Html.DisplayNameFor(model => model.OrderStatus)
+                    @Html.DisplayNameFor(model => model.SalesOrderState.OrderStatus)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.OrderNumber)
@@ -74,7 +74,7 @@
                     @Html.DisplayNameFor(model => model.Notes)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CustomerName)
+                    @Html.DisplayNameFor(model => model.Customer.FullName)
                 </th>
 
             </tr>
@@ -87,8 +87,8 @@
                         <a asp-action="SalesOrderDetails" asp-route-id="@item.OrderId">Details</a> |
                         <a asp-action="SalesOrderDetails" asp-route-id="@item.OrderId">Payments</a>
                     </td>
-                    <td style="font-weight:bolder;color:@item.ColorCode">
-                        @Html.DisplayFor(modelItem => item.OrderStatus)
+                    <td style="font-weight:bolder;color:@item.SalesOrderState.ColorCode">
+                        @Html.DisplayFor(modelItem => item.SalesOrderState.OrderStatus)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.OrderNumber)
@@ -104,7 +104,7 @@
                         @Html.DisplayFor(modelItem => item.Notes)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CustomerName)
+                        @Html.DisplayFor(modelItem => item.Customer.FullName)
                     </td>
 
                 </tr>

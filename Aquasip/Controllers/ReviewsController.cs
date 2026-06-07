@@ -1,4 +1,5 @@
 ﻿using Aquasip.EF;
+using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Aquasip.Controllers
 {
+    [AdminFilter]
     public class ReviewsController : Controller
     {
         //private readonly AquasipContext _context;
@@ -164,7 +166,12 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
             AquasipContext _context = new AquasipContext();
-            var review = await _context.Reviews.FindAsync(id);
+            //var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Reviews
+                .Where(x => x.ReviewId == id)
+                .Include(r => r.Customer)
+                .Include(r => r.Product)
+                .FirstOrDefaultAsync();
             if (review == null)
             {
                 return NotFound();
@@ -186,29 +193,27 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
             AquasipContext _context = new AquasipContext();
-            if (ModelState.IsValid)
+            try
             {
-                try
+                _context.Update(review);
+                await _context.SaveChangesAsync();
+                
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReviewExists(review.ReviewId))
                 {
-                    _context.Update(review);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!ReviewExists(review.ReviewId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return RedirectToAction(nameof(Edit), new { id = review.ReviewId });
+                    //throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", review.CustomerId);
             ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId", review.ProductId);
-            return View(review);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reviews/Delete/5

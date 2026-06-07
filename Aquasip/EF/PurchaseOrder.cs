@@ -17,9 +17,17 @@ public partial class PurchaseOrder
 
     public decimal? DiscountAmount { get; set; }
 
+    public decimal? TaxPercent { get; set; }
+
+    public decimal? OtherCharge { get; set; }
+
     public decimal? TaxAmount { get; set; }
 
     public decimal? TotalAmount { get; set; }
+
+    public string? Remark { get; set; }
+
+    public int? PurchaseStateId { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -28,4 +36,6 @@ public partial class PurchaseOrder
     public virtual ICollection<PurchaseReturn> PurchaseReturns { get; set; } = new List<PurchaseReturn>();
 
     public virtual Supplier Supplier { get; set; } = null!;
+
+    public virtual ICollection<SupplierPayment> SupplierPayments { get; set; } = new List<SupplierPayment>();
 }

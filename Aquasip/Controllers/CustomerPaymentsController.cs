@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 namespace Aquasip.Controllers
 {
     [AdminFilter]
-    public class PaymentTransactionsController : Controller
+    public class CustomerPaymentsController : Controller
     {
-        private readonly ILogger<PaymentTransactionsController> _logger;
+        private readonly ILogger<CustomerPaymentsController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
         private readonly AquasipContext _context;
-        public PaymentTransactionsController(ILogger<PaymentTransactionsController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        public CustomerPaymentsController(ILogger<CustomerPaymentsController> logger, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");
@@ -25,14 +25,46 @@ namespace Aquasip.Controllers
             _context = new AquasipContext();
         }
 
-        // GET: PaymentTransactions
-        public async Task<IActionResult> Index()
+        // GET: CustomerPayments
+        public async Task<IActionResult> Index(string? PaymentDateStart = "", string? PaymentDateEnd = "", int PageSize = 10)
         {
-            var aquasipContext = _context.PaymentTransactions.Include(p => p.Order).Include(p => p.PaymentMethod).Include(p => p.PaymentStatus);
-            return View(await aquasipContext.ToListAsync());
+            List<CustomerPayment> listCustomerPayment = new List<CustomerPayment>();
+            try
+            {
+                if (string.IsNullOrEmpty(PaymentDateStart) || string.IsNullOrEmpty(PaymentDateEnd))
+                {
+                    listCustomerPayment = await _context.CustomerPayments
+                        .Skip(0)
+                        .Take(PageSize)
+                        .Include(p => p.Order)
+                        .Include(p => p.PaymentMethod)
+                        .Include(p => p.PaymentStatus)
+                        .ToListAsync();
+                }
+                else
+                {
+                    DateTime DateStart = Convert.ToDateTime(PaymentDateStart);
+                    DateTime DateEnd = Convert.ToDateTime(PaymentDateEnd);
+                    listCustomerPayment = await _context.CustomerPayments
+                        .Where(x => x.PaymentDate > DateStart && x.PaymentDate < DateEnd)
+                        .Skip(0)
+                        .Take(PageSize)
+                        .Include(p => p.Order)
+                        .Include(p => p.PaymentMethod)
+                        .Include(p => p.PaymentStatus)
+                        .ToListAsync();
+                }
+            }
+            catch 
+            {
+            }
+            ViewData["PaymentDateStart"] = PaymentDateStart;
+            ViewData["PaymentDateEnd"] = PaymentDateEnd;
+            ViewData["PageSize"] = PageSize;
+            return View(listCustomerPayment);
         }
 
-        // GET: PaymentTransactions/Details/5
+        // GET: CustomerPayments/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -40,11 +72,11 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var paymentTransaction = await _context.PaymentTransactions
+            var paymentTransaction = await _context.CustomerPayments
                 .Include(p => p.Order)
                 .Include(p => p.PaymentMethod)
                 .Include(p => p.PaymentStatus)
-                .FirstOrDefaultAsync(m => m.PaymentTransactionId == id);
+                .FirstOrDefaultAsync(m => m.PaymentId == id);
             if (paymentTransaction == null)
             {
                 return NotFound();
@@ -53,7 +85,7 @@ namespace Aquasip.Controllers
             return View(paymentTransaction);
         }
 
-        // GET: PaymentTransactions/Create
+        // GET: CustomerPayments/Create
         public IActionResult Create()
         {
             ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId");
@@ -62,16 +94,16 @@ namespace Aquasip.Controllers
             return View();
         }
 
-        // POST: PaymentTransactions/Create
+        // POST: CustomerPayments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PaymentTransactionId,OrderId,PaymentMethodId,TransactionNumber,PaidAmount,PaymentStatusId,PaymentDate,Remarks")] PaymentTransaction paymentTransaction)
+        public async Task<IActionResult> Create([Bind("PaymentId,OrderId,PaymentMethodId,TransactionNumber,PaidAmount,PaymentStatusId,PaymentDate,Remarks")] CustomerPayment customerPayment)
         {
             try
             {
-                _context.Add(paymentTransaction);
+                _context.Add(customerPayment);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Payment created successfully!";
             }
@@ -83,7 +115,7 @@ namespace Aquasip.Controllers
             //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
             //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
             //return View(paymentTransaction);
-            return RedirectToAction(actionName: "Details", controllerName: "SalesOrders", routeValues: new { id = paymentTransaction.OrderId });
+            return RedirectToAction(actionName: "Details", controllerName: "SalesOrders", routeValues: new { id = customerPayment.OrderId });
         }
 
         // GET: PaymentTransactions/Edit/5
@@ -94,8 +126,8 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var paymentTransaction = await _context.PaymentTransactions.FindAsync(id);
-            if (paymentTransaction == null)
+            var customerPayment = await _context.CustomerPayments.FindAsync(id);
+            if (customerPayment == null)
             {
                 return NotFound();
             }
@@ -116,8 +148,8 @@ namespace Aquasip.Controllers
                     Text = x.PaymentStatus1
                 })
                 .ToList();
-            paymentTransaction.Order = _context.SalesOrders.Find(paymentTransaction.OrderId);
-            return View(paymentTransaction);
+            customerPayment.Order = _context.SalesOrders.Find(customerPayment.OrderId);
+            return View(customerPayment);
         }
 
         // POST: PaymentTransactions/Edit/5
@@ -125,23 +157,23 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("PaymentTransactionId,OrderId,PaymentMethodId,TransactionNumber,PaidAmount,PaymentStatusId,PaymentDate,Remarks")] PaymentTransaction paymentTransaction)
+        public async Task<IActionResult> Edit(long id, [Bind("PaymentId,OrderId,PaymentMethodId,TransactionNumber,PaidAmount,PaymentStatusId,PaymentDate,Remarks")] CustomerPayment customerPayment)
         {
-            if (id != paymentTransaction.PaymentTransactionId)
+            if (id != customerPayment.PaymentId)
             {
                 return NotFound();
             }
 
             try
             {
-                _context.Update(paymentTransaction);
+                _context.Update(customerPayment);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Data saved successfully.";
             }
             catch (DbUpdateConcurrencyException ex)
             {
                 TempData["message"] = ex.Message;
-                if (!PaymentTransactionExists(paymentTransaction.PaymentTransactionId))
+                if (!CustomerPaymentExists(customerPayment.PaymentId))
                 {
                     return NotFound();
                 }
@@ -155,7 +187,7 @@ namespace Aquasip.Controllers
             //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
             //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
             //return View(paymentTransaction);
-            return RedirectToAction("Details", "SalesOrders", new { id = paymentTransaction.OrderId });
+            return RedirectToAction("Details", "SalesOrders", new { id = customerPayment.OrderId });
         }
 
         // GET: PaymentTransactions/Delete/5
@@ -166,37 +198,37 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var paymentTransaction = await _context.PaymentTransactions
+            var customerPayment = await _context.CustomerPayments
                 .Include(p => p.Order)
                 .Include(p => p.PaymentMethod)
                 .Include(p => p.PaymentStatus)
-                .FirstOrDefaultAsync(m => m.PaymentTransactionId == id);
-            if (paymentTransaction == null)
+                .FirstOrDefaultAsync(m => m.PaymentId == id);
+            if (customerPayment == null)
             {
                 return NotFound();
             }
 
-            return View(paymentTransaction);
+            return View(customerPayment);
         }
 
-        // POST: PaymentTransactions/Delete/5
+        // POST: CustomerPayments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var paymentTransaction = await _context.PaymentTransactions.FindAsync(id);
-            if (paymentTransaction != null)
+            var customerPayment = await _context.CustomerPayments.FindAsync(id);
+            if (customerPayment != null)
             {
-                _context.PaymentTransactions.Remove(paymentTransaction);
+                _context.CustomerPayments.Remove(customerPayment);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PaymentTransactionExists(long id)
+        private bool CustomerPaymentExists(long id)
         {
-            return _context.PaymentTransactions.Any(e => e.PaymentTransactionId == id);
+            return _context.CustomerPayments.Any(e => e.PaymentId == id);
         }
     }
 }

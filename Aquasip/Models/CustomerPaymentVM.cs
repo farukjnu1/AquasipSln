@@ -2,7 +2,7 @@
 
 namespace Aquasip.Models
 {
-    public class PaymentTransactionVM
+    public class CustomerPaymentVM
     {
         public long PaymentTransactionId { get; set; }
 

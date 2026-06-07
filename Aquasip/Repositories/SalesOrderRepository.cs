@@ -4,8 +4,10 @@ using Aquasip.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using System.Collections.Generic;
 using System.Data;
 using System.Net.Mail;
+using static Aquasip.Models.SalesOrderVM;
 
 namespace Aquasip.Repositories
 {
@@ -161,70 +163,92 @@ namespace Aquasip.Repositories
         public List<SalesOrderVM> GetAll(int orderStateId = 0, int pageSize = 10)
         {
             var list = new List<SalesOrderVM>();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("SalesOrder_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    //@OrderStateId
-                    cmd.Parameters.AddWithValue("@OrderStateId", orderStateId);
-                    cmd.Parameters.AddWithValue("@PageSize", pageSize);
-                    cmd.Parameters.AddWithValue("@QueryType", SalesOrderVM.QueryType.GetAll);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("SalesOrder_Read", conn))
                     {
-                        while (reader.Read())
-                        {
-                            SalesOrderVM model = new SalesOrderVM();
-                            model.GrandTotal = reader.GetValue("GrandTotal") == DBNull.Value ? 0: reader.GetDecimal("GrandTotal");
-                            model.Notes = reader.GetValue("Notes") == DBNull.Value ? "" : reader.GetString("Notes");
-                            model.OrderId = reader.GetValue("OrderId") == DBNull.Value ? 0 : reader.GetInt64("OrderId");
-                            model.OrderNumber = reader.GetValue("OrderNumber") == DBNull.Value ? "" : reader.GetString("OrderNumber");
-                            model.OrderDate = reader.GetValue("OrderDate") == DBNull.Value ? DateTime.Now : reader.GetDateTime("OrderDate");
-                            
-                            model.Customer = reader.GetValue("Customer") == DBNull.Value ? new CustomerVM() : JsonConversion.DeserializeObject<CustomerVM>(reader.GetString("Customer")); 
-                            
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@OrderStateId", orderStateId);
+                        cmd.Parameters.AddWithValue("@PageSize", pageSize);
+                        cmd.Parameters.AddWithValue("@QueryType", SalesOrderVM.QueryType.GetAll);
 
-                            list.Add(model);
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                SalesOrderVM model = new SalesOrderVM();
+                                model.GrandTotal = reader.GetValue("GrandTotal") == DBNull.Value ? 0 : reader.GetDecimal("GrandTotal");
+                                model.Notes = reader.GetValue("Notes") == DBNull.Value ? "" : reader.GetString("Notes");
+                                model.OrderId = reader.GetValue("OrderId") == DBNull.Value ? 0 : reader.GetInt64("OrderId");
+                                model.OrderNumber = reader.GetValue("OrderNumber") == DBNull.Value ? "" : reader.GetString("OrderNumber");
+                                model.OrderDate = reader.GetValue("OrderDate") == DBNull.Value ? DateTime.Now : reader.GetDateTime("OrderDate");
+                                model.Customer = reader.GetValue("Customer") == DBNull.Value ? new CustomerVM() : JsonConversion.DeserializeObject<List<CustomerVM>>(reader.GetString("Customer")).FirstOrDefault();
+                                model.SalesOrderState = reader.GetValue("SalesOrderState") == DBNull.Value ? new SalesOrderStateVM() : JsonConversion.DeserializeObject<List<SalesOrderStateVM>>(reader.GetString("SalesOrderState")).FirstOrDefault();
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
+            }
+            catch(Exception ex)
+            {
             }
             return list;
         }
 
         // Read one
-        public UserVM? GetById(int userId)
+        public SalesOrderVM? GetById(long id)
         {
-            UserVM? model = null;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            SalesOrderVM? model = null;
+            try 
             {
-                using (SqlCommand cmd = new SqlCommand("User_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@QueryType", SalesOrderVM.QueryType.GetById);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("SalesOrder_Read", conn))
                     {
-                        while (reader.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@OrderID", id);
+                        cmd.Parameters.AddWithValue("@QueryType", SalesOrderVM.QueryType.GetById);
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            model = new UserVM();
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.Email = reader.GetValue("Email") == DBNull.Value ? string.Empty : reader.GetString("Email");
-                            model.UserID = reader.GetValue("UserID") == DBNull.Value ? 0 : reader.GetInt32("UserID");
-                            model.Username = reader.GetValue("Username") == DBNull.Value ? string.Empty : reader.GetString("Username");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
-                            model.RoleName = reader.GetValue("Description") == DBNull.Value ? string.Empty : reader.GetString("Description");
-                            model.RoleId = reader.GetValue("RoleId") == DBNull.Value ? 0 : reader.GetInt32("RoleId");
+                            while (reader.Read())
+                            {
+                                model = new SalesOrderVM();
+                                model.GrandTotal = reader.GetValue("GrandTotal") == DBNull.Value ? 0 : reader.GetDecimal("GrandTotal");
+                                model.Notes = reader.GetValue("Notes") == DBNull.Value ? "" : reader.GetString("Notes");
+                                model.OrderId = reader.GetValue("OrderId") == DBNull.Value ? 0 : reader.GetInt64("OrderId");
+                                model.OrderNumber = reader.GetValue("OrderNumber") == DBNull.Value ? "" : reader.GetString("OrderNumber");
+                                model.DeliveryCharge = reader.GetValue("DeliveryCharge") == DBNull.Value ? 0 : reader.GetDecimal("DeliveryCharge");
+                                model.GatewayCharge = reader.GetValue("GatewayCharge") == DBNull.Value ? 0 : reader.GetDecimal("GatewayCharge");
+                                model.VatPercent = reader.GetValue("VatPercent") == DBNull.Value ? 0 : reader.GetDecimal("VatPercent");
+                                model.VatAmount = reader.GetValue("VatAmount") == DBNull.Value ? 0 : reader.GetDecimal("VatAmount");
+                                model.SubTotal = reader.GetValue("SubTotal") == DBNull.Value ? 0 : reader.GetDecimal("GatewayCharge");
+                                model.OrderStateId = reader.GetValue("OrderStateId") == DBNull.Value ? 0 : reader.GetInt32("OrderStateId");
+                                model.OrderDate = reader.GetValue("OrderDate") == DBNull.Value ? DateTime.Now : reader.GetDateTime("OrderDate");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                                model.Customer = reader.GetValue("Customer") == DBNull.Value ? new CustomerVM() : JsonConversion.DeserializeObject<List<CustomerVM>>(reader.GetString("Customer")).FirstOrDefault();
+                                model.SalesOrderState = reader.GetValue("SalesOrderState") == DBNull.Value ? new SalesOrderStateVM() : JsonConversion.DeserializeObject<List<SalesOrderStateVM>>(reader.GetString("SalesOrderState")).FirstOrDefault();
+                                model.PaymentMethod = reader.GetValue("PaymentMethod") == DBNull.Value ? new PaymentMethodVM() : JsonConversion.DeserializeObject<List<PaymentMethodVM>>(reader.GetString("PaymentMethod")).FirstOrDefault();
+                                model.ShippingAddress = reader.GetValue("ShippingAddress") == DBNull.Value ? new ShippingAddressVM() : JsonConversion.DeserializeObject<List<ShippingAddressVM>>(reader.GetString("ShippingAddress")).FirstOrDefault();
+                                model.CustomerPayments = reader.GetValue("CustomerPayments") == DBNull.Value ? new List<CustomerPaymentVM>() : JsonConversion.DeserializeObject<List<CustomerPaymentVM>>(reader.GetString("CustomerPayments"));
+                                model.OrderDetails = reader.GetValue("SalesOrderDetails") == DBNull.Value ? new List<SalesOrderDetailVM>() : JsonConversion.DeserializeObject<List<SalesOrderDetailVM>>(reader.GetString("SalesOrderDetails"));
+                                foreach (var item in model.OrderDetails)
+                                {
+                                    item.Product = new ProductVM { ProductName = item.ProductName };
+                                }
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
+            }
+            catch(Exception ex)
+            {
             }
             return model;
         }

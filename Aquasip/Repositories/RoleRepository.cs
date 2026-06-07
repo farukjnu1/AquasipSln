@@ -59,33 +59,37 @@ namespace Aquasip.Repositories
         public List<RolePermissionVM> GetPermissionByRole(int roleId, string controller)
         {
             var list = new List<RolePermissionVM>();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("Role_Read", conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@RoleId", roleId);
-                    cmd.Parameters.AddWithValue("@Controller", controller);
-                    cmd.Parameters.AddWithValue("@QueryType", RoleVM.QueryType.GetPermissionByRole);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("Role_Read", conn))
                     {
-                        while (reader.Read())
-                        {
-                            RolePermissionVM model = new RolePermissionVM();
-                            model.Controller = reader.GetValue("Controller") == DBNull.Value ? string.Empty : reader.GetString("Controller");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
-                            model.RoleId = reader.GetValue("RoleId") == DBNull.Value ? 0 : reader.GetInt32("RoleId");
-                            model.RolePermissionId = reader.GetValue("RolePermissionId") == DBNull.Value ? 0 : reader.GetInt32("RolePermissionId");
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                            list.Add(model);
+                        cmd.Parameters.AddWithValue("@RoleId", roleId);
+                        cmd.Parameters.AddWithValue("@Controller", controller);
+                        cmd.Parameters.AddWithValue("@QueryType", RoleVM.QueryType.GetPermissionByRole);
+
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                RolePermissionVM model = new RolePermissionVM();
+                                model.Controller = reader.GetValue("Controller") == DBNull.Value ? string.Empty : reader.GetString("Controller");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");
+                                model.RoleId = reader.GetValue("RoleId") == DBNull.Value ? 0 : reader.GetInt32("RoleId");
+                                model.RolePermissionId = reader.GetValue("RolePermissionId") == DBNull.Value ? 0 : reader.GetInt32("RolePermissionId");
+
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
                 }
             }
+            catch { }
             return list;
         }
 

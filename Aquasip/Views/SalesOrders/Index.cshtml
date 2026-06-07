@@ -3,36 +3,30 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    
+    var nOrderStateId = (int?)ViewData["nOrderStateId"];
+    var PageSize = (int?)ViewData["PageSize"];
 }
 
-<h3>Orders</h3>
+<h3>Sales Orders</h3>
 
-@* <p>
-    <a asp-action="Create">Create New</a>
-</p> *@
 <div class="row">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="OrderStateId" class="control-label">Order Status</label>
-            <select id="OrderStateId" class="form-control" asp-items="ViewBag.OrderStateId"></select>
-        </div>
+    <div class="col-md-3">
+        <input type="hidden" id="nOrderStateId" value="@nOrderStateId" />
+        <label for="OrderStateId" class="control-label">Order Status</label>
+        <select id="OrderStateId" asp-items="ViewBag.OrderStateId"></select>
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="PageSize" class="control-label">Row</label>
-            <select id="PageSize" class="form-control">
-                <option value="10">10</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="500">500</option>
-            </select>
-        </div>
+    <div class="col-md-2">
+        <input type="hidden" id="nPageSize" value="@PageSize" />
+        <label for="PageSize" class="control-label">Row</label>
+        <select id="PageSize">
+            <option value="10">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select>
     </div>
-    <div class="col-md-4">
-        <div class="form-group" style="padding:28px">
-            <button onclick="search()">Search</button>
-        </div>
+    <div class="col-md-2">
+        <button onclick="search()">Search</button>
     </div>
 </div>
 
@@ -41,7 +35,7 @@
         <tr>
             <th></th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderStatus)
+                @Html.DisplayNameFor(model => model.SalesOrderState.OrderStatus)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.OrderNumber)
@@ -56,7 +50,7 @@
                 @Html.DisplayNameFor(model => model.Notes)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomerName)
+                @Html.DisplayNameFor(model => model.Customer.FullName)
             </th>
             
         </tr>
@@ -68,8 +62,8 @@
                 <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.OrderId">Payments</a>
             </td>
-            <td style="font-weight:bolder;color:@item.ColorCode">
-                @Html.DisplayFor(modelItem => item.OrderStatus)
+            <td style="font-weight:bolder;color:@item.SalesOrderState.ColorCode">
+                @Html.DisplayFor(modelItem => item.SalesOrderState.OrderStatus)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OrderNumber)
@@ -85,14 +79,24 @@
                 @Html.DisplayFor(modelItem => item.Notes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CustomerName)
-            </td>
-            
+                @Html.DisplayFor(modelItem => item.Customer.FullName)
+            </td>          
         </tr>
 }
     </tbody>
 </table>
 <script>
+    // Equivalent to jQuery $(document).ready()
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Document is ready!");
+        setSearchValues();
+    });
+    function setSearchValues(){
+        var nPageSize = document.getElementById('nPageSize').value;
+        document.getElementById('PageSize').value = nPageSize;
+        var nOrderStateId = document.getElementById('nOrderStateId').value;
+        document.getElementById('OrderStateId').value = nOrderStateId;
+    }
     function search(){
         var OrderStateId = document.getElementById('OrderStateId').value;
         var PageSize = document.getElementById('PageSize').value;

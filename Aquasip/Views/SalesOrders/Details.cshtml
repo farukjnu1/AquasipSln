@@ -6,98 +6,98 @@
     
     decimal totalPaidAmount = 0;
     string? paymentStatus = "undefined";
-    totalPaidAmount = Model.PaymentTransactions.Where(y=>y.PaymentStatusId == 2).Sum(x => x.PaidAmount);
+    totalPaidAmount = Model.CustomerPayments.Where(y=>y.PaymentStatusId == 2).Sum(x => x.PaidAmount);
     paymentStatus = totalPaidAmount < Model.GrandTotal ? "DUE" : "PAID";
     string paymentStatusColor = totalPaidAmount < Model.GrandTotal ? "badge bg-danger" : "badge bg-success";
 }
 
 <h3>Sales Order <span class="@paymentStatusColor">@paymentStatus</span></h3>
 <div class="row">
-    <div class="col-md-7">
+    <div class="col-sm-6">
         <h4>Order-Summery</h4>
         <hr />
         <dl class="row">
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.OrderNumber)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.OrderNumber)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.OrderDate)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.OrderDate)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.SubTotal)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.SubTotal)
             </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.VatPercent)  (%)
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.VatPercent) (%)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.VatPercent)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.VatAmount)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.VatAmount)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.DeliveryCharge)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.DeliveryCharge)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.GatewayCharge)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.GatewayCharge)
             </dd>
-            <dt class="col-sm-2 text-danger">
+            <dt class="col-sm-4 text-danger">
                 @Html.DisplayNameFor(model => model.GrandTotal)
             </dt>
-            <dd class="col-sm-10 text-danger">
+            <dd class="col-sm-8 text-danger">
                 @Html.DisplayFor(model => model.GrandTotal)
             </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.OrderStatus)
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.SalesOrderState.OrderStatus)
             </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.OrderStatus)
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.SalesOrderState.OrderStatus)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.Notes)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.Notes)
             </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CustomerName)
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Customer.FullName)
             </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CustomerName)
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Customer.FullName)
             </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.PaymentMethod)
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.PaymentMethod.PaymentMethodName)
             </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.PaymentMethod)
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.PaymentMethod.PaymentMethodName)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.ShippingAddress)
             </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.StreetAddress)
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.ShippingAddress.StreetAddress)
             </dd>
         </dl>
     </div>
-    <div class="col-md-5">
+    <div class="col-sm-6">
         <h4>
             Order-Details 
             <!-- Button trigger modal -->
@@ -122,7 +122,7 @@
                 @foreach (var item in Model.OrderDetails)
                 {
                     <tr>
-                        <td>@item.ProductName</td>
+                        <td>@item.Product.ProductName</td>
                         <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
                         <td>@item.TotalPrice</td>
@@ -141,15 +141,15 @@
                     <th>PaymentDate</th>
                     <th>PaymentStatus</th>
                     <th>PaymentMethod</th>
-                    <th align="right">PaidAmount</th>
+                    <th style="text-align:right">PaidAmount</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.PaymentTransactions)
+                @foreach (var item in Model.CustomerPayments)
                 {
                     <tr>
                         <td>@item.PaymentDate</td>
-                        <td><a href="/PaymentTransactions/Edit/@item.PaymentTransactionId">@item.PaymentStatus</a></td>
+                        <td><a href="/CustomerPayments/Edit/@item.PaymentTransactionId">@item.PaymentStatus</a></td>
                         <td>@item.PaymentMethod</td>
                         <td align="right">@item.PaidAmount</td>
                     </tr>
@@ -193,40 +193,40 @@
             </div>
 
             <div class="modal-body">
-                <form asp-action="Create" asp-controller="PaymentTransactions" method="post">
+                <form asp-action="Create" asp-controller="CustomerPayments" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="OrderNumber" class="control-label"></label>
                         <input asp-for="OrderNumber" class="form-control" readonly />
-                        <input type="hidden" asp-for="PaymentTransaction.OrderId" />
+                        <input type="hidden" asp-for="CustomerPayment.OrderId" />
                     </div>
                     <div class="form-group">
-                        <label asp-for="PaymentTransaction.PaymentMethodId" class="control-label"></label>
-                        <select asp-for="PaymentTransaction.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
+                        <label asp-for="CustomerPayment.PaymentMethodId" class="control-label"></label>
+                        <select asp-for="CustomerPayment.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="PaymentTransaction.PaymentStatusId" class="control-label"></label>
-                        <select asp-for="PaymentTransaction.PaymentStatusId" class="form-control" asp-items="ViewBag.PaymentStatusId"></select>
+                        <label asp-for="CustomerPayment.PaymentStatusId" class="control-label"></label>
+                        <select asp-for="CustomerPayment.PaymentStatusId" class="form-control" asp-items="ViewBag.PaymentStatusId"></select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="PaymentTransaction.TransactionNumber" class="control-label"></label>
-                        <input asp-for="PaymentTransaction.TransactionNumber" class="form-control" required />
-                        <span asp-validation-for="PaymentTransaction.TransactionNumber" class="text-danger"></span>
+                        <label asp-for="CustomerPayment.TransactionNumber" class="control-label"></label>
+                        <input asp-for="CustomerPayment.TransactionNumber" class="form-control" required />
+                        <span asp-validation-for="CustomerPayment.TransactionNumber" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="PaymentTransaction.PaidAmount" class="control-label"></label>
-                        <input asp-for="PaymentTransaction.PaidAmount" class="form-control" required />
-                        <span asp-validation-for="PaymentTransaction.PaidAmount" class="text-danger"></span>
+                        <label asp-for="CustomerPayment.PaidAmount" class="control-label"></label>
+                        <input asp-for="CustomerPayment.PaidAmount" class="form-control" required />
+                        <span asp-validation-for="CustomerPayment.PaidAmount" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="PaymentTransaction.PaymentDate" class="control-label"></label>
-                        <input asp-for="PaymentTransaction.PaymentDate" class="form-control" required />
-                        <span asp-validation-for="PaymentTransaction.PaymentDate" class="text-danger"></span>
+                        <label asp-for="CustomerPayment.PaymentDate" class="control-label"></label>
+                        <input asp-for="CustomerPayment.PaymentDate" class="form-control" required />
+                        <span asp-validation-for="CustomerPayment.PaymentDate" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="PaymentTransaction.Remarks" class="control-label"></label>
-                        <input asp-for="PaymentTransaction.Remarks" class="form-control" />
-                        <span asp-validation-for="PaymentTransaction.Remarks" class="text-danger"></span>
+                        <label asp-for="CustomerPayment.Remarks" class="control-label"></label>
+                        <input asp-for="CustomerPayment.Remarks" class="form-control" />
+                        <span asp-validation-for="CustomerPayment.Remarks" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Create" class="btn btn-primary" />

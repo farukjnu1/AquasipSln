@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Aquasip.EF.StockTransaction>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReferenceTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReferenceId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QtyIn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QtyOut)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UnitCost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StoreId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReferenceTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReferenceId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QtyIn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QtyOut)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitCost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoreId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.ProductId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.StockTransactionId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.StockTransactionId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.StockTransactionId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

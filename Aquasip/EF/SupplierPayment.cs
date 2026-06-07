@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Aquasip.EF;
+
+public partial class SupplierPayment
+{
+    public long PaymentId { get; set; }
+
+    public long PurchaseOrderId { get; set; }
+
+    public int PaymentMethodId { get; set; }
+
+    public string? TransactionNumber { get; set; }
+
+    public decimal PaidAmount { get; set; }
+
+    public int PaymentStatusId { get; set; }
+
+    public DateTime? PaymentDate { get; set; }
+
+    public string? Remarks { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+
+    public virtual PaymentStatus PaymentStatus { get; set; } = null!;
+
+    public virtual PurchaseOrder PurchaseOrder { get; set; } = null!;
+}

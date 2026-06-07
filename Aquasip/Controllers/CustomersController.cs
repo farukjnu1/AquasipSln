@@ -79,8 +79,7 @@ namespace Aquasip.Controllers
                 })
                 .ToList());
             ViewData["OrderStateId"] = listOrderStatus;
-
-            var aquasipContext = (from o in _context.SalesOrders.Include(o => o.Customer)
+            /*var aquasipContext = (from o in _context.SalesOrders.Include(o => o.Customer)
                                   join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
                                   where o.IsActive == true && o.CustomerId == CustomerId && o.OrderStateId == (OrderStateId == 0 ? o.OrderStateId : OrderStateId)
                                   select new SalesOrderVM
@@ -94,13 +93,14 @@ namespace Aquasip.Controllers
                                       OrderStatus = os.OrderStatus,
                                       ColorCode = os.ColorCode
                                   }).OrderByDescending(x => x.OrderId).Take(PageSize);
-            return View(await aquasipContext.ToListAsync());
+            return View(await aquasipContext.ToListAsync());*/
+            SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
+            return View(soRepo.GetAll(OrderStateId, PageSize));
         }
 
         // GET: Orders/Details/5
         public async Task<IActionResult> SalesOrderDetails(long? id)
         {
-
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
@@ -115,65 +115,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            var order = await (from o in _context.SalesOrders.Include(o => o.Customer)
-                               join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
-                               join pm in _context.PaymentMethods on o.PaymentMethodId equals pm.PaymentMethodId
-                               where o.OrderId == id
-                               select new SalesOrderVM
-                               {
-                                   CustomerName = o.Customer.FullName,
-                                   GrandTotal = o.GrandTotal,
-                                   Notes = o.Notes,
-                                   OrderId = o.OrderId,
-                                   OrderNumber = o.OrderNumber,
-                                   OrderDate = o.OrderDate,
-                                   OrderStatus = os.OrderStatus,
-                                   CustomerId = o.CustomerId,
-                                   DeliveryCharge = o.DeliveryCharge,
-                                   GatewayCharge = o.GatewayCharge,
-                                   OrderStateId = o.OrderStateId,
-                                   PaymentMethodId = o.PaymentMethodId,
-                                   PaymentMethod = pm.PaymentMethodName,
-                                   StreetAddress = o.ShippingAddress.StreetAddress,
-                                   SubTotal = o.SubTotal,
-                                   VatAmount = o.VatAmount,
-                                   VatPercent = o.VatPercent,
-                                   OrderDetails = (from od in _context.SalesOrderDetails.Include(pp => pp.Product)
-                                                   join p in _context.Products on od.ProductId equals p.ProductId
-                                                   where od.OrderId == o.OrderId
-                                                   select new SalesOrderVM.SalesOrderDetailVM
-                                                   {
-                                                       OrderDetailId = od.OrderDetailId,
-                                                       OrderId = od.OrderId,
-                                                       ProductId = od.ProductId,
-                                                       Qty = od.Qty,
-                                                       UnitPrice = od.UnitPrice,
-                                                       TotalPrice = od.TotalPrice,
-                                                       ProductName = od.Product.ProductName
-                                                   }).ToList()
-                               }).FirstOrDefaultAsync();
-            if (order == null)
-            {
-                return NotFound();
-            }
-            order.PaymentTransaction = new PaymentTransactionVM { OrderId = order.OrderId };
-            order.PaymentTransactions = (from pt in _context.PaymentTransactions
-                                         join pm in _context.PaymentMethods on pt.PaymentMethodId equals pm.PaymentMethodId
-                                         join ps in _context.PaymentStatuses on pt.PaymentStatusId equals ps.PaymentStateId
-                                         where pt.OrderId == order.OrderId && pt.PaymentStatusId == 2 // paid
-                                         select new PaymentTransactionVM
-                                         {
-                                             OrderId = pt.OrderId,
-                                             PaidAmount = pt.PaidAmount,
-                                             PaymentDate = pt.PaymentDate,
-                                             PaymentMethodId = pt.PaymentMethodId,
-                                             PaymentStatusId = pt.PaymentStatusId,
-                                             PaymentTransactionId = pt.PaymentTransactionId,
-                                             Remarks = pt.Remarks,
-                                             TransactionNumber = pt.TransactionNumber,
-                                             PaymentMethod = pm.PaymentMethodName,
-                                             PaymentStatus = ps.PaymentStatus1
-                                         }).ToList();
             ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodId)
                 .Select(x => new SelectListItem
                 {
@@ -188,10 +129,11 @@ namespace Aquasip.Controllers
                     Text = x.PaymentStatus1
                 })
                 .ToList();
-            return View(order);
+            SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
+            return View(soRepo.GetById((long)id));
         }
 
-        public async Task<IActionResult> PaymentTransactions()
+        public async Task<IActionResult> CustomerPayments()
         {
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
@@ -205,7 +147,7 @@ namespace Aquasip.Controllers
 
             long CustomerId = HttpContext.Session.GetString("CustomerId") == null ? 0 : Convert.ToInt64(HttpContext.Session.GetString("CustomerId"));
 
-            var aquasipContext = _context.PaymentTransactions.Include(s => s.Order).Include(s => s.PaymentMethod).Include(s => s.PaymentStatus).Where(x=> x.Order.CustomerId == CustomerId && x.PaymentStatusId == 2); // paid
+            var aquasipContext = _context.CustomerPayments.Include(s => s.Order).Include(s => s.PaymentMethod).Include(s => s.PaymentStatus).Where(x=> x.Order.CustomerId == CustomerId && x.PaymentStatusId == 2); // paid
             return View(await aquasipContext.ToListAsync());
         }
 

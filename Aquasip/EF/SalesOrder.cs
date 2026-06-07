@@ -37,9 +37,9 @@ public partial class SalesOrder
 
     public virtual Customer Customer { get; set; } = null!;
 
-    public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+    public virtual ICollection<CustomerPayment> CustomerPayments { get; set; } = new List<CustomerPayment>();
 
-    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+    public virtual PaymentMethod PaymentMethod { get; set; } = null!;
 
     public virtual ICollection<SalesOrderDetail> SalesOrderDetails { get; set; } = new List<SalesOrderDetail>();
 

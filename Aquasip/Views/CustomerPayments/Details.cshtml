@@ -39,23 +39,23 @@
             @Html.DisplayNameFor(model => model.Order)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Order.OrderId)
+            @Html.DisplayFor(model => model.Order.OrderNumber)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PaymentMethod)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentMethod.PaymentMethodId)
+            @Html.DisplayFor(model => model.PaymentMethod.PaymentMethodName)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PaymentStatus)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentStatus.PaymentStateId)
+            @Html.DisplayFor(model => model.PaymentStatus.PaymentStatus1)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.PaymentTransactionId">Edit</a> |
+    @* <a asp-action="Edit" asp-route-id="@Model?.PaymentTransactionId">Edit</a> | *@
     <a asp-action="Index">Back to List</a>
 </div>

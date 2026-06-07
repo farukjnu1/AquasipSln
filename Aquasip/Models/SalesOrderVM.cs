@@ -31,23 +31,26 @@ namespace Aquasip.Models
         public int OrderStateId { get; set; }
 
         public string? Notes { get; set; }
+        public bool? IsActive { get; set; }
+
         public virtual ICollection<SalesOrderDetailVM> OrderDetails { get; set; } = new List<SalesOrderDetailVM>();
 
         public virtual CustomerVM Customer { get; set; } = null!;
-        public string? CustomerName { get; set; }
-        public string? OrderStatus { get; set; }
-        public string? PaymentMethod { get; set; }
-        public string? StreetAddress { get; set; }
-        public string? ColorCode { get; set; }
+        //public string? CustomerName { get; set; }
+        //public string? OrderStatus { get; set; }
+        //public string? PaymentMethod { get; set; }
+        //public string? StreetAddress { get; set; }
+        //public string? ColorCode { get; set; }
 
         //public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-        public virtual PaymentMethodVM PaymentMethodVm { get; set; } = null!;
+        public virtual PaymentMethodVM PaymentMethod { get; set; } = null!;
 
-        public virtual ICollection<PaymentTransactionVM> PaymentTransactions { get; set; } = new List<PaymentTransactionVM>();
+        public virtual ICollection<CustomerPaymentVM> CustomerPayments { get; set; } = new List<CustomerPaymentVM>();
 
         public virtual ShippingAddressVM ShippingAddress { get; set; } = null!;
-        public virtual PaymentTransactionVM PaymentTransaction { get; set; } = null!;
+        public virtual CustomerPaymentVM CustomerPayment { get; set; } = null!;
+        public virtual SalesOrderStateVM SalesOrderState { get; set; } = null!;
         public enum QueryType
         {
             GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4
@@ -67,9 +70,9 @@ namespace Aquasip.Models
 
             public decimal TotalPrice { get; set; }
 
-            public virtual Order Order { get; set; } = null!;
+            public virtual SalesOrderVM Order { get; set; } = null!;
 
-            public virtual Product Product { get; set; } = null!;
+            public virtual ProductVM Product { get; set; } = null!;
             public string ProductName { get; set; } = null!;
 
         }

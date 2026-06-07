@@ -429,8 +429,6 @@ namespace Aquasip.Controllers
             ReviewRepository reviewRepo = new ReviewRepository(_connectionString);
             var listReview = reviewRepo.GetAll();
             ViewData["Reviews"] = listReview;
-            //var aquasipContext = _context.Reviews.Include(r => r.Customer).Include(r => r.Product);
-            //ViewData["Reviews"] = aquasipContext.ToList();
 
             return View(oReview);
         }

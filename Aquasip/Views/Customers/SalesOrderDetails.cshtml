@@ -18,7 +18,7 @@
 
     decimal totalPaidAmount = 0;
     string? paymentStatus = "undefined";
-    totalPaidAmount = Model.PaymentTransactions.Sum(x => x.PaidAmount);
+    totalPaidAmount = Model.CustomerPayments.Sum(x => x.PaidAmount);
     paymentStatus = totalPaidAmount < Model.GrandTotal ? "DUE" : "PAID";
     string paymentStatusColor = totalPaidAmount < Model.GrandTotal ? "badge bg-danger" : "badge bg-success";
 }
@@ -29,91 +29,91 @@
 <div class="container-fluid">
     <h3>Sales Order <span class="@paymentStatusColor">@paymentStatus</span></h3>
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
             <h4>Order-Summery</h4>
             <hr />
             <dl class="row">
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.OrderNumber)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.OrderNumber)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.OrderDate)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.OrderDate)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.SubTotal)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.SubTotal)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.VatPercent) (%)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.VatPercent)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.VatAmount)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.VatAmount)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.DeliveryCharge)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.DeliveryCharge)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.GatewayCharge)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.GatewayCharge)
                 </dd>
-                <dt class="col-sm-2 text-danger">
+                <dt class="col-sm-3 text-danger">
                     @Html.DisplayNameFor(model => model.GrandTotal)
                 </dt>
-                <dd class="col-sm-10 text-danger">
+                <dd class="col-sm-9 text-danger">
                     @Html.DisplayFor(model => model.GrandTotal)
                 </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.OrderStatus)
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.SalesOrderState.OrderStatus)
                 </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.OrderStatus)
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.SalesOrderState.OrderStatus)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.Notes)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.Notes)
                 </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.CustomerName)
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Customer.FullName)
                 </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.CustomerName)
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Customer.FullName)
                 </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.PaymentMethod)
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.PaymentMethod.PaymentMethodName)
                 </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.PaymentMethod)
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.PaymentMethod.PaymentMethodName)
                 </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ShippingAddress)
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.ShippingAddress.StreetAddress)
                 </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.StreetAddress)
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.ShippingAddress.StreetAddress)
                 </dd>
             </dl>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
             <h4>Order-Details</h4>
             <hr />
             <table class="table">
@@ -129,7 +129,7 @@
                     @foreach (var item in Model.OrderDetails)
                     {
                         <tr>
-                            <td>@item.ProductName</td>
+                            <td>@item.Product.ProductName</td>
                             <td>@item.UnitPrice</td>
                             <td>@item.Qty</td>
                             <td>@item.TotalPrice</td>
@@ -152,7 +152,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.PaymentTransactions)
+                    @foreach (var item in Model.CustomerPayments)
                     {
                         <tr>
                             <td>@item.PaymentDate</td>

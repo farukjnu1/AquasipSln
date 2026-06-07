@@ -25,14 +25,14 @@
                 <span asp-validation-for="OrderNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CustomerName" class="control-label"></label>
-                <input asp-for="CustomerName" class="form-control" readonly disabled />
+                <label asp-for="Customer.FullName" class="control-label"></label>
+                <input asp-for="Customer.FullName" class="form-control" readonly disabled />
                 <input type="hidden" asp-for="CustomerId" />
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ShippingAddressId" class="control-label"></label>
-                <input asp-for="StreetAddress" class="form-control" readonly disabled />
+                <input asp-for="ShippingAddress.StreetAddress" class="form-control" readonly disabled />
                 <input type="hidden" asp-for="ShippingAddressId" />
                 <span asp-validation-for="ShippingAddressId" class="text-danger"></span>
             </div>
@@ -89,7 +89,7 @@
         </form>
     </div>
     <div class="col-md-6">
-        <h4>Order-Summery</h4>
+        <h4>Order-Details</h4>
         <hr />
         <table class="table">
             <thead>
@@ -104,7 +104,7 @@
                 @foreach (var item in Model.OrderDetails)
                 {
                     <tr>
-                        <td>@item.ProductName</td>
+                        <td>@item.Product.ProductName</td>
                         <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
                         <td>@item.TotalPrice</td>

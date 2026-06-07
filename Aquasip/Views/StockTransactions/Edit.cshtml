@@ -1,0 +1,80 @@
+﻿@model Aquasip.EF.StockTransaction
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>StockTransaction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="StockTransactionId" />
+            <div class="form-group">
+                <label asp-for="TransactionDate" class="control-label"></label>
+                <input asp-for="TransactionDate" class="form-control" />
+                <span asp-validation-for="TransactionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TransactionTypeId" class="control-label"></label>
+                <input asp-for="TransactionTypeId" class="form-control" />
+                <span asp-validation-for="TransactionTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReferenceTypeId" class="control-label"></label>
+                <input asp-for="ReferenceTypeId" class="form-control" />
+                <span asp-validation-for="ReferenceTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReferenceId" class="control-label"></label>
+                <input asp-for="ReferenceId" class="form-control" />
+                <span asp-validation-for="ReferenceId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QtyIn" class="control-label"></label>
+                <input asp-for="QtyIn" class="form-control" />
+                <span asp-validation-for="QtyIn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QtyOut" class="control-label"></label>
+                <input asp-for="QtyOut" class="form-control" />
+                <span asp-validation-for="QtyOut" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UnitCost" class="control-label"></label>
+                <input asp-for="UnitCost" class="form-control" />
+                <span asp-validation-for="UnitCost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StoreId" class="control-label"></label>
+                <input asp-for="StoreId" class="form-control" />
+                <span asp-validation-for="StoreId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsActive" class="control-label"></label>
+                <input asp-for="IsActive" class="form-control" />
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

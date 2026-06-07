@@ -1,0 +1,111 @@
+﻿@model IEnumerable<Aquasip.EF.CustomerPayment>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var PaymentDateStart = ViewData["PaymentDateStart"] as string;
+    var PaymentDateEnd = ViewData["PaymentDateEnd"] as string;
+    var PageSize = (int?)ViewData["PageSize"];
+}
+<h3>Customer Payments</h3>
+<div class="row">
+    <div class="col-md-6">
+        <label for="PaymentDateStart" class="control-label">Payment Date</label>
+        <input type="datetime-local" id="PaymentDateStart" value="@PaymentDateStart" />
+        <label for="PaymentDateEnd" class="control-label">to</label>
+        <input type="datetime-local" id="PaymentDateEnd" value="@PaymentDateEnd" />
+    </div>
+    <div class="col-md-2">
+        <input type="hidden" id="nPageSize" value="@PageSize" />
+        <label for="PageSize" class="control-label">Row</label>
+        <select id="PageSize">
+            <option value="10">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button onclick="search()">Search</button>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaidAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Remarks)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Order)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var paymentStatusBg = item.PaymentStatusId == 1 ? "bg-danger" : item.PaymentStatusId == 2 ? "bg-success" : "bg-secondary";
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaidAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Remarks)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Order.OrderNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentMethod.PaymentMethodName)
+            </td>
+            <td>
+                <span class="badge @paymentStatusBg">
+                    @Html.DisplayFor(modelItem => item.PaymentStatus.PaymentStatus1)
+                </span>
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.PaymentId">Details</a>
+                @* <a asp-action="Edit" asp-route-id="@item.PaymentId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.PaymentId">Delete</a> *@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script>
+    // Equivalent to jQuery $(document).ready()
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Document is ready!");
+        setSearchValues();
+    });
+    function setSearchValues(){
+        var nPageSize = document.getElementById('nPageSize').value;
+        document.getElementById('PageSize').value = nPageSize;
+    }
+    function search(){
+        var PaymentDateStart = document.getElementById('PaymentDateStart').value;
+        var PaymentDateEnd = document.getElementById('PaymentDateEnd').value;
+        var PageSize = document.getElementById('PageSize').value;
+        location.href = '/CustomerPayments/Index?PaymentDateStart='+PaymentDateStart + '&PaymentDateEnd='+PaymentDateEnd+'&PageSize=' + PageSize;
+    }
+</script>
