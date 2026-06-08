@@ -37,6 +37,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Supplier)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PurchaseState)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -65,12 +68,16 @@
                 @Html.DisplayFor(modelItem => item.IsActive)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Supplier.SupplierId)
+                @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PurchaseState.PurchaseStatus)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.PurchaseOrderId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PurchaseOrderId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PurchaseOrderId">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.PurchaseOrderId">Details</a> 
+                @* |
+                <a asp-action="Delete" asp-route-id="@item.PurchaseOrderId">Delete</a> *@
             </td>
         </tr>
 }

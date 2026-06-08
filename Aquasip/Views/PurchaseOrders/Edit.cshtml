@@ -3,17 +3,19 @@
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var listPurchaseOrderDetail = ViewData["PurchaseOrderDetails"] as List<Aquasip.EF.PurchaseOrderDetail>;
 }
 
-<h1>Edit</h1>
+<h2>Edit PurchaseOrder</h2>
 
-<h4>PurchaseOrder</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
+        <h4>Summery</h4>
+        <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="PurchaseOrderId" />
+            <input type="hidden" asp-for="IsActive" value="True" />
             <div class="form-group">
                 <label asp-for="Ponumber" class="control-label"></label>
                 <input asp-for="Ponumber" class="form-control" />
@@ -31,33 +33,84 @@
             </div>
             <div class="form-group">
                 <label asp-for="SubTotal" class="control-label"></label>
-                <input asp-for="SubTotal" class="form-control" />
+                <input asp-for="SubTotal" class="form-control" readonly />
                 <span asp-validation-for="SubTotal" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DiscountAmount" class="control-label"></label>
-                <input asp-for="DiscountAmount" class="form-control" />
+                <input asp-for="DiscountAmount" class="form-control" readonly />
                 <span asp-validation-for="DiscountAmount" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="TaxPercent" class="control-label"></label>
+                <input asp-for="TaxPercent" class="form-control" />
+                <span asp-validation-for="TaxPercent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="TaxAmount" class="control-label"></label>
-                <input asp-for="TaxAmount" class="form-control" />
+                <input asp-for="TaxAmount" class="form-control" readonly />
                 <span asp-validation-for="TaxAmount" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TotalAmount" class="control-label"></label>
-                <input asp-for="TotalAmount" class="form-control" />
+                <input asp-for="TotalAmount" class="form-control" readonly />
                 <span asp-validation-for="TotalAmount" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="IsActive" class="control-label"></label>
-                <input asp-for="IsActive" class="form-control" />
+                <select asp-for="IsActive" class="form-control">
+                    <option value="True">Enable</option>
+                    <option value="False">Disable</option>
+                </select>
                 <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="PurchaseStateId" class="control-label"></label>
+                <select asp-for="PurchaseStateId" class="form-control" asp-items="ViewBag.PurchaseStateId"></select>
+                <span asp-validation-for="PurchaseStateId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Remark" class="control-label"></label>
+                <input asp-for="Remark" class="form-control" />
+                <span asp-validation-for="Remark" class="text-danger"></span>
+            </div>
+            <div class="form-group pt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Details</h4>
+        <a href="/PurchaseOrderDetails/Create?PurchaseOrderId=@Model.PurchaseOrderId">Add Purchase item</a>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>UnitCost</th>
+                    <th>Qty</th>
+                    <th>Discount</th>
+                    <th style="text-align:right">Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in listPurchaseOrderDetail)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>@item.UnitCost</td>
+                        <td>@item.Qty</td>
+                        <td>@item.DiscountAmount</td>
+                        <td align="right">@item.LineTotal</td>
+                        <td>
+                            <a href="/PurchaseOrderDetails/Delete/@item.PurchaseOrderDetailId">Remove</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -65,6 +118,15 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
+@* @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+} *@
+
+<script>
+    function calculateLineTotal(){
+        var UnitCost = parseFloat(document.getElementById('UnitCost').value);
+        var Qty = parseFloat(document.getElementById('Qty').value);
+        var DiscountAmount = parseFloat(document.getElementById('DiscountAmount').value);
+        document.getElementById('LineTotal').value = (UnitCost * Qty) - DiscountAmount;
+    }
+</script>

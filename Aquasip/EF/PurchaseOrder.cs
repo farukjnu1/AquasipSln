@@ -35,6 +35,8 @@ public partial class PurchaseOrder
 
     public virtual ICollection<PurchaseReturn> PurchaseReturns { get; set; } = new List<PurchaseReturn>();
 
+    public virtual PurchaseOrderState? PurchaseState { get; set; }
+
     public virtual Supplier Supplier { get; set; } = null!;
 
     public virtual ICollection<SupplierPayment> SupplierPayments { get; set; } = new List<SupplierPayment>();

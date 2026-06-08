@@ -16,4 +16,6 @@ public partial class PurchaseOrderState
     public string? ColorCode { get; set; }
 
     public bool? IsActive { get; set; }
+
+    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
 }

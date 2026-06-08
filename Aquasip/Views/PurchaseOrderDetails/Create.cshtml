@@ -1,67 +1,140 @@
 ﻿@model Aquasip.EF.PurchaseOrderDetail
-
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var oPurchaseOrder = ViewData["PurchaseOrderId"] as Aquasip.EF.PurchaseOrder;
 }
-
-<h1>Create</h1>
-
-<h4>PurchaseOrderDetail</h4>
-<hr />
+<h3>Create</h3>
 <div class="row">
     <div class="col-md-4">
+        <h4>PurchaseOrderDetail</h4>
+        <hr />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <input type="hidden" asp-for="PurchaseOrderId" />
+            <input type="hidden" asp-for="IsActive" value="True" />
+            @* <div class="form-group">
                 <label asp-for="PurchaseOrderId" class="control-label"></label>
                 <select asp-for="PurchaseOrderId" class ="form-control" asp-items="ViewBag.PurchaseOrderId"></select>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="ProductId" class="control-label"></label>
                 <select asp-for="ProductId" class ="form-control" asp-items="ViewBag.ProductId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Qty" class="control-label"></label>
-                <input asp-for="Qty" class="form-control" />
-                <span asp-validation-for="Qty" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="UnitCost" class="control-label"></label>
-                <input asp-for="UnitCost" class="form-control" />
+                <input asp-for="UnitCost" type="number" min="1" class="form-control" onkeyup="calculateLineTotal()" />
                 <span asp-validation-for="UnitCost" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Qty" class="control-label"></label>
+                <input asp-for="Qty" type="number" min="1" class="form-control" onkeyup="calculateLineTotal()" />
+                <span asp-validation-for="Qty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="DiscountAmount" class="control-label"></label>
-                <input asp-for="DiscountAmount" class="form-control" />
+                <input asp-for="DiscountAmount" type="number" min="0" class="form-control" onkeyup="calculateLineTotal()" />
                 <span asp-validation-for="DiscountAmount" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LineTotal" class="control-label"></label>
-                <input asp-for="LineTotal" class="form-control" />
+                <input asp-for="LineTotal" type="number" min="0" class="form-control" readonly />
                 <span asp-validation-for="LineTotal" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="StoreId" class="control-label"></label>
                 <input asp-for="StoreId" class="form-control" />
                 <span asp-validation-for="StoreId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div> *@
+            @* <div class="form-group">
                 <label asp-for="IsActive" class="control-label"></label>
                 <input asp-for="IsActive" class="form-control" />
                 <span asp-validation-for="IsActive" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div> *@
+            <div class="form-group pt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
+    <div class="col-md-6">
+        <h4>PurchaseOrder</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-4">
+                Ponumber
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.Ponumber
+            </dd>
+            <dt class="col-sm-4">
+                Podate
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.Podate
+            </dd>
+            <dt class="col-sm-4">
+                SubTotal
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.SubTotal
+            </dd>
+            <dt class="col-sm-4">
+                DiscountAmount
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.DiscountAmount
+            </dd>
+            <dt class="col-sm-4">
+                TaxPercent
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.TaxPercent
+            </dd>
+            <dt class="col-sm-4">
+                TaxAmount
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.TaxAmount
+            </dd>
+            <dt class="col-sm-4">
+                TotalAmount
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.TotalAmount
+            </dd>
+            <dt class="col-sm-4">
+                IsActive
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.IsActive
+            </dd>
+            <dt class="col-sm-4">
+                Supplier
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseOrder.Supplier.SupplierName
+            </dd>
+        </dl>
+    </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @* <a asp-action="Index">Back to List</a> *@
+    <a href="/PurchaseOrders/Edit/@oPurchaseOrder.PurchaseOrderId">Back</a>
 </div>
 
+@* 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+ *@
+
+<script>
+    function calculateLineTotal(){
+        var UnitCost = parseFloat(document.getElementById('UnitCost').value);
+        var Qty = parseFloat(document.getElementById('Qty').value);
+        var DiscountAmount = parseFloat(document.getElementById('DiscountAmount').value);
+        document.getElementById('LineTotal').value = (UnitCost * Qty) - DiscountAmount;
+    }
+</script>

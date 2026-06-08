@@ -1,5 +1,6 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace Aquasip.Controllers
         // GET: PurchaseOrders
         public async Task<IActionResult> Index()
         {
-            var aquasipContext = _context.PurchaseOrders.Include(p => p.Supplier);
+            var aquasipContext = _context.PurchaseOrders.Include(p => p.Supplier).Include(x=>x.PurchaseState);
             return View(await aquasipContext.ToListAsync());
         }
 
@@ -49,7 +50,16 @@ namespace Aquasip.Controllers
         // GET: PurchaseOrders/Create
         public IActionResult Create()
         {
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId");
+            var listSuppliers = new List<SelectListItem>();
+            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.SupplierId.ToString(),
+                    Text = x.SupplierName
+                })
+                .ToList());
+            ViewData["SupplierId"] = listSuppliers;
+            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId");
             return View();
         }
 
@@ -60,13 +70,28 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxAmount,TotalAmount,IsActive")] PurchaseOrder purchaseOrder)
         {
-            if (ModelState.IsValid)
+            try
             {
+                purchaseOrder.Ponumber = CodeGenerate.PurchaseOrderNumber(DateTime.Now);
                 _context.Add(purchaseOrder);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["message"] = "Please Add Purchase items";
+                return RedirectToAction("Create", "PurchaseOrderDetails", new { purchaseOrderId = purchaseOrder.PurchaseOrderId });
             }
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", purchaseOrder.SupplierId);
+            catch 
+            {
+                TempData["message"] = "Exceptions!";
+            }
+            var listSuppliers = new List<SelectListItem>();
+            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.SupplierId.ToString(),
+                    Text = x.SupplierName
+                })
+                .ToList());
+            ViewData["SupplierId"] = listSuppliers;
+            
             return View(purchaseOrder);
         }
 
@@ -83,7 +108,28 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", purchaseOrder.SupplierId);
+
+            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", purchaseOrder.SupplierId);
+            var listSuppliers = new List<SelectListItem>();
+            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.SupplierId.ToString(),
+                    Text = x.SupplierName
+                })
+                .ToList());
+            ViewData["SupplierId"] = listSuppliers;
+            var listPurchaseOrderState = new List<SelectListItem>();
+            listPurchaseOrderState.AddRange(_context.PurchaseOrderStates.OrderBy(x => x.Sequence)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.PurchaseStateId.ToString(),
+                    Text = x.PurchaseStatus
+                })
+                .ToList());
+            ViewData["PurchaseStateId"] = listPurchaseOrderState;
+            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id).Include(x=>x.Product).ToListAsync();
+
             return View(purchaseOrder);
         }
 
@@ -92,34 +138,66 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxAmount,TotalAmount,IsActive")] PurchaseOrder purchaseOrder)
+        public async Task<IActionResult> Edit(long id, [Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxPercent,TaxAmount,TotalAmount,IsActive,PurchaseStateId,Remark")] PurchaseOrder purchaseOrder)
         {
             if (id != purchaseOrder.PurchaseOrderId)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            
+            try
             {
-                try
+                #region order-summery
+                _context.Update(purchaseOrder);
+                await _context.SaveChangesAsync();
+
+                var oOrder = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == purchaseOrder.PurchaseOrderId).FirstOrDefault();
+                if (oOrder != null)
                 {
-                    _context.Update(purchaseOrder);
-                    await _context.SaveChangesAsync();
+                    oOrder.IsActive = true;
+                    oOrder.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == purchaseOrder.PurchaseOrderId).Sum(x => x.LineTotal);
+                    oOrder.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
+                    oOrder.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
+                    // =========================
+                    // Save Order Header
+                    // =========================
+                    _context.SaveChanges();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PurchaseOrderExists(purchaseOrder.PurchaseOrderId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                #endregion
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", purchaseOrder.SupplierId);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PurchaseOrderExists(purchaseOrder.PurchaseOrderId))
+                {
+                    //return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            var listSuppliers = new List<SelectListItem>();
+            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.SupplierId.ToString(),
+                    Text = x.SupplierName
+                })
+                .ToList());
+            ViewData["SupplierId"] = listSuppliers;
+            var listPurchaseOrderState = new List<SelectListItem>();
+            listPurchaseOrderState.AddRange(_context.PurchaseOrderStates.OrderBy(x => x.Sequence)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.PurchaseStateId.ToString(),
+                    Text = x.PurchaseStatus
+                })
+                .ToList());
+            ViewData["PurchaseStateId"] = listPurchaseOrderState;
+            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id).Include(x => x.Product).ToListAsync();
+
             return View(purchaseOrder);
         }
 

@@ -1,5 +1,6 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
+using Aquasip.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -48,10 +49,18 @@ namespace Aquasip.Controllers
         }
 
         // GET: PurchaseOrderDetails/Create
-        public IActionResult Create()
+        public IActionResult Create(long PurchaseOrderId)
         {
-            ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId");
-            ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrders, "PurchaseOrderId", "PurchaseOrderId");
+            //ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId");
+            var listProducts = new List<SelectListItem>();
+            listProducts.AddRange(_context.Products.OrderBy(x => x.ProductName).Select(x => new SelectListItem
+                {
+                    Value = x.ProductId.ToString(),
+                    Text = x.ProductName
+                })
+                .ToList());
+            ViewData["ProductId"] = listProducts;
+            ViewData["PurchaseOrderId"] = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == PurchaseOrderId).Include(i => i.Supplier).FirstOrDefault();
             return View();
         }
 
@@ -62,14 +71,63 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PurchaseOrderDetailId,PurchaseOrderId,ProductId,Qty,UnitCost,DiscountAmount,LineTotal,StoreId,IsActive")] PurchaseOrderDetail purchaseOrderDetail)
         {
-            if (ModelState.IsValid)
+            using (var _context = new AquasipContext())
             {
-                _context.Add(purchaseOrderDetail);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Begin Transaction
+                using var transaction = _context.Database.BeginTransaction();
+                try
+                {
+                    #region order-details
+                    // =========================
+                    // Save Order Details
+                    // =========================
+                    purchaseOrderDetail.LineTotal = (purchaseOrderDetail.Qty ?? 0) * (purchaseOrderDetail.UnitCost ?? 0) - (purchaseOrderDetail.DiscountAmount ?? 0);
+                    _context.Add(purchaseOrderDetail);
+                    await _context.SaveChangesAsync();
+                    #endregion
+                    #region order-summery
+                    var oOrder = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).FirstOrDefault();
+                    if (oOrder != null) 
+                    {
+                        oOrder.IsActive = true;
+                        oOrder.DiscountAmount = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).Sum(x => x.DiscountAmount);
+                        oOrder.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).Sum(x => x.LineTotal);
+                        oOrder.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
+                        oOrder.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
+                        // =========================
+                        // Save Order Header
+                        // =========================
+                        _context.SaveChanges();
+                    }
+                    #endregion
+                    
+                    // =========================
+                    // Commit Transaction
+                    // =========================
+                    transaction.Commit();
+                    return RedirectToAction("Edit", "PurchaseOrders", new { id = purchaseOrderDetail.PurchaseOrderId });
+                }
+                catch (Exception ex)
+                {
+                    // =========================
+                    // Rollback Transaction
+                    // =========================
+                    transaction.Rollback();
+                }
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId", purchaseOrderDetail.ProductId);
-            ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrders, "PurchaseOrderId", "PurchaseOrderId", purchaseOrderDetail.PurchaseOrderId);
+
+            //ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId");
+            var listProducts = new List<SelectListItem>();
+            listProducts.AddRange(_context.Products.OrderBy(x => x.ProductName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.ProductId.ToString(),
+                    Text = x.ProductName
+                })
+                .ToList());
+            ViewData["ProductId"] = listProducts;
+            ViewData["PurchaseOrderId"] = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).FirstOrDefault();
+
             return View(purchaseOrderDetail);
         }
 
@@ -102,7 +160,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
@@ -153,14 +210,55 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var purchaseOrderDetail = await _context.PurchaseOrderDetails.FindAsync(id);
-            if (purchaseOrderDetail != null)
+            using (var _context = new AquasipContext())
             {
-                _context.PurchaseOrderDetails.Remove(purchaseOrderDetail);
+                // Begin Transaction
+                using var transaction = _context.Database.BeginTransaction();
+                try
+                {
+                    #region order-details
+                    var purchaseOrderDetail = await _context.PurchaseOrderDetails.FindAsync(id);
+                    if (purchaseOrderDetail != null)
+                    {
+                        _context.PurchaseOrderDetails.Remove(purchaseOrderDetail);
+                    }
+                    await _context.SaveChangesAsync();
+                    #endregion
+                    #region order-summery
+                    var oOrder = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).FirstOrDefault();
+                    if (oOrder != null)
+                    {
+                        oOrder.IsActive = true;
+                        oOrder.DiscountAmount = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).Sum(x => x.DiscountAmount);
+                        oOrder.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == purchaseOrderDetail.PurchaseOrderId).Sum(x => x.LineTotal);
+                        oOrder.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
+                        oOrder.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
+                        // =========================
+                        // Save Order Header
+                        // =========================
+                        _context.SaveChanges();
+                    }
+                    #endregion
+
+                    // =========================
+                    // Commit Transaction
+                    // =========================
+                    transaction.Commit();
+                    TempData["message"] = "Please Add Purchase items";
+                    return RedirectToAction("Edit", "PurchaseOrders", new { id = purchaseOrderDetail.PurchaseOrderId });
+                    
+                }
+                catch (Exception ex)
+                {
+                    // =========================
+                    // Rollback Transaction
+                    // =========================
+                    transaction.Rollback();
+                    TempData["message"] = "Exceptions!";
+                }
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "PurchaseOrders");
         }
 
         private bool PurchaseOrderDetailExists(long id)

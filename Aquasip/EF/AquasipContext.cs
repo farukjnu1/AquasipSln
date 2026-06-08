@@ -372,6 +372,10 @@ public partial class AquasipContext : DbContext
             entity.Property(e => e.TaxPercent).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
 
+            entity.HasOne(d => d.PurchaseState).WithMany(p => p.PurchaseOrders)
+                .HasForeignKey(d => d.PurchaseStateId)
+                .HasConstraintName("FK_PurchaseOrder_PurchaseOrderState");
+
             entity.HasOne(d => d.Supplier).WithMany(p => p.PurchaseOrders)
                 .HasForeignKey(d => d.SupplierId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

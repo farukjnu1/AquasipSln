@@ -13,5 +13,14 @@
             // Combine last 2 digits of phone number with timestamp
             return last2Digits + timestamp;
         }
+
+        public static string PurchaseOrderNumber(DateTime dateTime)
+        {
+            // Calculate total seconds since epoch
+            string timestamp = TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+
+            return timestamp;
+        }
+
     }
 }

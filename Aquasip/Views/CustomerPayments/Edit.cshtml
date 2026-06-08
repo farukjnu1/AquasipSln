@@ -1,4 +1,4 @@
-﻿@model Aquasip.EF.PaymentTransaction
+﻿@model Aquasip.EF.CustomerPayment
 
 @{
     ViewData["Title"] = "Edit";
@@ -7,13 +7,13 @@
 
 <h1>Edit</h1>
 
-<h4>PaymentTransaction</h4>
+<h4>CustomerPayment</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PaymentTransactionId" />
+            <input type="hidden" asp-for="PaymentId" />
             <div class="form-group">
                 <label asp-for="OrderId" class="control-label"></label>
                 @* <select asp-for="OrderId" class="form-control" asp-items="ViewBag.OrderId"></select> *@

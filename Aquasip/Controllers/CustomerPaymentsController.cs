@@ -34,6 +34,7 @@ namespace Aquasip.Controllers
                 if (string.IsNullOrEmpty(PaymentDateStart) || string.IsNullOrEmpty(PaymentDateEnd))
                 {
                     listCustomerPayment = await _context.CustomerPayments
+                        .Where(x => x.IsActive == true)
                         .Skip(0)
                         .Take(PageSize)
                         .Include(p => p.Order)
@@ -46,7 +47,7 @@ namespace Aquasip.Controllers
                     DateTime DateStart = Convert.ToDateTime(PaymentDateStart);
                     DateTime DateEnd = Convert.ToDateTime(PaymentDateEnd);
                     listCustomerPayment = await _context.CustomerPayments
-                        .Where(x => x.PaymentDate > DateStart && x.PaymentDate < DateEnd)
+                        .Where(x=> x.IsActive == true && x.PaymentDate > DateStart && x.PaymentDate < DateEnd)
                         .Skip(0)
                         .Take(PageSize)
                         .Include(p => p.Order)
@@ -103,6 +104,7 @@ namespace Aquasip.Controllers
         {
             try
             {
+                customerPayment.IsActive = true;
                 _context.Add(customerPayment);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Payment created successfully!";
@@ -166,6 +168,7 @@ namespace Aquasip.Controllers
 
             try
             {
+                customerPayment.IsActive = true;
                 _context.Update(customerPayment);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Data saved successfully.";
