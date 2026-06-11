@@ -66,7 +66,7 @@ namespace Aquasip.Controllers
         {
             AquasipContext _context = new AquasipContext();
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
-            ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId");
+            ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
             return View();
         }
 
@@ -151,10 +151,7 @@ namespace Aquasip.Controllers
                 }
             }
             #endregion
-            //return RedirectToAction(nameof(Index));
-            //ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", review.CustomerId);
-            //ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId", review.ProductId);
-            //return View(review);
+            
             return RedirectToAction("Review", "Home");
         }
 
@@ -177,7 +174,7 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", review.CustomerId);
-            ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId", review.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId", review.ProductId);
             return View(review);
         }
 
@@ -212,7 +209,7 @@ namespace Aquasip.Controllers
                 }
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", review.CustomerId);
-            ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId", review.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId", review.ProductId);
             return RedirectToAction(nameof(Index));
         }
 

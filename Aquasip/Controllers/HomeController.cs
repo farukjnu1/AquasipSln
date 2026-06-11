@@ -413,7 +413,7 @@ namespace Aquasip.Controllers
             #endregion
 
             AquasipContext _context = new AquasipContext();
-            var listProduct = (from x in _context.Products select x).ToList();
+            var listProduct = (from x in _context.Products where x.IsActive == true select x).ToList();
             List<SelectListItem> selectList = new List<SelectListItem>();
             foreach (var item in listProduct)
             {

@@ -1,5 +1,7 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
+using Aquasip.Models;
+using Aquasip.Services.TokenServices;
 using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,16 +17,20 @@ namespace Aquasip.Controllers
     public class PurchaseOrdersController : Controller
     {
         private readonly AquasipContext _context;
+        private readonly ITokenService _tokenService;
 
-        public PurchaseOrdersController(AquasipContext context)
+        public PurchaseOrdersController(AquasipContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: PurchaseOrders
         public async Task<IActionResult> Index()
         {
-            var aquasipContext = _context.PurchaseOrders.Include(p => p.Supplier).Include(x=>x.PurchaseState);
+            var aquasipContext = _context.PurchaseOrders
+                .Include(p => p.Supplier)
+                .Include(x => x.PurchaseState);
             return View(await aquasipContext.ToListAsync());
         }
 
@@ -35,16 +41,96 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
-            var purchaseOrder = await _context.PurchaseOrders
-                .Include(p => p.Supplier)
-                .FirstOrDefaultAsync(m => m.PurchaseOrderId == id);
-            if (purchaseOrder == null)
+            PurchaseOrderVM oPurchaseOrder = new PurchaseOrderVM();
+            try
             {
-                return NotFound();
+                #region dropdown list
+                ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodId)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.PaymentMethodId.ToString(),
+                        Text = x.PaymentMethodName
+                    })
+                    .ToList();
+                ViewData["PaymentStatusId"] = _context.PaymentStatuses.OrderBy(x => x.Sequence)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.PaymentStateId.ToString(),
+                        Text = x.PaymentStatus1
+                    })
+                    .ToList();
+                #endregion
+                #region Model of PurchaseOrderVM
+                var purchaseOrder = await _context.PurchaseOrders
+                    .Include(p => p.Supplier)
+                    .FirstOrDefaultAsync(m => m.PurchaseOrderId == id);
+                if (purchaseOrder == null)
+                {
+                    return NotFound();
+                }
+                var listPurchaseOrderDetail = await _context.PurchaseOrderDetails
+                    .Where(x => x.PurchaseOrderId == id && x.IsActive == true)
+                    .Include(x => x.Product)
+                    .Select(x => new PurchaseOrderDetailVM
+                    {
+                        LineTotal = x.LineTotal,
+                        UnitCost = x.UnitCost,
+                        ProductId = x.ProductId,
+                        PurchaseOrderDetailId = x.PurchaseOrderDetailId,
+                        PurchaseOrderId = x.PurchaseOrderId,
+                        Qty = x.Qty,
+                        IsActive = x.IsActive,
+                        Product = new Product { ProductId = x.Product.ProductId, ProductName = x.Product.ProductName },
+                        DiscountAmount = x.DiscountAmount,
+                        StoreId = x.StoreId,
+                        ReferenceToken = _tokenService.Encrypt("PurchaseOrderDetail"),
+                        TransactionTypeToken = _tokenService.Encrypt("1") // 1 for plus stock, 2 for minus stock
+                    }).ToListAsync();
+                //ViewData["PurchaseOrderDetails"] = listPurchaseOrderDetail; //await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x => x.Product).ToListAsync();
+                oPurchaseOrder = new PurchaseOrderVM
+                {
+                    DiscountAmount = purchaseOrder.DiscountAmount,
+                    IsActive = purchaseOrder.IsActive,
+                    OtherCharge = purchaseOrder.OtherCharge,
+                    Podate = purchaseOrder.Podate,
+                    Ponumber = purchaseOrder.Ponumber,
+                    PurchaseOrderId = purchaseOrder.PurchaseOrderId,
+                    PurchaseStateId = purchaseOrder.PurchaseStateId,
+                    Remark = purchaseOrder.Remark,
+                    SubTotal = purchaseOrder.SubTotal,
+                    Supplier = new SupplierVM { SupplierId = purchaseOrder.Supplier.SupplierId, SupplierCode = purchaseOrder.Supplier.SupplierCode, SupplierName = purchaseOrder.Supplier.SupplierName },
+                    SupplierId = purchaseOrder.SupplierId,
+                    SupplierPayments = new List<SupplierPaymentVM>(),
+                    SupplierPayment = new SupplierPaymentVM() { PurchaseOrderId = purchaseOrder.PurchaseOrderId },
+                    TaxAmount = purchaseOrder.TaxAmount,
+                    TaxPercent = purchaseOrder.TaxPercent,
+                    TotalAmount = purchaseOrder.TotalAmount,
+                    PurchaseOrderDetails = listPurchaseOrderDetail
+                };
+                oPurchaseOrder.SupplierPayments = _context.SupplierPayments
+                    .Where(sp => sp.PurchaseOrderId == oPurchaseOrder.PurchaseOrderId)
+                    .Include(pm => pm.PaymentMethod)
+                    .Include(ps => ps.PaymentStatus).Select(x => new SupplierPaymentVM
+                    {
+                        PaidAmount = x.PaidAmount,
+                        PaymentMethodId = x.PaymentMethodId,
+                        PaymentStatusId = x.PaymentStatusId,
+                        PaymentDate = x.PaymentDate,
+                        Remarks = x.Remarks,
+                        PaymentId = x.PaymentId,
+                        IsActive = x.IsActive,
+                        PaymentMethod = new PaymentMethod { PaymentMethodId = x.PaymentMethod.PaymentMethodId, PaymentMethodName = x.PaymentMethod.PaymentMethodName },
+                        PaymentStatus = new PaymentStatus { PaymentStateId = x.PaymentStatus.PaymentStateId, PaymentStatus1 = x.PaymentStatus.PaymentStatus1 },
+                        PurchaseOrderId = x.PurchaseOrderId,
+                        TransactionNumber = x.TransactionNumber
+                    }).ToList();
+                #endregion
             }
-
-            return View(purchaseOrder);
+            catch 
+            {
+                
+            }
+            return View(oPurchaseOrder);
         }
 
         // GET: PurchaseOrders/Create
@@ -128,7 +214,7 @@ namespace Aquasip.Controllers
                 })
                 .ToList());
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
-            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id).Include(x=>x.Product).ToListAsync();
+            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x=>x.Product).ToListAsync();
 
             return View(purchaseOrder);
         }
@@ -196,7 +282,7 @@ namespace Aquasip.Controllers
                 })
                 .ToList());
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
-            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id).Include(x => x.Product).ToListAsync();
+            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x => x.Product).ToListAsync();
 
             return View(purchaseOrder);
         }

@@ -36,7 +36,8 @@ namespace Aquasip.Models
 
         public virtual SupplierVM Supplier { get; set; } = null!;
 
-        public virtual ICollection<SupplierPayment> SupplierPayments { get; set; } = new List<SupplierPayment>();
+        public virtual ICollection<SupplierPaymentVM> SupplierPayments { get; set; } = new List<SupplierPaymentVM>();
+        public virtual SupplierPaymentVM SupplierPayment { get; set; } = null!;
     }
 
 }

@@ -776,7 +776,6 @@ public partial class AquasipContext : DbContext
 
             entity.ToTable("SupplierPayment");
 
-            entity.Property(e => e.PaymentId).ValueGeneratedNever();
             entity.Property(e => e.PaidAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PaymentStatusId).HasDefaultValue(1);
             entity.Property(e => e.Remarks).HasMaxLength(500);

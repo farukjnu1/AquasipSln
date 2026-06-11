@@ -1,4 +1,4 @@
-﻿@model Aquasip.EF.CustomerPayment
+﻿@model Aquasip.EF.SupplierPayment
 
 @{
     ViewData["Title"] = "Details";
@@ -36,10 +36,10 @@
             @Html.DisplayFor(model => model.Remarks)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Order)
+            @Html.DisplayNameFor(model => model.PurchaseOrder)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Order.OrderNumber)
+            @Html.DisplayFor(model => model.PurchaseOrder.Ponumber)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PaymentMethod)

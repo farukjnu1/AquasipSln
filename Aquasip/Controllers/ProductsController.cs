@@ -49,7 +49,7 @@ namespace Aquasip.Controllers
             }
             AquasipContext _context = new AquasipContext();
             var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+                .FirstOrDefaultAsync(m=> m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
@@ -212,7 +212,7 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
             AquasipContext _context = new AquasipContext();
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.Where(x=>x.ProductId == id).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound();
@@ -286,7 +286,7 @@ namespace Aquasip.Controllers
             }
             AquasipContext _context = new AquasipContext();
             var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+                .FirstOrDefaultAsync(m=> m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
@@ -314,7 +314,7 @@ namespace Aquasip.Controllers
         private bool ProductExists(long id)
         {
             AquasipContext _context = new AquasipContext();
-            return _context.Products.Any(e => e.ProductId == id);
+            return _context.Products.Any(e=> e.ProductId == id);
         }
 
     }

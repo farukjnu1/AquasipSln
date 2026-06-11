@@ -25,5 +25,7 @@ namespace Aquasip.Models
         public virtual Product Product { get; set; } = null!;
 
         public virtual PurchaseOrder PurchaseOrder { get; set; } = null!;
+        public string ReferenceToken { get; set; } = null!;
+        public string TransactionTypeToken { get; set; } = null!;
     }
 }
