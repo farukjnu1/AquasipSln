@@ -22,9 +22,9 @@ namespace Aquasip.Models
 
         public bool? IsActive { get; set; }
 
-        public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+        public virtual PaymentMethodVM PaymentMethod { get; set; } = null!;
 
-        public virtual PaymentStatus PaymentStatus { get; set; } = null!;
+        public virtual PaymentStatusVM PaymentStatus { get; set; } = null!;
 
         public virtual PurchaseOrder PurchaseOrder { get; set; } = null!;
     }

@@ -1,15 +1,15 @@
-﻿@model IEnumerable<Aquasip.EF.StockTransaction>
+﻿@model IEnumerable<Aquasip.Models.StockTransactionVM>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Index</h1>
+<h3>Stock Transactions</h3>
 
-<p>
+@* <p>
     <a asp-action="Create">Create New</a>
-</p>
+</p> *@
 <table class="table">
     <thead>
         <tr>
@@ -17,14 +17,14 @@
                 @Html.DisplayNameFor(model => model.TransactionDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TransactionTypeId)
+                @Html.DisplayNameFor(model => model.TransactionType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReferenceTypeId)
+                @Html.DisplayNameFor(model => model.ReferenceType)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.ReferenceId)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.QtyIn)
             </th>
@@ -35,15 +35,15 @@
                 @Html.DisplayNameFor(model => model.UnitCost)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StoreId)
+                @Html.DisplayNameFor(model => model.Store)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.IsActive)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Product)
             </th>
-            <th></th>
+            @* <th></th> *@
         </tr>
     </thead>
     <tbody>
@@ -53,14 +53,14 @@
                 @Html.DisplayFor(modelItem => item.TransactionDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TransactionTypeId)
+                @Html.DisplayFor(modelItem => item.TransactionType.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ReferenceTypeId)
+                @Html.DisplayFor(modelItem => item.ReferenceType.Name)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.ReferenceId)
-            </td>
+            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.QtyIn)
             </td>
@@ -71,19 +71,19 @@
                 @Html.DisplayFor(modelItem => item.UnitCost)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StoreId)
+                @Html.DisplayFor(modelItem => item.Store.StoreName)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
+            </td> *@
             <td>
-                @Html.DisplayFor(modelItem => item.Product.ProductId)
+                @Html.DisplayFor(modelItem => item.Product.ProductName)
             </td>
-            <td>
+            @* <td>
                 <a asp-action="Edit" asp-route-id="@item.StockTransactionId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.StockTransactionId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.StockTransactionId">Delete</a>
-            </td>
+            </td> *@
         </tr>
 }
     </tbody>

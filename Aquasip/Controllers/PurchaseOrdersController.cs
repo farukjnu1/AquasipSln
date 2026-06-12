@@ -68,6 +68,7 @@ namespace Aquasip.Controllers
                 {
                     return NotFound();
                 }
+                string referenceCode = "PurchaseOrderDetail";
                 var listPurchaseOrderDetail = await _context.PurchaseOrderDetails
                     .Where(x => x.PurchaseOrderId == id && x.IsActive == true)
                     .Include(x => x.Product)
@@ -80,13 +81,22 @@ namespace Aquasip.Controllers
                         PurchaseOrderId = x.PurchaseOrderId,
                         Qty = x.Qty,
                         IsActive = x.IsActive,
-                        Product = new Product { ProductId = x.Product.ProductId, ProductName = x.Product.ProductName },
+                        Product = new ProductVM { ProductId = x.Product.ProductId, ProductName = x.Product.ProductName },
                         DiscountAmount = x.DiscountAmount,
                         StoreId = x.StoreId,
-                        ReferenceToken = _tokenService.Encrypt("PurchaseOrderDetail"),
+                        ReferenceToken = CodeGenerate.TextToHex(referenceCode),
                         TransactionTypeToken = _tokenService.Encrypt("1") // 1 for plus stock, 2 for minus stock
                     }).ToListAsync();
-                //ViewData["PurchaseOrderDetails"] = listPurchaseOrderDetail; //await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x => x.Product).ToListAsync();
+                var oReferenceType = _context.ReferenceTypes.Where(x => x.Code == referenceCode).FirstOrDefault();
+                if (oReferenceType == null)
+                {
+                    return NotFound();
+                }
+                foreach (var item in listPurchaseOrderDetail)
+                {
+                    var oStock = _context.StockTransactions.Where(x => x.ReferenceId == item.PurchaseOrderDetailId && x.ReferenceTypeId == oReferenceType.ReferenceTypeId).FirstOrDefault();
+                    item.IsStockUpdated = oStock == null ? false : true;
+                }
                 oPurchaseOrder = new PurchaseOrderVM
                 {
                     DiscountAmount = purchaseOrder.DiscountAmount,
@@ -119,8 +129,8 @@ namespace Aquasip.Controllers
                         Remarks = x.Remarks,
                         PaymentId = x.PaymentId,
                         IsActive = x.IsActive,
-                        PaymentMethod = new PaymentMethod { PaymentMethodId = x.PaymentMethod.PaymentMethodId, PaymentMethodName = x.PaymentMethod.PaymentMethodName },
-                        PaymentStatus = new PaymentStatus { PaymentStateId = x.PaymentStatus.PaymentStateId, PaymentStatus1 = x.PaymentStatus.PaymentStatus1 },
+                        PaymentMethod = new PaymentMethodVM { PaymentMethodId = x.PaymentMethod.PaymentMethodId, PaymentMethodName = x.PaymentMethod.PaymentMethodName },
+                        PaymentStatus = new PaymentStatusVM { PaymentStateId = x.PaymentStatus.PaymentStateId, PaymentStatus1 = x.PaymentStatus.PaymentStatus1 },
                         PurchaseOrderId = x.PurchaseOrderId,
                         TransactionNumber = x.TransactionNumber
                     }).ToList();

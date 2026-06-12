@@ -1,6 +1,8 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
+using Aquasip.Models;
 using Aquasip.Services.TokenServices;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,8 +28,34 @@ namespace Aquasip.Controllers
         // GET: StockTransactions
         public async Task<IActionResult> Index()
         {
-            var aquasipContext = _context.StockTransactions.Include(s => s.Product);
-            return View(await aquasipContext.ToListAsync());
+            //var aquasipContext = _context.StockTransactions.Include(s => s.Product);
+            //return View(await aquasipContext.ToListAsync());
+            var listTransactionType = _context.TransactionTypes.ToList();
+            var listReferenceType = _context.ReferenceTypes.ToList();
+            var listStore = _context.Stores.ToList();
+            var listStockTransaction = await _context.StockTransactions.Include(s => s.Product).Select(x => new StockTransactionVM
+            {
+                IsActive = x.IsActive,
+                Product = new ProductVM { ProductId = x.Product.ProductId , ProductName = x.Product.ProductName },
+                ProductId = x.ProductId,
+                QtyIn = x.QtyIn,
+                QtyOut = x.QtyOut,
+                ReferenceId = x.ReferenceId,
+                ReferenceTypeId = x.ReferenceTypeId,
+                StockTransactionId = x.StockTransactionId,
+                StoreId = x.StoreId,
+                TransactionDate = x.TransactionDate,
+                TransactionTypeId = x.TransactionTypeId,
+                UnitCost = x.UnitCost
+            }).ToListAsync();
+            foreach (var item in listStockTransaction)
+            {
+                item.ReferenceType = listReferenceType.Where(rt => rt.ReferenceTypeId == item.ReferenceTypeId).Select(rtt => new ReferenceTypeVM { ReferenceTypeId = rtt.ReferenceTypeId, Code = rtt.Code, Name = rtt.Name }).First();
+                item.Store = listStore.Where(s => s.StoreId == item.StoreId).Select(ss => new StoreVM { StoreId = ss.StoreId, StoreCode = ss.StoreCode, StoreName = ss.StoreName }).First();
+                item.TransactionType = listTransactionType.Where(tt => tt.TransactionTypeId == item.TransactionTypeId).Select(ttt => new TransactionTypeVM { TransactionTypeId = ttt.TransactionTypeId, Code = ttt.Code, Name = ttt.Name }).First();
+            }
+                                 
+            return View(listStockTransaction);
         }
 
         // GET: StockTransactions/Details/5
@@ -47,6 +75,83 @@ namespace Aquasip.Controllers
             }
 
             return View(stockTransaction);
+        }
+
+        public IActionResult PurchaseOrderDetail(long id, string referenceToken, string transactionType)
+        {
+            #region Dropdown list
+            var listStore = new List<SelectListItem>();
+            listStore.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.StoreId.ToString(),
+                    Text = x.StoreName
+                }).ToList());
+            ViewData["StoreId"] = listStore;
+            #endregion
+            //ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
+            #region Model of StockTransaction
+            var referenceCode = CodeGenerate.HexToText(referenceToken);
+            var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
+            if (referenceType == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Reference not valid.";
+                return RedirectToAction("Index", "PurchaseOrders");
+            }
+            var transactionTypeId = Convert.ToInt32(_tokenService.Decrypt(transactionType));
+            if (transactionTypeId != 1) // 1 for plus stock, 2 for minus stock
+            {
+                //return NotFound();
+                TempData["message"] = "Transaction not valid.";
+                return RedirectToAction("Index", "PurchaseOrders");
+            }
+            long productId = 0;
+            decimal? unitCost = 0, qtyIn = 0, qtyOut = 0;
+            if (referenceCode != "PurchaseOrderDetail")
+            {
+                //return NotFound();
+                TempData["message"] = "Purchase not valid.";
+                return RedirectToAction("Index", "PurchaseOrders");
+            }
+            if (referenceCode == "PurchaseOrderDetail")
+            {
+                var oPurchaseOrderDetail = _context.PurchaseOrderDetails.FirstOrDefault(x => x.PurchaseOrderDetailId == id);
+                if (oPurchaseOrderDetail == null)
+                {
+                    //return NotFound();
+                    TempData["message"] = "Purchase not found.";
+                    return RedirectToAction("Index", "PurchaseOrders");
+                }
+                productId = oPurchaseOrderDetail.ProductId;
+                unitCost = oPurchaseOrderDetail.UnitCost;
+                qtyIn = oPurchaseOrderDetail.Qty;
+            }
+            var oProduct = _context.Products.FirstOrDefault(x => x.ProductId == productId);
+            if (oProduct == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Product not found.";
+                return RedirectToAction("Index", "PurchaseOrders");
+            }
+            StockTransaction stockTransaction = new StockTransaction
+            {
+                IsActive = true,
+                ProductId = productId,
+                Product = oProduct,
+                QtyIn = qtyIn,
+                QtyOut = qtyOut,
+                ReferenceId = id,
+                ReferenceTypeId = referenceType != null ? referenceType.ReferenceTypeId : (int?)null,
+                StockTransactionId = 0,
+                StoreId = 0,
+                TransactionDate = DateTime.Now,
+                TransactionTypeId = transactionTypeId,
+                UnitCost = unitCost,
+            };
+            #endregion
+            ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
+            return View("Create", stockTransaction);
         }
 
         // GET: StockTransactions/Create
@@ -149,11 +254,23 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("StockTransactionId,TransactionDate,ProductId,TransactionTypeId,ReferenceTypeId,ReferenceId,QtyIn,QtyOut,UnitCost,StoreId,IsActive")] StockTransaction stockTransaction)
         {
-            if (ModelState.IsValid)
+            try
             {
+                var oStockTransaction = await _context.StockTransactions.Where(x => x.ReferenceId == stockTransaction.ReferenceId && x.ReferenceTypeId == stockTransaction.ReferenceTypeId).FirstOrDefaultAsync();
+                if (oStockTransaction != null) 
+                {
+                    TempData["message"] = "Stocks already received. Try aanother.";
+                    return RedirectToAction(nameof(Index));
+                }
+                stockTransaction.TransactionDate = DateTime.Now;
                 _context.Add(stockTransaction);
                 await _context.SaveChangesAsync();
+                TempData["message"] = "Stocks received successfully.";
                 return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["message"] = "Something went wrong.";
             }
             #region Dropdown list
             var listStore = new List<SelectListItem>();
@@ -165,7 +282,7 @@ namespace Aquasip.Controllers
                 }).ToList());
             ViewData["StoreId"] = listStore;
             #endregion
-            return View(stockTransaction);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: StockTransactions/Edit/5

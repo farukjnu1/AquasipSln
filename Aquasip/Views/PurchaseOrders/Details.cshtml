@@ -92,9 +92,17 @@
                         <td>@item.DiscountAmount</td>
                         <td align="right">@item.LineTotal</td>
                         <td>
+                            
+                            @if (item.IsStockUpdated == true)
+                            {
+                                <a href="javascript:void(0)" title="Received">Received</a>
+                            }
+                            else
+                            {
+                                <a href="/StockTransactions/PurchaseOrderDetail?id=@item.PurchaseOrderDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Add to Stocks">Add to Stocks</a>
+                            }
+                            | <a href="/PurchaseOrderDetails/Edit/@item.PurchaseOrderDetailId">Remove</a>
                             @* <a href="/PurchaseOrderDetails/Delete/@item.PurchaseOrderDetailId">Delete</a> *@
-                            <a href="/StockTransactions/Create?id=@item.PurchaseOrderDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Receive to Stocks">Receive to Stocks</a> |
-                            <a href="/PurchaseOrderDetails/Edit/@item.PurchaseOrderDetailId">Remove</a>
                         </td>
                     </tr>
                 }

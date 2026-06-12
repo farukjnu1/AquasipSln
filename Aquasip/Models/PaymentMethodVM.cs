@@ -10,9 +10,9 @@ namespace Aquasip.Models
 
         public bool IsActive { get; set; }
 
-        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        //public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
-        public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+        //public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
     }
 
 }

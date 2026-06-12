@@ -22,10 +22,11 @@ namespace Aquasip.Models
 
         public bool? IsActive { get; set; }
 
-        public virtual Product Product { get; set; } = null!;
+        public virtual ProductVM Product { get; set; } = null!;
 
-        public virtual PurchaseOrder PurchaseOrder { get; set; } = null!;
+        public virtual PurchaseOrderVM PurchaseOrder { get; set; } = null!;
         public string ReferenceToken { get; set; } = null!;
         public string TransactionTypeToken { get; set; } = null!;
+        public bool IsStockUpdated { get; set; }
     }
 }

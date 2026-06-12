@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var referenceType = ViewData["ReferenceType"] as Aquasip.Models.ReferenceTypeVM;
+    var referenceTypeName = referenceType != null ? referenceType.Name : "undefined";
 }
 
 <h3>Create</h3>
@@ -17,13 +19,38 @@
             <input type="hidden" asp-for="TransactionTypeId" />
             <input type="hidden" asp-for="ReferenceTypeId" />
             <input type="hidden" asp-for="ReferenceId" />
+            <input type="hidden" asp-for="IsActive" />
             <div class="form-group">
-                <label for="TransactionDate" class="control-label"></label>
+                <label asp-for="StoreId" class="control-label"></label>
+                <select asp-for="StoreId" class="form-control" asp-items="ViewBag.StoreId"></select>
+                <span asp-validation-for="StoreId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="TransactionDate" class="control-label">TransactionDate</label>
                 <input for="TransactionDate" id="TransactionDate" value="@Model.TransactionDate" class="form-control" readonly />
             </div>
             <div class="form-group">
-                <label for="ProductName" class="control-label"></label>
+                <label for="ProductName" class="control-label">Product</label>
                 <input type="text" id="ProductName" value="@Model.Product.ProductName" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="UnitCost" class="control-label"></label>
+                <input asp-for="UnitCost" class="form-control" readonly />
+                <span asp-validation-for="UnitCost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QtyIn" class="control-label"></label>
+                <input asp-for="QtyIn" class="form-control" readonly />
+                <span asp-validation-for="QtyIn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QtyOut" class="control-label"></label>
+                <input asp-for="QtyOut" class="form-control" readonly />
+                <span asp-validation-for="QtyOut" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="ReferenceTypeId" class="control-label">ReferenceType</label>
+                <input id="ReferenceTypeId" class="form-control" value="@referenceTypeName" readonly />
             </div>
             @* <div class="form-group">
                 <label asp-for="TransactionTypeId" class="control-label"></label>
@@ -31,30 +58,16 @@
                 <span asp-validation-for="TransactionTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ReferenceTypeId" class="control-label"></label>
-                <input asp-for="ReferenceTypeId" class="form-control" />
-                <span asp-validation-for="ReferenceTypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="ReferenceId" class="control-label"></label>
                 <input asp-for="ReferenceId" class="form-control" />
                 <span asp-validation-for="ReferenceId" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
-                <label asp-for="UnitCost" class="control-label"></label>
-                <input asp-for="UnitCost" class="form-control" />
-                <span asp-validation-for="UnitCost" class="text-danger"></span>
-            </div> *@
-            <div class="form-group">
-                <label asp-for="StoreId" class="control-label"></label>
-                <select asp-for="StoreId" class="form-control" asp-items="ViewBag.StoreId"></select>
-                <span asp-validation-for="StoreId" class="text-danger"></span>
-            </div>
-            @* <div class="form-group">
                 <label asp-for="IsActive" class="control-label"></label>
                 <input asp-for="IsActive" class="form-control" />
                 <span asp-validation-for="IsActive" class="text-danger"></span>
-            </div> *@
+            </div>*@ 
             <div class="form-group pt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
