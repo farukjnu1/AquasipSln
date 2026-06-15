@@ -5,14 +5,15 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     var referenceType = ViewData["ReferenceType"] as Aquasip.Models.ReferenceTypeVM;
     var referenceTypeName = referenceType != null ? referenceType.Name : "undefined";
+    var listStock = ViewData["Stocks"] as IEnumerable<Aquasip.Models.StockTransactionVM>;
 }
 
 <h3>Create</h3>
 
-<h4>StockTransaction</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
+        <h4>StockTransaction</h4>
+        <hr />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ProductId" />
@@ -72,6 +73,29 @@
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Current Stock</h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Store</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in listStock)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>@item.Store.StoreName</td>
+                        <td>@item.CurrentStock</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 

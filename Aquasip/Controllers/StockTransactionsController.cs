@@ -1,6 +1,7 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
 using Aquasip.Models;
+using Aquasip.Repositories;
 using Aquasip.Services.TokenServices;
 using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,25 +20,51 @@ namespace Aquasip.Controllers
     {
         private readonly AquasipContext _context;
         private readonly ITokenService _tokenService;
+        private readonly string _connectionString;
 
-        public StockTransactionsController(AquasipContext context, ITokenService tokenService)
+        public StockTransactionsController(AquasipContext context, ITokenService tokenService, IConfiguration configuration)
         {
             _context = context;
             _tokenService = tokenService;
+            _connectionString = configuration.GetConnectionString("AquasipContext");
         }
 
         // GET: StockTransactions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(long ProductId = 0, int StoreId = 0, int PageSize = 10)
         {
-            //var aquasipContext = _context.StockTransactions.Include(s => s.Product);
-            //return View(await aquasipContext.ToListAsync());
+            #region Dropdown List
+            var listProductSelect = new List<SelectListItem>();
+            listProductSelect.Add(new SelectListItem { Value = "0", Text = "All" });
+            listProductSelect.AddRange(_context.Products.OrderBy(x => x.ProductName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.ProductId.ToString(),
+                    Text = x.ProductName
+                })
+                .ToList());
+            ViewData["Products"] = listProductSelect;
+            ViewData["nProductId"] = ProductId;
+            var listStoreSelect = new List<SelectListItem>();
+            listStoreSelect.Add(new SelectListItem { Value = "0", Text = "All" });
+            listStoreSelect.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.StoreId.ToString(),
+                    Text = x.StoreName
+                })
+                .ToList());
+            ViewData["Stores"] = listStoreSelect;
+            ViewData["nStoreId"] = StoreId;
+            ViewData["PageSize"] = PageSize == 0 ? 10 : PageSize;
+            #endregion
+            #region Data
             var listTransactionType = _context.TransactionTypes.ToList();
             var listReferenceType = _context.ReferenceTypes.ToList();
             var listStore = _context.Stores.ToList();
             var listStockTransaction = await _context.StockTransactions.Include(s => s.Product).Select(x => new StockTransactionVM
             {
                 IsActive = x.IsActive,
-                Product = new ProductVM { ProductId = x.Product.ProductId , ProductName = x.Product.ProductName },
+                Product = new ProductVM { ProductId = x.Product.ProductId, ProductName = x.Product.ProductName },
                 ProductId = x.ProductId,
                 QtyIn = x.QtyIn,
                 QtyOut = x.QtyOut,
@@ -47,14 +75,26 @@ namespace Aquasip.Controllers
                 TransactionDate = x.TransactionDate,
                 TransactionTypeId = x.TransactionTypeId,
                 UnitCost = x.UnitCost
-            }).ToListAsync();
+            }).ToListAsync();//.OrderBy(x => x.TransactionDate).Skip(0).Take(PageSize).ToListAsync();
+            if (ProductId > 0)
+            {
+                listStockTransaction = listStockTransaction.Where(x => x.ProductId == ProductId).ToList();
+            }
+            if (StoreId > 0)
+            {
+                listStockTransaction = listStockTransaction.Where(x => x.StoreId == StoreId).ToList();
+            }
+            listStockTransaction = listStockTransaction.OrderBy(x => x.TransactionDate).Skip(0).Take(PageSize).ToList();
+            decimal? currentStock = 0;
             foreach (var item in listStockTransaction)
             {
                 item.ReferenceType = listReferenceType.Where(rt => rt.ReferenceTypeId == item.ReferenceTypeId).Select(rtt => new ReferenceTypeVM { ReferenceTypeId = rtt.ReferenceTypeId, Code = rtt.Code, Name = rtt.Name }).First();
                 item.Store = listStore.Where(s => s.StoreId == item.StoreId).Select(ss => new StoreVM { StoreId = ss.StoreId, StoreCode = ss.StoreCode, StoreName = ss.StoreName }).First();
                 item.TransactionType = listTransactionType.Where(tt => tt.TransactionTypeId == item.TransactionTypeId).Select(ttt => new TransactionTypeVM { TransactionTypeId = ttt.TransactionTypeId, Code = ttt.Code, Name = ttt.Name }).First();
+                currentStock += item.QtyIn - item.QtyOut;
+                item.CurrentStock = currentStock;
             }
-                                 
+            #endregion
             return View(listStockTransaction);
         }
 
@@ -77,6 +117,7 @@ namespace Aquasip.Controllers
             return View(stockTransaction);
         }
 
+        //PurchaseOrderDetail
         public IActionResult PurchaseOrderDetail(long id, string referenceToken, string transactionType)
         {
             #region Dropdown list
@@ -151,6 +192,100 @@ namespace Aquasip.Controllers
             };
             #endregion
             ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
+            return View("Create", stockTransaction);
+        }
+
+        //SalesOrderDetail
+        public IActionResult SalesOrderDetail(long id, string referenceToken, string transactionType)
+        {
+            #region Dropdown list
+            var listStore = new List<SelectListItem>();
+            listStore.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.StoreId.ToString(),
+                    Text = x.StoreName
+                }).ToList());
+            ViewData["StoreId"] = listStore;
+            #endregion
+            //ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
+            #region Model of StockTransaction
+            var referenceCode = CodeGenerate.HexToText(referenceToken);
+            var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
+            if (referenceType == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Reference not valid.";
+                return RedirectToAction("Index", "SalesOrders");
+            }
+            var transactionTypeId = Convert.ToInt32(_tokenService.Decrypt(transactionType));
+            if (transactionTypeId != 2) // 1 for plus stock, 2 for minus stock
+            {
+                //return NotFound();
+                TempData["message"] = "Transaction not valid.";
+                return RedirectToAction("Index", "SalesOrders");
+            }
+            long productId = 0;
+            decimal? unitCost = 0, qtyIn = 0, qtyOut = 0;
+            if (referenceCode != "SalesOrderDetails")
+            {
+                //return NotFound();
+                TempData["message"] = "Sales not valid.";
+                return RedirectToAction("Index", "SalesOrders");
+            }
+            if (referenceCode == "SalesOrderDetails")
+            {
+                var oSalesOrderDetail = _context.SalesOrderDetails.FirstOrDefault(x => x.OrderDetailId == id);
+                if (oSalesOrderDetail == null)
+                {
+                    //return NotFound();
+                    TempData["message"] = "Sales not found.";
+                    return RedirectToAction("Index", "SalesOrders");
+                }
+                productId = oSalesOrderDetail.ProductId;
+                unitCost = oSalesOrderDetail.UnitPrice;
+                qtyOut = oSalesOrderDetail.Qty;
+            }
+            var oProduct = _context.Products.Where(x => x.ProductId == productId).FirstOrDefault();
+            if (oProduct == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Product not found.";
+                return RedirectToAction("Index", "SalesOrders");
+            }
+            StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
+            var listStock = stockRepo.GetCurrentStock(productId);
+            var oStock = listStock.Where(x=>x.ProductId == productId).FirstOrDefault();
+            if (oStock == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Stock not found.";
+                return RedirectToAction("Index", "SalesOrders");
+            }
+            if(oStock.CurrentStock < qtyOut)
+            {
+                //return NotFound();
+                TempData["message"] = "Not enough stock. Current stock is " + oStock.CurrentStock;
+                return RedirectToAction("Index", "SalesOrders");
+            }
+            StockTransaction stockTransaction = new StockTransaction
+            {
+                IsActive = true,
+                ProductId = productId,
+                Product = oProduct,
+                QtyIn = qtyIn,
+                QtyOut = qtyOut,
+                ReferenceId = id,
+                ReferenceTypeId = referenceType != null ? referenceType.ReferenceTypeId : (int?)null,
+                StockTransactionId = 0,
+                StoreId = 0,
+                TransactionDate = DateTime.Now,
+                TransactionTypeId = transactionTypeId,
+                UnitCost = unitCost,
+            };
+            #endregion
+            ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
+            ViewData["Stocks"] = listStock;
             return View("Create", stockTransaction);
         }
 
@@ -243,7 +378,6 @@ namespace Aquasip.Controllers
                 UnitCost = unitCost,
             };
             #endregion
-            
             return View(stockTransaction);
         }
 
@@ -265,7 +399,7 @@ namespace Aquasip.Controllers
                 stockTransaction.TransactionDate = DateTime.Now;
                 _context.Add(stockTransaction);
                 await _context.SaveChangesAsync();
-                TempData["message"] = "Stocks received successfully.";
+                TempData["message"] = "Stocks saved successfully.";
                 return RedirectToAction(nameof(Index));
             }
             catch

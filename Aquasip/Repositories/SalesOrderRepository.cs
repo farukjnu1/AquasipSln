@@ -1,5 +1,6 @@
 ﻿using Aquasip.EF;
 using Aquasip.Models;
+using Aquasip.Services.TokenServices;
 using Aquasip.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace Aquasip.Repositories
     public class SalesOrderRepository
     {
         private readonly string _connectionString = "";
+        
         #region constructor
         public SalesOrderRepository(string connectionString)
         {
@@ -185,6 +187,7 @@ namespace Aquasip.Repositories
                                 model.OrderId = reader.GetValue("OrderId") == DBNull.Value ? 0 : reader.GetInt64("OrderId");
                                 model.OrderNumber = reader.GetValue("OrderNumber") == DBNull.Value ? "" : reader.GetString("OrderNumber");
                                 model.OrderDate = reader.GetValue("OrderDate") == DBNull.Value ? DateTime.Now : reader.GetDateTime("OrderDate");
+                                model.CustomerId = reader.GetValue("OrderId") == DBNull.Value ? 0 : reader.GetInt64("CustomerId");
                                 model.Customer = reader.GetValue("Customer") == DBNull.Value ? new CustomerVM() : JsonConversion.DeserializeObject<List<CustomerVM>>(reader.GetString("Customer")).FirstOrDefault();
                                 model.SalesOrderState = reader.GetValue("SalesOrderState") == DBNull.Value ? new SalesOrderStateVM() : JsonConversion.DeserializeObject<List<SalesOrderStateVM>>(reader.GetString("SalesOrderState")).FirstOrDefault();
                                 list.Add(model);
@@ -237,9 +240,15 @@ namespace Aquasip.Repositories
                                 model.ShippingAddress = reader.GetValue("ShippingAddress") == DBNull.Value ? new ShippingAddressVM() : JsonConversion.DeserializeObject<List<ShippingAddressVM>>(reader.GetString("ShippingAddress")).FirstOrDefault();
                                 model.CustomerPayments = reader.GetValue("CustomerPayments") == DBNull.Value ? new List<CustomerPaymentVM>() : JsonConversion.DeserializeObject<List<CustomerPaymentVM>>(reader.GetString("CustomerPayments"));
                                 model.OrderDetails = reader.GetValue("SalesOrderDetails") == DBNull.Value ? new List<SalesOrderDetailVM>() : JsonConversion.DeserializeObject<List<SalesOrderDetailVM>>(reader.GetString("SalesOrderDetails"));
+                                model.CustomerPayment = new CustomerPaymentVM { OrderId = model.OrderId };
                                 foreach (var item in model.OrderDetails)
                                 {
-                                    item.Product = new ProductVM { ProductName = item.ProductName };
+                                    item.Product = new ProductVM { ProductId = item.ProductId, ProductName = item.ProductName };
+                                }
+                                foreach (var item in model.CustomerPayments)
+                                {
+                                    item.PaymentMethod = new PaymentMethodVM { PaymentMethodName = item.PaymentMethod1 };
+                                    item.PaymentStatus = new PaymentStatusVM { PaymentStatus1 = item.PaymentStatus1 };
                                 }
                             }
                         }

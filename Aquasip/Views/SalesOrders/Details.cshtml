@@ -107,6 +107,7 @@
                     <th>Price</th>
                     <th>Qty</th>
                     <th>Total</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -117,6 +118,16 @@
                         <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
                         <td>@item.TotalPrice</td>
+                        <td>
+                            @if (item.IsStockUpdated == true)
+                            {
+                                <a href="javascript:void(0)" title="Received">Received</a>
+                            }
+                            else
+                            {
+                                <a href="/StockTransactions/SalesOrderDetail?id=@item.OrderDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Add to Stocks">Add to Stocks</a>
+                            }
+                        </td>
                     </tr>
                 }
 
@@ -147,8 +158,8 @@
                 {
                     <tr>
                         <td>@item.PaymentDate</td>
-                        <td><a href="/CustomerPayments/Edit/@item.PaymentId">@item.PaymentStatus</a></td>
-                        <td>@item.PaymentMethod</td>
+                        <td><a href="/CustomerPayments/Edit/@item.PaymentId">@item.PaymentStatus.PaymentStatus1</a></td>
+                        <td>@item.PaymentMethod.PaymentMethodName</td>
                         <td align="right">@item.PaidAmount</td>
                     </tr>
                 }
@@ -213,7 +224,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="CustomerPayment.PaidAmount" class="control-label"></label>
-                        <input asp-for="CustomerPayment.PaidAmount" class="form-control" required />
+                        <input asp-for="CustomerPayment.PaidAmount" class="form-control" min="0" required />
                         <span asp-validation-for="CustomerPayment.PaidAmount" class="text-danger"></span>
                     </div>
                     <div class="form-group">

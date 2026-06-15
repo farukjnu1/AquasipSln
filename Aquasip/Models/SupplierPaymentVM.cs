@@ -26,6 +26,6 @@ namespace Aquasip.Models
 
         public virtual PaymentStatusVM PaymentStatus { get; set; } = null!;
 
-        public virtual PurchaseOrder PurchaseOrder { get; set; } = null!;
+        public virtual PurchaseOrderVM PurchaseOrder { get; set; } = null!;
     }
 }

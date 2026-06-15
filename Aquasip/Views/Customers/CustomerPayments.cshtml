@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Aquasip.EF.PaymentTransaction>
+﻿@model IEnumerable<Aquasip.EF.CustomerPayment>
 
 @{
     ViewData["Title"] = "Index";
@@ -31,26 +31,26 @@
         <thead>
             <tr>
                 <th style="text-align:right">
-                    @Html.DisplayNameFor(model => model.PaidAmount)
+                    PaidAmount
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PaymentDate)
+                    PaymentDate
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PaymentMethod.PaymentMethodName)
+                    PaymentMethod
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.TransactionNumber)
+                    TransactionNumber
                 </th>
                 
                 <th>
-                    @Html.DisplayNameFor(model => model.Remarks)
+                    Remarks
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Order.OrderNumber)
+                    OrderNumber
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Order.OrderDate)
+                    OrderDate
                 </th>
             </tr>
         </thead>

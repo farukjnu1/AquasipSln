@@ -198,7 +198,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="SupplierPayment.PaidAmount" class="control-label"></label>
-                        <input asp-for="SupplierPayment.PaidAmount" class="form-control" required />
+                        <input asp-for="SupplierPayment.PaidAmount" class="form-control" min="0" required />
                         <span asp-validation-for="SupplierPayment.PaidAmount" class="text-danger"></span>
                     </div>
                     <div class="form-group">

@@ -2,6 +2,8 @@
 using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Repositories;
+using Aquasip.Services.TokenServices;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,17 +21,20 @@ namespace Aquasip.Controllers
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
         private readonly AquasipContext _context;
-        public SalesOrdersController(ILogger<SalesOrdersController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        private readonly ITokenService _tokenService;
+        public SalesOrdersController(ILogger<SalesOrdersController> logger, IConfiguration configuration, IWebHostEnvironment environment, ITokenService tokenService)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");
             _environment = environment;
             _context = new AquasipContext();
+            _tokenService = tokenService;
         }
 
         // GET: Orders
         public async Task<IActionResult> Index(int OrderStateId = 0, int PageSize = 10)
         {
+            #region Dropdown List
             var listOrderStatus = new List<SelectListItem>();
             listOrderStatus.Add(new SelectListItem { Value = "0", Text = "All" });
             listOrderStatus.AddRange(_context.SalesOrderStates.OrderBy(x => x.Sequence)
@@ -42,7 +47,10 @@ namespace Aquasip.Controllers
             ViewData["OrderStateId"] = listOrderStatus;
             ViewData["nOrderStateId"] = OrderStateId;
             ViewData["PageSize"] = PageSize;
+            #endregion
+            #region Data
             SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
+            #endregion
             return View(soRepo.GetAll(OrderStateId, PageSize));
         }
 
@@ -53,6 +61,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
+            #region Dropdown List
             ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodId)
                 .Select(x => new SelectListItem
                 {
@@ -67,8 +76,48 @@ namespace Aquasip.Controllers
                     Text = x.PaymentStatus1
                 })
                 .ToList();
+            #endregion
+            #region Model of SalesOrder
+            string referenceCode = "SalesOrderDetails";
+            var oReferenceType = _context.ReferenceTypes.Where(x => x.Code == referenceCode).FirstOrDefault();
+            if (oReferenceType == null)
+            {
+                return NotFound();
+            }
             SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
-            return View(soRepo.GetById((long)id));
+            var oSalesOrder = soRepo.GetById((long)id);
+            if (oSalesOrder == null)
+            {
+                TempData["message"] = "Sales-Order not found.";
+                return NotFound();
+            }
+            oSalesOrder.CustomerPayment = new CustomerPaymentVM { OrderId = oSalesOrder.OrderId };
+            foreach (var item in oSalesOrder.OrderDetails)
+            {
+                item.ReferenceToken = CodeGenerate.TextToHex(referenceCode);
+                item.TransactionTypeToken = _tokenService.Encrypt("2"); // 1 for plus stock, 2 for minus stock
+                var oStock = _context.StockTransactions.Where(x => x.ReferenceId == item.OrderDetailId && x.ReferenceTypeId == oReferenceType.ReferenceTypeId).FirstOrDefault();
+                item.IsStockUpdated = oStock == null ? false : true;
+            }
+            /*oSalesOrder.CustomerPayments = _context.CustomerPayments
+                    .Where(cp => cp.OrderId == oSalesOrder.OrderId)
+                    .Include(pm => pm.PaymentMethod)
+                    .Include(ps => ps.PaymentStatus).Select(x => new CustomerPaymentVM
+                    {
+                        PaidAmount = x.PaidAmount,
+                        PaymentMethodId = x.PaymentMethodId,
+                        PaymentStatusId = x.PaymentStatusId,
+                        PaymentDate = x.PaymentDate,
+                        Remarks = x.Remarks,
+                        PaymentId = x.PaymentId,
+                        IsActive = x.IsActive,
+                        PaymentMethod = new PaymentMethodVM { PaymentMethodId = x.PaymentMethod.PaymentMethodId, PaymentMethodName = x.PaymentMethod.PaymentMethodName },
+                        PaymentStatus = new PaymentStatusVM { PaymentStateId = x.PaymentStatus.PaymentStateId, PaymentStatus1 = x.PaymentStatus.PaymentStatus1 },
+                        OrderId = x.OrderId,
+                        TransactionNumber = x.TransactionNumber
+                    }).ToList();*/
+            #endregion
+            return View(oSalesOrder);
         }
 
         // GET: Orders/Create
@@ -116,7 +165,23 @@ namespace Aquasip.Controllers
                 .ToList();
 
             SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
-            return View(soRepo.GetById((long)id));
+            var oSalesOrder = soRepo.GetById((long)id);
+            /*if (oSalesOrder != null)
+            {
+                var listProduct = _context.Products.ToList();
+                foreach (var item in oSalesOrder.OrderDetails)
+                {
+                    item.Product = listProduct.Where(x => x.ProductId == item.ProductId).Select(y => new ProductVM
+                    {
+                        ProductId = y.ProductId,
+                        ProductCode = y.ProductCode,
+                        ProductName = y.ProductName,
+                        Description = y.Description,
+                        Price = y.Price
+                    }).FirstOrDefault();
+                }
+            }*/
+            return View(oSalesOrder);
         }
 
         // POST: Orders/Edit/5

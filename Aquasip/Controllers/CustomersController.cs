@@ -68,17 +68,20 @@ namespace Aquasip.Controllers
             #endregion
 
             long CustomerId = HttpContext.Session.GetString("CustomerId") == null ? 0 : Convert.ToInt64(HttpContext.Session.GetString("CustomerId"));
-
+            
+            #region Dropdown List
             var listOrderStatus = new List<SelectListItem>();
             listOrderStatus.Add(new SelectListItem { Value = "0", Text = "All" });
-            listOrderStatus.AddRange(_context.SalesOrderStates.OrderBy(x => x.Sequence)
+            listOrderStatus.AddRange(await _context.SalesOrderStates.OrderBy(x => x.Sequence)
                 .Select(x => new SelectListItem
                 {
                     Value = x.OrderStateId.ToString(),
                     Text = x.OrderStatus
                 })
-                .ToList());
+                .ToListAsync());
             ViewData["OrderStateId"] = listOrderStatus;
+            #endregion
+
             /*var aquasipContext = (from o in _context.SalesOrders.Include(o => o.Customer)
                                   join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
                                   where o.IsActive == true && o.CustomerId == CustomerId && o.OrderStateId == (OrderStateId == 0 ? o.OrderStateId : OrderStateId)
@@ -94,8 +97,12 @@ namespace Aquasip.Controllers
                                       ColorCode = os.ColorCode
                                   }).OrderByDescending(x => x.OrderId).Take(PageSize);
             return View(await aquasipContext.ToListAsync());*/
+
             SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
-            return View(soRepo.GetAll(OrderStateId, PageSize));
+            var listSalesOrder = soRepo.GetAll(OrderStateId, PageSize);
+            listSalesOrder = listSalesOrder.Where(x => x.CustomerId == CustomerId).ToList();
+
+            return View(listSalesOrder);
         }
 
         // GET: Orders/Details/5

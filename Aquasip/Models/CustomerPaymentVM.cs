@@ -19,14 +19,16 @@ namespace Aquasip.Models
         public DateTime? PaymentDate { get; set; }
 
         public string? Remarks { get; set; }
-
+        public bool? IsActive { get; set; }
         public virtual SalesOrderVM Order { get; set; } = null!;
 
-        //public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+        public virtual PaymentMethodVM PaymentMethod { get; set; } = null!;
 
-        //public virtual PaymentStatus PaymentStatus { get; set; } = null!;
-        public string? PaymentMethod { get; set; }
-        public string? PaymentStatus { get; set; }
+        public virtual PaymentStatusVM PaymentStatus { get; set; } = null!;
+
+        public virtual PurchaseOrderVM PurchaseOrder { get; set; } = null!;
+        public string? PaymentMethod1 { get; set; }
+        public string? PaymentStatus1 { get; set; }
     }
 
 }

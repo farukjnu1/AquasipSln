@@ -1,11 +1,40 @@
 ﻿@model IEnumerable<Aquasip.Models.StockTransactionVM>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Stocks";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var nStoreId = (int?)ViewData["nStoreId"];
+    var nProductId = (long?)ViewData["nProductId"];
+    var pageSize = (int?)ViewData["PageSize"];
 }
 
 <h3>Stock Transactions</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <input type="hidden" id="nProductId" value="@nProductId" />
+        <label for="ProductId" class="control-label">Product</label>
+        <select id="ProductId" asp-items="ViewBag.Products"></select>
+    </div>
+    <div class="col-md-3">
+        <input type="hidden" id="nStoreId" value="@nStoreId" />
+        <label for="StoreId" class="control-label">Store</label>
+        <select id="StoreId" asp-items="ViewBag.Stores"></select>
+    </div>
+    <div class="col-md-2">
+        <input type="hidden" id="nPageSize" value="@pageSize" />
+        <label for="PageSize" class="control-label">Row</label>
+        <select id="PageSize">
+            <option value="10">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button onclick="search()">Search</button>
+    </div>
+</div>
 
 @* <p>
     <a asp-action="Create">Create New</a>
@@ -13,6 +42,22 @@
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Product)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QtyIn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QtyOut)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrentStock)
+            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.TransactionDate)
             </th>
@@ -22,33 +67,40 @@
             <th>
                 @Html.DisplayNameFor(model => model.ReferenceType)
             </th>
+            
             @* <th>
                 @Html.DisplayNameFor(model => model.ReferenceId)
             </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.QtyIn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QtyOut)
-            </th>
-            <th>
+            
+            @* <th>
                 @Html.DisplayNameFor(model => model.UnitCost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Store)
-            </th>
+            </th> *@
+            
             @* <th>
                 @Html.DisplayNameFor(model => model.IsActive)
             </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.Product)
-            </th>
+            
             @* <th></th> *@
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.StoreName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QtyIn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QtyOut)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentStock)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TransactionDate)
             </td>
@@ -61,24 +113,12 @@
             @* <td>
                 @Html.DisplayFor(modelItem => item.ReferenceId)
             </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.QtyIn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QtyOut)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnitCost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Store.StoreName)
-            </td>
+            
+            
             @* <td>
                 @Html.DisplayFor(modelItem => item.IsActive)
             </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.ProductName)
-            </td>
+            
             @* <td>
                 <a asp-action="Edit" asp-route-id="@item.StockTransactionId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.StockTransactionId">Details</a> |
@@ -88,3 +128,25 @@
 }
     </tbody>
 </table>
+
+<script>
+    // Equivalent to jQuery $(document).ready()
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Document is ready!");
+        setSearchValues();
+    });
+    function setSearchValues(){
+        var nPageSize = document.getElementById('nPageSize').value;
+        document.getElementById('PageSize').value = nPageSize;
+        var nStoreId = document.getElementById('nStoreId').value;
+        document.getElementById('StoreId').value = nStoreId;
+        var nProductId = document.getElementById('nProductId').value;
+        document.getElementById('ProductId').value = nProductId;
+    }
+    function search(){
+        var StoreId = document.getElementById('StoreId').value;
+        var ProductId = document.getElementById('ProductId').value;
+        var PageSize = document.getElementById('PageSize').value;
+        location.href = '/StockTransactions/Index?ProductId='+ProductId+'&StoreId='+StoreId + '&PageSize=' + PageSize;
+    }
+</script>

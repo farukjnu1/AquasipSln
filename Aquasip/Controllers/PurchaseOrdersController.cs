@@ -69,6 +69,11 @@ namespace Aquasip.Controllers
                     return NotFound();
                 }
                 string referenceCode = "PurchaseOrderDetail";
+                var oReferenceType = _context.ReferenceTypes.Where(x => x.Code == referenceCode).FirstOrDefault();
+                if (oReferenceType == null)
+                {
+                    return NotFound();
+                }
                 var listPurchaseOrderDetail = await _context.PurchaseOrderDetails
                     .Where(x => x.PurchaseOrderId == id && x.IsActive == true)
                     .Include(x => x.Product)
@@ -87,11 +92,6 @@ namespace Aquasip.Controllers
                         ReferenceToken = CodeGenerate.TextToHex(referenceCode),
                         TransactionTypeToken = _tokenService.Encrypt("1") // 1 for plus stock, 2 for minus stock
                     }).ToListAsync();
-                var oReferenceType = _context.ReferenceTypes.Where(x => x.Code == referenceCode).FirstOrDefault();
-                if (oReferenceType == null)
-                {
-                    return NotFound();
-                }
                 foreach (var item in listPurchaseOrderDetail)
                 {
                     var oStock = _context.StockTransactions.Where(x => x.ReferenceId == item.PurchaseOrderDetailId && x.ReferenceTypeId == oReferenceType.ReferenceTypeId).FirstOrDefault();

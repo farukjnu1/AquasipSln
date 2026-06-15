@@ -104,19 +104,33 @@ namespace Aquasip.Controllers
         {
             try
             {
+                if (Convert.ToDecimal(customerPayment.PaidAmount) < 0)
+                {
+                    TempData["message"] = "PaidAmount not valid.";
+                    return RedirectToAction("Details", "SalesOrders", new { id = customerPayment.OrderId });
+                }
+                if (string.IsNullOrEmpty(customerPayment.TransactionNumber))
+                {
+                    TempData["message"] = "Transaction-Number required.";
+                    return RedirectToAction(actionName: "Details", controllerName: "SalesOrders", routeValues: new { id = customerPayment.OrderId });
+                }
+                string transactionNumber = customerPayment.TransactionNumber == null ? "" : customerPayment.TransactionNumber;
+                transactionNumber = transactionNumber.Replace(" ", "");
+                var oCustomerPayment = await _context.CustomerPayments.Where(x=>x.TransactionNumber == transactionNumber.Trim()).FirstOrDefaultAsync();
+                if (oCustomerPayment != null)
+                {
+                    TempData["message"] = "Transaction-Number already existed.";
+                    return RedirectToAction(actionName: "Details", controllerName: "SalesOrders", routeValues: new { id = customerPayment.OrderId });
+                }
                 customerPayment.IsActive = true;
                 _context.Add(customerPayment);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Payment created successfully!";
             }
-            catch
+            catch(Exception ex)
             {
                 TempData["message"] = "Exception!";
             }
-            //ViewData["OrderId"] = new SelectList(_context.Orders, "OrderId", "OrderId", paymentTransaction.OrderId);
-            //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
-            //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
-            //return View(paymentTransaction);
             return RedirectToAction(actionName: "Details", controllerName: "SalesOrders", routeValues: new { id = customerPayment.OrderId });
         }
 
@@ -127,15 +141,15 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
+            #region Model of CustomerPayments
             var customerPayment = await _context.CustomerPayments.FindAsync(id);
             if (customerPayment == null)
             {
                 return NotFound();
             }
-            //ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId", paymentTransaction.OrderId);
-            //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
-            //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
+            customerPayment.Order = _context.SalesOrders.Find(customerPayment.OrderId);
+            #endregion
+            #region Dropdown List
             ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodId)
                 .Select(x => new SelectListItem
                 {
@@ -150,7 +164,7 @@ namespace Aquasip.Controllers
                     Text = x.PaymentStatus1
                 })
                 .ToList();
-            customerPayment.Order = _context.SalesOrders.Find(customerPayment.OrderId);
+            #endregion
             return View(customerPayment);
         }
 
@@ -168,6 +182,11 @@ namespace Aquasip.Controllers
 
             try
             {
+                if (Convert.ToDecimal(customerPayment.PaidAmount) < 0)
+                {
+                    TempData["message"] = "PaidAmount not valid.";
+                    return RedirectToAction("Details", "SalesOrders", new { id = customerPayment.OrderId });
+                }
                 customerPayment.IsActive = true;
                 _context.Update(customerPayment);
                 await _context.SaveChangesAsync();
@@ -186,10 +205,6 @@ namespace Aquasip.Controllers
                 }
             }
             
-            //ViewData["OrderId"] = new SelectList(_context.SalesOrders, "OrderId", "OrderId", paymentTransaction.OrderId);
-            //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId", paymentTransaction.PaymentMethodId);
-            //ViewData["PaymentStatusId"] = new SelectList(_context.PaymentStatuses, "PaymentStateId", "PaymentStateId", paymentTransaction.PaymentStatusId);
-            //return View(paymentTransaction);
             return RedirectToAction("Details", "SalesOrders", new { id = customerPayment.OrderId });
         }
 

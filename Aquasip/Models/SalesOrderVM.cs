@@ -72,8 +72,11 @@ namespace Aquasip.Models
 
             public virtual SalesOrderVM Order { get; set; } = null!;
 
-            public virtual ProductVM Product { get; set; } = null!;
+            public virtual ProductVM? Product { get; set; } = null!;
             public string ProductName { get; set; } = null!;
+            public string ReferenceToken { get; set; } = null!;
+            public string TransactionTypeToken { get; set; } = null!;
+            public bool IsStockUpdated { get; set; }
 
         }
     }
