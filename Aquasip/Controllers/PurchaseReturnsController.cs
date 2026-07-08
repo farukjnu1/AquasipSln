@@ -14,24 +14,28 @@ using System.Threading.Tasks;
 namespace Aquasip.Controllers
 {
     [AdminFilter]
-    public class PurchaseOrdersController : Controller
+    public class PurchaseReturnsController : Controller
     {
         private readonly AquasipContext _context;
         private readonly ITokenService _tokenService;
 
-        public PurchaseOrdersController(AquasipContext context, ITokenService tokenService)
+        public PurchaseReturnsController(AquasipContext context, ITokenService tokenService)
         {
             _context = context;
             _tokenService = tokenService;
         }
 
         // GET: PurchaseOrders
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? poNumber)
         {
-            var aquasipContext = _context.PurchaseOrders
+            if (!string.IsNullOrEmpty(poNumber))
+            {
+                var aquasipContext = _context.PurchaseOrders.Where(x => x.Ponumber == poNumber)
                 .Include(p => p.Supplier)
                 .Include(x => x.PurchaseState).OrderByDescending(x => x.Podate);
-            return View(await aquasipContext.ToListAsync());
+                return View(await aquasipContext.ToListAsync());
+            }
+            return View(new List<PurchaseOrder>());
         }
 
         // GET: PurchaseOrders/Details/5

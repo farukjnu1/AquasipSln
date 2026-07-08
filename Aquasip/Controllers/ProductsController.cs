@@ -248,7 +248,7 @@ namespace Aquasip.Controllers
                             var oProductPrice = new ProductPrice();
                             oProductPrice.ProductId = id;
                             oProductPrice.Price = product.Price;
-                            oProductPrice.Description = product.Description;
+                            //oProductPrice.Description = product.Description;
                             oProductPrice.IsActive = true;
                             oProductPrice.UploadedAt = DateTime.Now;
                             oProductPrice.UploadedBy = UploadedBy;
@@ -261,7 +261,7 @@ namespace Aquasip.Controllers
 
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!ProductExists(product.ProductId))
                     {

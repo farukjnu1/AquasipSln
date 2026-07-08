@@ -740,7 +740,6 @@ public partial class AquasipContext : DbContext
         {
             entity.ToTable("Store");
 
-            entity.Property(e => e.StoreId).ValueGeneratedNever();
             entity.Property(e => e.StoreCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);

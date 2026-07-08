@@ -18,11 +18,11 @@ namespace Aquasip.Models
 
         public bool? IsActive { get; set; }
 
-        public virtual PurchaseOrder? PurchaseOrder { get; set; }
+        public virtual PurchaseOrderVM? PurchaseOrder { get; set; }
 
-        public virtual ICollection<PurchaseReturnDetail> PurchaseReturnDetails { get; set; } = new List<PurchaseReturnDetail>();
+        public virtual ICollection<PurchaseReturnDetailVM> PurchaseReturnDetails { get; set; } = new List<PurchaseReturnDetailVM>();
 
-        public virtual Supplier Supplier { get; set; } = null!;
+        public virtual SupplierVM Supplier { get; set; } = null!;
     }
 
 }

@@ -1,0 +1,228 @@
+﻿@model Aquasip.Models.PurchaseOrderVM
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    //var listPurchaseOrderDetail = ViewData["PurchaseOrderDetails"] as List<Aquasip.EF.PurchaseOrderDetail>;
+    decimal totalPaidAmount = 0;
+    string? paymentStatus = "undefined";
+    totalPaidAmount = Model.SupplierPayments.Where(y => y.PaymentStatusId == 2).Sum(x => x.PaidAmount);
+    paymentStatus = totalPaidAmount < Model.TotalAmount ? "DUE" : "PAID";
+    string paymentStatusColor = totalPaidAmount < Model.TotalAmount ? "badge bg-danger" : "badge bg-success";
+}
+
+<h3>Purchase Order <span class="@paymentStatusColor">@paymentStatus</span></h3>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Summery</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Ponumber)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Ponumber)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Podate)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Podate)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.SubTotal)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.SubTotal)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.DiscountAmount)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.DiscountAmount)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.TaxAmount)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.TaxAmount)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.TotalAmount)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.TotalAmount)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.IsActive)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.IsActive)
+            </dd>
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Supplier)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Supplier.SupplierName)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <h4>Details : <a href="/PurchaseOrderDetails/Create?PurchaseOrderId=@Model.PurchaseOrderId">Add Purchase item</a></h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>UnitCost</th>
+                    <th>Qty</th>
+                    <th>Discount</th>
+                    <th style="text-align:right">Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PurchaseOrderDetails)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>@item.UnitCost</td>
+                        <td>@item.Qty</td>
+                        <td>@item.DiscountAmount</td>
+                        <td align="right">@item.LineTotal</td>
+                        <td>
+                            
+                            @if (item.IsStockUpdated == true)
+                            {
+                                <a href="javascript:void(0)" title="Received">Received</a>
+                            }
+                            else
+                            {
+                                <a href="/StockTransactions/PurchaseOrderDetail?id=@item.PurchaseOrderDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Add to Stocks">Add to Stocks</a>
+                            }
+                            | <a href="/PurchaseOrderDetails/Edit/@item.PurchaseOrderDetailId">Remove</a>
+                            @* <a href="/PurchaseOrderDetails/Delete/@item.PurchaseOrderDetailId">Delete</a> *@
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <h4>
+            Supplier Payments
+            <!-- Button trigger modal -->
+            <button type="button"
+                    class="btn btn-warning btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#OpenPayment">Open Payment
+            </button>
+        </h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>PaymentDate</th>
+                    <th>PaymentStatus</th>
+                    <th>PaymentMethod</th>
+                    <th style="text-align:right">PaidAmount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.SupplierPayments)
+                {
+                    <tr>
+                        <td>@item.PaymentDate</td>
+                        <td><a href="/SupplierPayments/Edit/@item.PaymentId">@item.PaymentStatus.PaymentStatus1</a></td>
+                        <td>@item.PaymentMethod.PaymentMethodName</td>
+                        <td align="right">@item.PaidAmount</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="text-success">Payment Total:</th>
+                    <th class="text-success" style="text-align:right">@totalPaidAmount</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.PurchaseOrderId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+<!-- Modal -->
+<div class="modal fade"
+     id="OpenPayment"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Payment Information
+                </h1>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form asp-action="Create" asp-controller="SupplierPayments" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Ponumber" class="control-label"></label>
+                        <input asp-for="Ponumber" class="form-control" readonly />
+                        <input type="hidden" asp-for="SupplierPayment.PurchaseOrderId" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupplierPayment.PaymentMethodId" class="control-label"></label>
+                        <select asp-for="SupplierPayment.PaymentMethodId" class="form-control" asp-items="ViewBag.PaymentMethodId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupplierPayment.PaymentStatusId" class="control-label"></label>
+                        <select asp-for="SupplierPayment.PaymentStatusId" class="form-control" asp-items="ViewBag.PaymentStatusId"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupplierPayment.TransactionNumber" class="control-label"></label>
+                        <input asp-for="SupplierPayment.TransactionNumber" class="form-control" required />
+                        <span asp-validation-for="SupplierPayment.TransactionNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupplierPayment.PaidAmount" class="control-label"></label>
+                        <input asp-for="SupplierPayment.PaidAmount" class="form-control" min="0" required />
+                        <span asp-validation-for="SupplierPayment.PaidAmount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupplierPayment.PaymentDate" class="control-label"></label>
+                        <input asp-for="SupplierPayment.PaymentDate" class="form-control" required />
+                        <span asp-validation-for="SupplierPayment.PaymentDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupplierPayment.Remarks" class="control-label"></label>
+                        <input asp-for="SupplierPayment.Remarks" class="form-control" />
+                        <span asp-validation-for="SupplierPayment.Remarks" class="text-danger"></span>
+                    </div>
+                    <div class="form-group pt-2">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

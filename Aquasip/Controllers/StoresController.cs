@@ -1,32 +1,30 @@
-﻿using Aquasip.EF;
-using Aquasip.Fiters;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Aquasip.EF;
 
 namespace Aquasip.Controllers
 {
-    [AdminFilter]
-    public class SuppliersController : Controller
+    public class StoresController : Controller
     {
         private readonly AquasipContext _context;
 
-        public SuppliersController(AquasipContext context)
+        public StoresController(AquasipContext context)
         {
             _context = context;
         }
 
-        // GET: Suppliers
+        // GET: Stores
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Suppliers.ToListAsync());
+            return View(await _context.Stores.ToListAsync());
         }
 
-        // GET: Suppliers/Details/5
+        // GET: Stores/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +32,39 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.SupplierId == id);
-            if (supplier == null)
+            var store = await _context.Stores
+                .FirstOrDefaultAsync(m => m.StoreId == id);
+            if (store == null)
             {
                 return NotFound();
             }
 
-            return View(supplier);
+            return View(store);
         }
 
-        // GET: Suppliers/Create
+        // GET: Stores/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Suppliers/Create
+        // POST: Stores/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SupplierId,SupplierCode,SupplierName,Phone,Email,Address,IsActive")] Supplier supplier)
+        public async Task<IActionResult> Create([Bind("StoreId,StoreCode,StoreName,IsActive")] Store store)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(supplier);
+                _context.Add(store);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(supplier);
+            return View(store);
         }
 
-        // GET: Suppliers/Edit/5
+        // GET: Stores/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +72,22 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier == null)
+            var store = await _context.Stores.FindAsync(id);
+            if (store == null)
             {
                 return NotFound();
             }
-            return View(supplier);
+            return View(store);
         }
 
-        // POST: Suppliers/Edit/5
+        // POST: Stores/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SupplierId,SupplierCode,SupplierName,Phone,Email,Address,IsActive")] Supplier supplier)
+        public async Task<IActionResult> Edit(int id, [Bind("StoreId,StoreCode,StoreName,IsActive")] Store store)
         {
-            if (id != supplier.SupplierId)
+            if (id != store.StoreId)
             {
                 return NotFound();
             }
@@ -98,12 +96,12 @@ namespace Aquasip.Controllers
             {
                 try
                 {
-                    _context.Update(supplier);
+                    _context.Update(store);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SupplierExists(supplier.SupplierId))
+                    if (!StoreExists(store.StoreId))
                     {
                         return NotFound();
                     }
@@ -114,10 +112,10 @@ namespace Aquasip.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(supplier);
+            return View(store);
         }
 
-        // GET: Suppliers/Delete/5
+        // GET: Stores/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,34 +123,34 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.SupplierId == id);
-            if (supplier == null)
+            var store = await _context.Stores
+                .FirstOrDefaultAsync(m => m.StoreId == id);
+            if (store == null)
             {
                 return NotFound();
             }
 
-            return View(supplier);
+            return View(store);
         }
 
-        // POST: Suppliers/Delete/5
+        // POST: Stores/Delete/5
         /*[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier != null)
+            var store = await _context.Stores.FindAsync(id);
+            if (store != null)
             {
-                _context.Suppliers.Remove(supplier);
+                _context.Stores.Remove(store);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }*/
 
-        private bool SupplierExists(int id)
+        private bool StoreExists(int id)
         {
-            return _context.Suppliers.Any(e => e.SupplierId == id);
+            return _context.Stores.Any(e => e.StoreId == id);
         }
     }
 }

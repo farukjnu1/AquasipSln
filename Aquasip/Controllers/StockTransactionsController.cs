@@ -35,7 +35,7 @@ namespace Aquasip.Controllers
             #region Dropdown List
             var listProductSelect = new List<SelectListItem>();
             listProductSelect.Add(new SelectListItem { Value = "0", Text = "All" });
-            listProductSelect.AddRange(_context.Products.OrderBy(x => x.ProductName)
+            listProductSelect.AddRange(_context.Products.Where(x=>x.IsActive == true).OrderBy(x => x.ProductName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.ProductId.ToString(),
@@ -46,7 +46,7 @@ namespace Aquasip.Controllers
             ViewData["nProductId"] = ProductId;
             var listStoreSelect = new List<SelectListItem>();
             listStoreSelect.Add(new SelectListItem { Value = "0", Text = "All" });
-            listStoreSelect.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+            listStoreSelect.AddRange(_context.Stores.Where(x=>x.IsActive == true).OrderBy(x => x.StoreName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.StoreId.ToString(),
@@ -60,7 +60,7 @@ namespace Aquasip.Controllers
             #region Data
             var listTransactionType = _context.TransactionTypes.ToList();
             var listReferenceType = _context.ReferenceTypes.ToList();
-            var listStore = _context.Stores.ToList();
+            var listStore = _context.Stores.Where(x => x.IsActive == true).ToList();
             var listStockTransaction = await _context.StockTransactions.Include(s => s.Product).Select(x => new StockTransactionVM
             {
                 IsActive = x.IsActive,
@@ -122,7 +122,7 @@ namespace Aquasip.Controllers
         {
             #region Dropdown list
             var listStore = new List<SelectListItem>();
-            listStore.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+            listStore.AddRange(_context.Stores.Where(x => x.IsActive == true).OrderBy(x => x.StoreName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.StoreId.ToString(),
@@ -168,13 +168,15 @@ namespace Aquasip.Controllers
                 unitCost = oPurchaseOrderDetail.UnitCost;
                 qtyIn = oPurchaseOrderDetail.Qty;
             }
-            var oProduct = _context.Products.FirstOrDefault(x => x.ProductId == productId);
+            var oProduct = _context.Products.Where(x => x.IsActive == true).FirstOrDefault(x => x.ProductId == productId);
             if (oProduct == null)
             {
                 //return NotFound();
                 TempData["message"] = "Product not found.";
                 return RedirectToAction("Index", "PurchaseOrders");
             }
+            StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
+            var listStock = stockRepo.GetCurrentStock(productId);
             StockTransaction stockTransaction = new StockTransaction
             {
                 IsActive = true,
@@ -192,6 +194,7 @@ namespace Aquasip.Controllers
             };
             #endregion
             ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
+            ViewData["Stocks"] = listStock;
             return View("Create", stockTransaction);
         }
 
@@ -200,7 +203,7 @@ namespace Aquasip.Controllers
         {
             #region Dropdown list
             var listStore = new List<SelectListItem>();
-            listStore.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+            listStore.AddRange(_context.Stores.Where(x => x.IsActive == true).OrderBy(x => x.StoreName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.StoreId.ToString(),
@@ -294,7 +297,7 @@ namespace Aquasip.Controllers
         {
             #region Dropdown list
             var listStore = new List<SelectListItem>();
-            listStore.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+            listStore.AddRange(_context.Stores.Where(x => x.IsActive == true).OrderBy(x => x.StoreName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.StoreId.ToString(),
@@ -357,7 +360,7 @@ namespace Aquasip.Controllers
                 productId = oSalesReturnDetail.ProductId;
                 unitCost = oSalesReturnDetail.UnitPrice;
             }
-            var oProduct = _context.Products.FirstOrDefault(x => x.ProductId == productId);
+            var oProduct = _context.Products.Where(x => x.IsActive == true).FirstOrDefault(x => x.ProductId == productId);
             if (oProduct == null) 
             {
                 return NotFound();
@@ -408,7 +411,7 @@ namespace Aquasip.Controllers
             }
             #region Dropdown list
             var listStore = new List<SelectListItem>();
-            listStore.AddRange(_context.Stores.OrderBy(x => x.StoreName)
+            listStore.AddRange(_context.Stores.Where(x => x.IsActive == true).OrderBy(x => x.StoreName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.StoreId.ToString(),

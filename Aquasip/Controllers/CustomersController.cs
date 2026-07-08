@@ -286,7 +286,7 @@ namespace Aquasip.Controllers
         }
 
         // POST: Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
+        /*[HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
@@ -298,11 +298,12 @@ namespace Aquasip.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
+        }*/
 
         private bool SalesOrderExists(long id)
         {
             return _context.SalesOrders.Any(e => e.OrderId == id);
         }
+
     }
 }

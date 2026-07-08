@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 namespace Aquasip.Controllers
 {
     [AdminFilter]
-    public class SuppliersController : Controller
+    public class CustomerManagesController : Controller
     {
         private readonly AquasipContext _context;
 
-        public SuppliersController(AquasipContext context)
+        public CustomerManagesController(AquasipContext context)
         {
             _context = context;
         }
@@ -23,9 +23,10 @@ namespace Aquasip.Controllers
         // GET: Suppliers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Suppliers.ToListAsync());
+            return View(await _context.Customers.ToListAsync());
         }
 
+        // GET: Suppliers/Details/5
         // GET: Suppliers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -34,14 +35,13 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.SupplierId == id);
-            if (supplier == null)
+            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerId == id);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(supplier);
+            return View(customer);
         }
 
         // GET: Suppliers/Create
@@ -55,15 +55,15 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SupplierId,SupplierCode,SupplierName,Phone,Email,Address,IsActive")] Supplier supplier)
+        public async Task<IActionResult> Create([Bind("CustomerId,CustomerCode,FullName,PhoneNumber,Email,IsActive")] Customer customer)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(supplier);
+                _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(supplier);
+            return View(customer);
         }
 
         // GET: Suppliers/Edit/5
@@ -74,12 +74,12 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier == null)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
             {
                 return NotFound();
             }
-            return View(supplier);
+            return View(customer);
         }
 
         // POST: Suppliers/Edit/5
@@ -87,9 +87,9 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SupplierId,SupplierCode,SupplierName,Phone,Email,Address,IsActive")] Supplier supplier)
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,CustomerCode,FullName,PhoneNumber,Email,IsActive")] Customer customer)
         {
-            if (id != supplier.SupplierId)
+            if (id != customer.CustomerId)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace Aquasip.Controllers
             {
                 try
                 {
-                    _context.Update(supplier);
+                    _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SupplierExists(supplier.SupplierId))
+                    if (!CustomerExists(customer.CustomerId))
                     {
                         return NotFound();
                     }
@@ -114,45 +114,15 @@ namespace Aquasip.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(supplier);
+            return View(customer);
         }
 
-        // GET: Suppliers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+
+
+        private bool CustomerExists(long id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.SupplierId == id);
-            if (supplier == null)
-            {
-                return NotFound();
-            }
-
-            return View(supplier);
+            return _context.Customers.Any(e => e.CustomerId == id);
         }
 
-        // POST: Suppliers/Delete/5
-        /*[HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier != null)
-            {
-                _context.Suppliers.Remove(supplier);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }*/
-
-        private bool SupplierExists(int id)
-        {
-            return _context.Suppliers.Any(e => e.SupplierId == id);
-        }
     }
 }
