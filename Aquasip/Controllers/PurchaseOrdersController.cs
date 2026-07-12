@@ -168,7 +168,7 @@ namespace Aquasip.Controllers
         {
             try
             {
-                purchaseOrder.Ponumber = CodeGenerate.PurchaseOrderNumber(DateTime.Now);
+                purchaseOrder.Ponumber = CodeGenerate.PurchaseOrderNum(DateTime.Now);
                 _context.Add(purchaseOrder);
                 await _context.SaveChangesAsync();
                 TempData["message"] = "Please Add Purchase items";

@@ -1,5 +1,6 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,7 @@ namespace Aquasip.Controllers
         {
             if (ModelState.IsValid)
             {
+                customer.CustomerCode = CodeGenerate.CustomerNum(DateTime.Now);
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

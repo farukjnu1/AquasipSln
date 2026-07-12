@@ -26,16 +26,24 @@ namespace Aquasip.Controllers
         }
 
         // GET: PurchaseOrders
-        public async Task<IActionResult> Index(string? poNumber)
+        public async Task<IActionResult> Index(string? poNumber, int pageSize = 100)
         {
+            var listPurchaseOrder = new List<PurchaseOrder>();
             if (!string.IsNullOrEmpty(poNumber))
             {
-                var aquasipContext = _context.PurchaseOrders.Where(x => x.Ponumber == poNumber)
-                .Include(p => p.Supplier)
-                .Include(x => x.PurchaseState).OrderByDescending(x => x.Podate);
-                return View(await aquasipContext.ToListAsync());
+                listPurchaseOrder = _context.PurchaseOrders.Where(x => x.Ponumber == poNumber)
+                    .Include(p => p.Supplier)
+                    .Include(x => x.PurchaseState)  
+                    .OrderByDescending(x => x.Podate)
+                    .ToList();
             }
-            return View(new List<PurchaseOrder>());
+            ViewData["PurchaseOrders"] = listPurchaseOrder;
+            ViewData["Ponumber"] = poNumber;
+            ViewData["PageSize"] = pageSize;
+            var aquasipContext = _context.PurchaseReturns
+                .Include(p => p.PurchaseOrder)
+                .Include(p => p.Supplier).OrderByDescending(x => x.ReturnDate);
+            return View(await aquasipContext.ToListAsync());
         }
 
         // GET: PurchaseOrders/Details/5
@@ -45,7 +53,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            PurchaseOrderVM oPurchaseOrder = new PurchaseOrderVM();
+            PurchaseReturnVM oPurchaseReturn = new PurchaseReturnVM();
             try
             {
                 #region dropdown list
@@ -64,102 +72,71 @@ namespace Aquasip.Controllers
                     })
                     .ToList();
                 #endregion
-                #region Model of PurchaseOrderVM
-                var purchaseOrder = await _context.PurchaseOrders
+                #region Model of PurchaseReturnVM
+                var purchaseReturn = await _context.PurchaseReturns
                     .Include(p => p.Supplier)
-                    .FirstOrDefaultAsync(m => m.PurchaseOrderId == id);
-                if (purchaseOrder == null)
+                    .FirstOrDefaultAsync(m => m.PurchaseReturnId == id);
+                if (purchaseReturn == null)
                 {
                     return NotFound();
                 }
-                string referenceCode = "PurchaseOrderDetail";
+                string referenceCode = "PurchaseReturnDetail";
                 var oReferenceType = _context.ReferenceTypes.Where(x => x.Code == referenceCode).FirstOrDefault();
                 if (oReferenceType == null)
                 {
                     return NotFound();
                 }
-                var listPurchaseOrderDetail = await _context.PurchaseOrderDetails
-                    .Where(x => x.PurchaseOrderId == id && x.IsActive == true)
+                var listPurchaseReturnDetail = await _context.PurchaseReturnDetails
+                    .Where(x => x.PurchaseReturnId == id && x.IsActive == true)
                     .Include(x => x.Product)
-                    .Select(x => new PurchaseOrderDetailVM
+                    .Select(x => new PurchaseReturnDetailVM
                     {
                         LineTotal = x.LineTotal,
                         UnitCost = x.UnitCost,
                         ProductId = x.ProductId,
-                        PurchaseOrderDetailId = x.PurchaseOrderDetailId,
-                        PurchaseOrderId = x.PurchaseOrderId,
+                        PurchaseReturnDetailId = x.PurchaseReturnDetailId,
+                        PurchaseReturnId = x.PurchaseReturnId,
                         Qty = x.Qty,
                         IsActive = x.IsActive,
                         Product = new ProductVM { ProductId = x.Product.ProductId, ProductName = x.Product.ProductName },
-                        DiscountAmount = x.DiscountAmount,
                         StoreId = x.StoreId,
                         ReferenceToken = CodeGenerate.TextToHex(referenceCode),
-                        TransactionTypeToken = _tokenService.Encrypt("1") // 1 for plus stock, 2 for minus stock
+                        TransactionTypeToken = _tokenService.Encrypt("2") // 1 for plus stock, 2 for minus stock
                     }).ToListAsync();
-                foreach (var item in listPurchaseOrderDetail)
+                foreach (var item in listPurchaseReturnDetail)
                 {
-                    var oStock = _context.StockTransactions.Where(x => x.ReferenceId == item.PurchaseOrderDetailId && x.ReferenceTypeId == oReferenceType.ReferenceTypeId).FirstOrDefault();
+                    var oStock = _context.StockTransactions.Where(x => x.ReferenceId == item.PurchaseReturnDetailId && x.ReferenceTypeId == oReferenceType.ReferenceTypeId).FirstOrDefault();
                     item.IsStockUpdated = oStock == null ? false : true;
                 }
-                oPurchaseOrder = new PurchaseOrderVM
+                oPurchaseReturn = new PurchaseReturnVM
                 {
-                    DiscountAmount = purchaseOrder.DiscountAmount,
-                    IsActive = purchaseOrder.IsActive,
-                    OtherCharge = purchaseOrder.OtherCharge,
-                    Podate = purchaseOrder.Podate,
-                    Ponumber = purchaseOrder.Ponumber,
-                    PurchaseOrderId = purchaseOrder.PurchaseOrderId,
-                    PurchaseStateId = purchaseOrder.PurchaseStateId,
-                    Remark = purchaseOrder.Remark,
-                    SubTotal = purchaseOrder.SubTotal,
-                    Supplier = new SupplierVM { SupplierId = purchaseOrder.Supplier.SupplierId, SupplierCode = purchaseOrder.Supplier.SupplierCode, SupplierName = purchaseOrder.Supplier.SupplierName },
-                    SupplierId = purchaseOrder.SupplierId,
-                    SupplierPayments = new List<SupplierPaymentVM>(),
-                    SupplierPayment = new SupplierPaymentVM() { PurchaseOrderId = purchaseOrder.PurchaseOrderId },
-                    TaxAmount = purchaseOrder.TaxAmount,
-                    TaxPercent = purchaseOrder.TaxPercent,
-                    TotalAmount = purchaseOrder.TotalAmount,
-                    PurchaseOrderDetails = listPurchaseOrderDetail
+                    IsActive = purchaseReturn.IsActive,
+                    ReturnDate = purchaseReturn.ReturnDate,
+                    ReturnNumber = purchaseReturn.ReturnNumber,
+                    PurchaseOrderId = purchaseReturn.PurchaseOrderId,
+                    PurchaseReturnId = purchaseReturn.PurchaseReturnId,
+                    Remark = purchaseReturn.Remark,
+                    Supplier = new SupplierVM { SupplierId = purchaseReturn.Supplier.SupplierId, SupplierCode = purchaseReturn.Supplier.SupplierCode, SupplierName = purchaseReturn.Supplier.SupplierName },
+                    SupplierId = purchaseReturn.SupplierId,
+                    PurchaseReturnDetails = listPurchaseReturnDetail
                 };
-                oPurchaseOrder.SupplierPayments = _context.SupplierPayments
-                    .Where(sp => sp.PurchaseOrderId == oPurchaseOrder.PurchaseOrderId)
-                    .Include(pm => pm.PaymentMethod)
-                    .Include(ps => ps.PaymentStatus).Select(x => new SupplierPaymentVM
-                    {
-                        PaidAmount = x.PaidAmount,
-                        PaymentMethodId = x.PaymentMethodId,
-                        PaymentStatusId = x.PaymentStatusId,
-                        PaymentDate = x.PaymentDate,
-                        Remarks = x.Remarks,
-                        PaymentId = x.PaymentId,
-                        IsActive = x.IsActive,
-                        PaymentMethod = new PaymentMethodVM { PaymentMethodId = x.PaymentMethod.PaymentMethodId, PaymentMethodName = x.PaymentMethod.PaymentMethodName },
-                        PaymentStatus = new PaymentStatusVM { PaymentStateId = x.PaymentStatus.PaymentStateId, PaymentStatus1 = x.PaymentStatus.PaymentStatus1 },
-                        PurchaseOrderId = x.PurchaseOrderId,
-                        TransactionNumber = x.TransactionNumber
-                    }).ToList();
                 #endregion
             }
             catch 
             {
-                
             }
-            return View(oPurchaseOrder);
+            return View(oPurchaseReturn);
         }
 
         // GET: PurchaseOrders/Create
-        public IActionResult Create()
+        public IActionResult Create(long id)
         {
-            var listSuppliers = new List<SelectListItem>();
-            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
-                .Select(x => new SelectListItem
-                {
-                    Value = x.SupplierId.ToString(),
-                    Text = x.SupplierName
-                })
-                .ToList());
-            ViewData["SupplierId"] = listSuppliers;
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId");
+            var oPurchaseOrder = _context.PurchaseOrders.Include(x => x.Supplier).Where(x => x.PurchaseOrderId == id).FirstOrDefault();
+            if (oPurchaseOrder != null)
+            {
+                oPurchaseOrder.PurchaseOrderDetails = _context.PurchaseOrderDetails.Include(x=>x.Product).Where(x => x.PurchaseOrderId == id && x.IsActive == true).ToList();
+            }
+            ViewData["PurchaseOrder"] = oPurchaseOrder;
             return View();
         }
 
@@ -168,31 +145,21 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxAmount,TotalAmount,IsActive")] PurchaseOrder purchaseOrder)
+        public async Task<IActionResult> Create([Bind("PurchaseOrderId,ReturnDate,SupplierId,IsActive")] PurchaseReturn purchaseReturn)
         {
             try
             {
-                purchaseOrder.Ponumber = CodeGenerate.PurchaseOrderNumber(DateTime.Now);
-                _context.Add(purchaseOrder);
+                purchaseReturn.ReturnNumber = CodeGenerate.PurchaseReturnNum(DateTime.Now);
+                _context.Add(purchaseReturn);
                 await _context.SaveChangesAsync();
-                TempData["message"] = "Please Add Purchase items";
-                return RedirectToAction("Create", "PurchaseOrderDetails", new { purchaseOrderId = purchaseOrder.PurchaseOrderId });
+                TempData["message"] = "Please Add Purchase-Return items";
+                return RedirectToAction("Create", "PurchaseReturnDetails", new { purchaseReturnId = purchaseReturn.PurchaseReturnId });
             }
             catch 
             {
                 TempData["message"] = "Exceptions!";
             }
-            var listSuppliers = new List<SelectListItem>();
-            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
-                .Select(x => new SelectListItem
-                {
-                    Value = x.SupplierId.ToString(),
-                    Text = x.SupplierName
-                })
-                .ToList());
-            ViewData["SupplierId"] = listSuppliers;
-            
-            return View(purchaseOrder);
+            return View(purchaseReturn);
         }
 
         // GET: PurchaseOrders/Edit/5
@@ -203,13 +170,13 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var purchaseOrder = await _context.PurchaseOrders.FindAsync(id);
-            if (purchaseOrder == null)
+            var purchaseReturn = await _context.PurchaseReturns.Include(x=>x.Supplier).FirstOrDefaultAsync(x=>x.PurchaseReturnId == id);
+            if (purchaseReturn == null)
             {
                 return NotFound();
             }
 
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", purchaseOrder.SupplierId);
+            #region dropdown list
             var listSuppliers = new List<SelectListItem>();
             listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
                 .Select(x => new SelectListItem
@@ -228,9 +195,9 @@ namespace Aquasip.Controllers
                 })
                 .ToList());
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
-            ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x=>x.Product).ToListAsync();
-
-            return View(purchaseOrder);
+            #endregion
+            ViewData["PurchaseReturnDetails"] = await _context.PurchaseReturnDetails.Where(x => x.PurchaseReturnId == id && x.IsActive == true).Include(x=>x.Product).ToListAsync();
+            return View(purchaseReturn);
         }
 
         // POST: PurchaseOrders/Edit/5
@@ -238,9 +205,9 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxPercent,TaxAmount,TotalAmount,IsActive,PurchaseStateId,Remark")] PurchaseOrder purchaseOrder)
+        public async Task<IActionResult> Edit(long id, [Bind("PurchaseReturnId,ReturnDate,SupplierId,IsActive,Remark")] PurchaseReturn purchaseReturn)
         {
-            if (id != purchaseOrder.PurchaseOrderId)
+            if (id != purchaseReturn.PurchaseReturnId)
             {
                 return NotFound();
             }
@@ -248,16 +215,14 @@ namespace Aquasip.Controllers
             try
             {
                 #region order-summery
-                _context.Update(purchaseOrder);
+                _context.Update(purchaseReturn);
                 await _context.SaveChangesAsync();
 
-                var oOrder = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == purchaseOrder.PurchaseOrderId).FirstOrDefault();
-                if (oOrder != null)
+                var oPurchaseReturn = _context.PurchaseReturns.Where(x => x.PurchaseReturnId == purchaseReturn.PurchaseReturnId).FirstOrDefault();
+                if (oPurchaseReturn != null)
                 {
-                    oOrder.IsActive = true;
-                    oOrder.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == purchaseOrder.PurchaseOrderId && x.IsActive == true).Sum(x => x.LineTotal);
-                    oOrder.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
-                    oOrder.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
+                    oPurchaseReturn.IsActive = true;
+                    oPurchaseReturn.Remark = purchaseReturn.Remark;
                     // =========================
                     // Save Order Header
                     // =========================
@@ -268,7 +233,7 @@ namespace Aquasip.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PurchaseOrderExists(purchaseOrder.PurchaseOrderId))
+                if (!PurchaseReturnExists(purchaseReturn.PurchaseReturnId))
                 {
                     //return NotFound();
                 }
@@ -298,7 +263,7 @@ namespace Aquasip.Controllers
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
             ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x => x.Product).ToListAsync();
 
-            return View(purchaseOrder);
+            return View(purchaseReturn);
         }
 
         // GET: PurchaseOrders/Delete/5
@@ -309,15 +274,15 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var purchaseOrder = await _context.PurchaseOrders
+            var purchaseReturn = await _context.PurchaseReturns
                 .Include(p => p.Supplier)
-                .FirstOrDefaultAsync(m => m.PurchaseOrderId == id);
-            if (purchaseOrder == null)
+                .FirstOrDefaultAsync(m => m.PurchaseReturnId == id);
+            if (purchaseReturn == null)
             {
                 return NotFound();
             }
 
-            return View(purchaseOrder);
+            return View(purchaseReturn);
         }
 
         // POST: PurchaseOrders/Delete/5
@@ -325,19 +290,19 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var purchaseOrder = await _context.PurchaseOrders.FindAsync(id);
-            if (purchaseOrder != null)
+            var purchaseReturn = await _context.PurchaseReturns.FindAsync(id);
+            if (purchaseReturn != null)
             {
-                _context.PurchaseOrders.Remove(purchaseOrder);
+                _context.PurchaseReturns.Remove(purchaseReturn);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PurchaseOrderExists(long id)
+        private bool PurchaseReturnExists(long id)
         {
-            return _context.PurchaseOrders.Any(e => e.PurchaseOrderId == id);
+            return _context.PurchaseReturns.Any(e => e.PurchaseReturnId == id);
         }
     }
 }

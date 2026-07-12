@@ -117,7 +117,7 @@ namespace Aquasip.Controllers
             return View(stockTransaction);
         }
 
-        //PurchaseOrderDetail
+        // PurchaseOrderDetail
         public IActionResult PurchaseOrderDetail(long id, string referenceToken, string transactionType)
         {
             #region Dropdown list
@@ -174,6 +174,86 @@ namespace Aquasip.Controllers
                 //return NotFound();
                 TempData["message"] = "Product not found.";
                 return RedirectToAction("Index", "PurchaseOrders");
+            }
+            StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
+            var listStock = stockRepo.GetCurrentStock(productId);
+            StockTransaction stockTransaction = new StockTransaction
+            {
+                IsActive = true,
+                ProductId = productId,
+                Product = oProduct,
+                QtyIn = qtyIn,
+                QtyOut = qtyOut,
+                ReferenceId = id,
+                ReferenceTypeId = referenceType != null ? referenceType.ReferenceTypeId : (int?)null,
+                StockTransactionId = 0,
+                StoreId = 0,
+                TransactionDate = DateTime.Now,
+                TransactionTypeId = transactionTypeId,
+                UnitCost = unitCost,
+            };
+            #endregion
+            ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
+            ViewData["Stocks"] = listStock;
+            return View("Create", stockTransaction);
+        }
+
+        // PurchaseReturnDetail 
+        public IActionResult PurchaseReturnDetail(long id, string referenceToken, string transactionType)
+        {
+            #region Dropdown list
+            var listStore = new List<SelectListItem>();
+            listStore.AddRange(_context.Stores.Where(x => x.IsActive == true).OrderBy(x => x.StoreName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.StoreId.ToString(),
+                    Text = x.StoreName
+                }).ToList());
+            ViewData["StoreId"] = listStore;
+            #endregion
+            #region Model of StockTransaction
+            var referenceCode = CodeGenerate.HexToText(referenceToken);
+            var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
+            if (referenceType == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Reference not valid.";
+                return RedirectToAction("Index", "PurchaseReturns");
+            }
+            var transactionTypeId = Convert.ToInt32(_tokenService.Decrypt(transactionType));
+            if (transactionTypeId != 2) // 1 for plus stock, 2 for minus stock
+            {
+                //return NotFound();
+                TempData["message"] = "Transaction not valid.";
+                return RedirectToAction("Index", "PurchaseReturns");
+            }
+            long productId = 0;
+            decimal? unitCost = 0, qtyIn = 0, qtyOut = 0;
+            if (referenceCode != "PurchaseReturnDetail")
+            {
+                //return NotFound();
+                TempData["message"] = "Purchase not valid.";
+                return RedirectToAction("Index", "PurchaseReturns");
+            }
+            if (referenceCode == "PurchaseReturnDetail")
+            {
+                var oPurchaseReturnDetail = _context.PurchaseReturnDetails.FirstOrDefault(x => x.PurchaseReturnDetailId == id);
+                if (oPurchaseReturnDetail == null)
+                {
+                    //return NotFound();
+                    TempData["message"] = "Purchase not found.";
+                    return RedirectToAction("Index", "PurchaseReturns");
+                }
+                productId = oPurchaseReturnDetail.ProductId;
+                unitCost = oPurchaseReturnDetail.UnitCost;
+                qtyOut = oPurchaseReturnDetail.Qty;
+            }
+            var oProduct = _context.Products.Where(x => x.IsActive == true).FirstOrDefault(x => x.ProductId == productId);
+            if (oProduct == null)
+            {
+                //return NotFound();
+                TempData["message"] = "Product not found.";
+                return RedirectToAction("Index", "PurchaseReturns");
             }
             StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
             var listStock = stockRepo.GetCurrentStock(productId);

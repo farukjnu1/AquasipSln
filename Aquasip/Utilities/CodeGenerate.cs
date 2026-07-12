@@ -5,23 +5,42 @@ namespace Aquasip.Utilities
 {
     public class CodeGenerate
     {
-        public static string SalesOrderNumber(DateTime dateTime, string phone)
+        public static string SalesOrderNum(DateTime dateTime)
         {
             // Calculate total seconds since epoch
             string timestamp = TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
-
-            // Get last 2 digits of phone number
-            string last2Digits = phone.Substring(phone.Length - 2);
 
             // Combine last 2 digits of phone number with timestamp
-            return last2Digits + timestamp;
+            return "SO" + timestamp;
         }
 
-        public static string PurchaseOrderNumber(DateTime dateTime)
+        public static string SalesReturnNum(DateTime dateTime)
         {
             // Calculate total seconds since epoch
             string timestamp = TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
 
+            // Combine last 2 digits of phone number with timestamp
+            return "SR" + timestamp;
+        }
+
+        public static string PurchaseOrderNum(DateTime dateTime)
+        {
+            // Calculate total seconds since epoch
+            string timestamp = "PO" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            return timestamp;
+        }
+
+        public static string PurchaseReturnNum(DateTime dateTime)
+        {
+            // Calculate total seconds since epoch
+            string timestamp = "PR" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            return timestamp;
+        }
+
+        public static string CustomerNum(DateTime dateTime)
+        {
+            // Calculate total seconds since epoch
+            string timestamp = "C" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
             return timestamp;
         }
 

@@ -425,6 +425,7 @@ public partial class AquasipContext : DbContext
 
             entity.HasIndex(e => e.ReturnNumber, "UQ__Purchase__2739D7BBA1037D70").IsUnique();
 
+            entity.Property(e => e.Remark).HasMaxLength(500);
             entity.Property(e => e.ReturnDate).HasColumnType("datetime");
             entity.Property(e => e.ReturnNumber)
                 .HasMaxLength(30)

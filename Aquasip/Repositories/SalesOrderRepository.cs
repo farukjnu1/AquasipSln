@@ -37,11 +37,13 @@ namespace Aquasip.Repositories
                     var oCustomer = (from x in _context.Customers where x.Email == order.Customer.Email select x).FirstOrDefault();
                     if (oCustomer == null)
                     {
+                        var customerCode = CodeGenerate.CustomerNum(DateTime.Now);
                         oCustomer = new Customer
                         {
                             Email = order.Customer.Email,
                             FullName = order.Customer.FullName,
-                            PhoneNumber = order.Customer.PhoneNumber
+                            PhoneNumber = order.Customer.PhoneNumber,
+                            CustomerCode = customerCode
                         };
                         _context.Customers.Add(oCustomer);
                         _context.SaveChanges();
@@ -88,7 +90,7 @@ namespace Aquasip.Repositories
                     }
                     #endregion
                     #region order-summery
-                    order.OrderNumber = CodeGenerate.SalesOrderNumber(DateTime.Now, oCustomer.PhoneNumber ?? "");
+                    order.OrderNumber = CodeGenerate.SalesOrderNum(DateTime.Now);
                     var oOrder = new SalesOrder
                     {
                         CustomerId = oCustomer.CustomerId,

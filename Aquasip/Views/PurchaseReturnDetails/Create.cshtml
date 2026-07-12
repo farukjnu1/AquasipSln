@@ -1,0 +1,135 @@
+﻿@model Aquasip.EF.PurchaseReturnDetail
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var oPurchaseOrder = ViewData["PurchaseOrder"] as Aquasip.EF.PurchaseOrder;
+    var oPurchaseReturn = ViewData["PurchaseReturn"] as Aquasip.EF.PurchaseReturn;
+}
+<h3>Create</h3>
+<div class="row">
+    <div class="col-md-4">
+        <h4>Purchase Return Detail</h4>
+        <hr />
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PurchaseReturnId" />
+            @* <input type="hidden" id="PurchaseOrderId" value="@oPurchaseOrder.PurchaseOrderId" /> *@
+            <input type="hidden" asp-for="IsActive" value="True" />
+            @* <div class="form-group">
+                <label asp-for="PurchaseOrderId" class="control-label"></label>
+                <select asp-for="PurchaseOrderId" class ="form-control" asp-items="ViewBag.PurchaseOrderId"></select>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" class ="form-control" asp-items="ViewBag.Products"></select>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="UnitCost" class="control-label"></label>
+                <input asp-for="UnitCost" type="number" min="1" class="form-control" onkeyup="calculateLineTotal()" />
+                <span asp-validation-for="UnitCost" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Qty" class="control-label"></label>
+                <input asp-for="Qty" type="number" min="1" class="form-control" onkeyup="calculateLineTotal()" />
+                <span asp-validation-for="Qty" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="DiscountAmount" class="control-label"></label>
+                <input asp-for="DiscountAmount" type="number" min="0" class="form-control" onkeyup="calculateLineTotal()" />
+                <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LineTotal" class="control-label"></label>
+                <input asp-for="LineTotal" type="number" min="0" class="form-control" readonly />
+                <span asp-validation-for="LineTotal" class="text-danger"></span>
+            </div> *@
+            @* <div class="form-group">
+                <label asp-for="StoreId" class="control-label"></label>
+                <input asp-for="StoreId" class="form-control" />
+                <span asp-validation-for="StoreId" class="text-danger"></span>
+            </div> *@
+            @* <div class="form-group">
+                <label asp-for="IsActive" class="control-label"></label>
+                <input asp-for="IsActive" class="form-control" />
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div> *@
+            <div class="form-group pt-3">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Purchase Return</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-4">
+                Return number
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseReturn.ReturnNumber
+            </dd>
+            <dt class="col-sm-4">
+                ReturnDate
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseReturn.ReturnDate
+            </dd>
+            <dt class="col-sm-4">
+                Supplier
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseReturn.Supplier.SupplierName
+            </dd>
+            <dt class="col-sm-4">
+                IsActive
+            </dt>
+            <dd class="col-sm-8">
+                @oPurchaseReturn.IsActive
+            </dd>
+        </dl>
+        <h4>From Purchase Order :</h4>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>UnitCost</th>
+                    <th>Qty</th>
+                    <th style="text-align:right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in oPurchaseOrder.PurchaseOrderDetails)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>@item.UnitCost</td>
+                        <td>@item.Qty</td>
+                        <td align="right">@item.LineTotal</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    @* <a asp-action="Index">Back to List</a> *@
+    <a href="/PurchaseReturns/Edit/@oPurchaseReturn.PurchaseReturnId">Back</a>
+</div>
+
+@* 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+ *@
+
+<script>
+    function calculateLineTotal(){
+        var UnitCost = parseFloat(document.getElementById('UnitCost').value);
+        var Qty = parseFloat(document.getElementById('Qty').value);
+        var DiscountAmount = parseFloat(document.getElementById('DiscountAmount').value);
+        document.getElementById('LineTotal').value = (UnitCost * Qty) - DiscountAmount;
+    }
+</script>

@@ -1,18 +1,19 @@
-﻿using Aquasip.EF;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Aquasip.Models
 {
-    public class PurchaseReturnDetailVM
+    public class SalesReturnDetailVM
     {
-        public long PurchaseReturnDetailId { get; set; }
+        public long SalesReturnDetailId { get; set; }
 
-        public long PurchaseReturnId { get; set; }
+        public long SalesReturnId { get; set; }
 
         public long ProductId { get; set; }
 
         public decimal? Qty { get; set; }
 
-        public decimal? UnitCost { get; set; }
+        public decimal? UnitPrice { get; set; }
 
         public decimal? LineTotal { get; set; }
 
@@ -22,9 +23,10 @@ namespace Aquasip.Models
 
         public virtual ProductVM Product { get; set; } = null!;
 
-        public virtual PurchaseReturnVM PurchaseReturn { get; set; } = null!;
+        public virtual SalesReturnVM SalesReturn { get; set; } = null!;
         public string ReferenceToken { get; set; } = null!;
         public string TransactionTypeToken { get; set; } = null!;
         public bool IsStockUpdated { get; set; }
     }
 }
+    

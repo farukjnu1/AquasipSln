@@ -1,4 +1,4 @@
-﻿@model Aquasip.EF.PurchaseOrderDetail
+﻿@model Aquasip.EF.PurchaseReturnDetail
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,16 +13,17 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PurchaseOrderDetailId" />
+            <input type="hidden" asp-for="PurchaseReturnDetailId" />
+            <input type="hidden" asp-for="PurchaseReturnId" />
+            <input type="hidden" asp-for="ProductId" />
             <div class="form-group">
-                <label asp-for="PurchaseOrderId" class="control-label"></label>
+                <label asp-for="PurchaseReturn.ReturnNumber" class="control-label"></label>
                 @* <select asp-for="PurchaseOrderId" class="form-control" asp-items="ViewBag.PurchaseOrderId"></select> *@
-                <input asp-for="PurchaseOrder.Ponumber" class="form-control" readonly />
-                <span asp-validation-for="PurchaseOrderId" class="text-danger"></span>
+                <input asp-for="PurchaseReturn.ReturnNumber" class="form-control" readonly />
+                <span asp-validation-for="PurchaseReturn.ReturnNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ProductId" class="control-label"></label>
-                @* <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select> *@
                 <input asp-for="Product.ProductName" class="form-control" readonly />
                 <span asp-validation-for="ProductId" class="text-danger"></span>
             </div>
@@ -36,7 +37,7 @@
                 <input asp-for="UnitCost" class="form-control" readonly />
                 <span asp-validation-for="UnitCost" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="DiscountAmount" class="control-label"></label>
                 <input asp-for="DiscountAmount" class="form-control" readonly />
                 <span asp-validation-for="DiscountAmount" class="text-danger"></span>
@@ -45,7 +46,7 @@
                 <label asp-for="LineTotal" class="control-label"></label>
                 <input asp-for="LineTotal" class="form-control" readonly />
                 <span asp-validation-for="LineTotal" class="text-danger"></span>
-            </div>
+            </div> *@
             @* <div class="form-group">
                 <label asp-for="StoreId" class="control-label"></label>
                 <input asp-for="StoreId" class="form-control" />
@@ -73,7 +74,7 @@
 </div>
 
 <div>
-    <a href="/PurchaseOrders/Edit/@Model.PurchaseOrderId">Back</a>
+    <a href="/PurchaseReturns/Edit/@Model.PurchaseReturnId">Back</a>
     @* <a asp-action="Index">Back to List</a> *@
 </div>
 

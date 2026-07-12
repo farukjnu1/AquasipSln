@@ -15,6 +15,7 @@ namespace Aquasip.Models
         public int SupplierId { get; set; }
 
         public decimal? TotalAmount { get; set; }
+        public string? Remark { get; set; }
 
         public bool? IsActive { get; set; }
 

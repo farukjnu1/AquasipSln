@@ -17,6 +17,8 @@ public partial class PurchaseReturn
 
     public decimal? TotalAmount { get; set; }
 
+    public string? Remark { get; set; }
+
     public bool? IsActive { get; set; }
 
     public virtual PurchaseOrder? PurchaseOrder { get; set; }
