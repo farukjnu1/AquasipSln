@@ -169,13 +169,14 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var purchaseReturn = await _context.PurchaseReturns.Include(x=>x.Supplier).FirstOrDefaultAsync(x=>x.PurchaseReturnId == id);
             if (purchaseReturn == null)
             {
                 return NotFound();
             }
-
+            var listPurchaseReturnDetail = await _context.PurchaseReturnDetails.Where(x => x.PurchaseReturnId == id && x.IsActive == true).Include(x=>x.Product).ToListAsync();
+            purchaseReturn.PurchaseReturnDetails = listPurchaseReturnDetail;
+            //ViewData["PurchaseReturnDetails"] = listPurchaseReturnDetail;
             #region dropdown list
             var listSuppliers = new List<SelectListItem>();
             listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
@@ -196,7 +197,12 @@ namespace Aquasip.Controllers
                 .ToList());
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
             #endregion
-            ViewData["PurchaseReturnDetails"] = await _context.PurchaseReturnDetails.Where(x => x.PurchaseReturnId == id && x.IsActive == true).Include(x=>x.Product).ToListAsync();
+            var oPurchaseOrder = _context.PurchaseOrders.Include(x => x.Supplier).Where(x => x.PurchaseOrderId == purchaseReturn.PurchaseOrderId).FirstOrDefault();
+            if (oPurchaseOrder != null)
+            {
+                oPurchaseOrder.PurchaseOrderDetails = _context.PurchaseOrderDetails.Include(x => x.Product).Where(x => x.PurchaseOrderId == purchaseReturn.PurchaseOrderId && x.IsActive == true).ToList();
+            }
+            ViewData["PurchaseOrder"] = oPurchaseOrder;
             return View(purchaseReturn);
         }
 

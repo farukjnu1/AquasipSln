@@ -1,12 +1,12 @@
-﻿@model Aquasip.EF.PurchaseReturn
+﻿@model Aquasip.EF.SalesReturn
 
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var listPurchaseReturnDetail = ViewData["PurchaseReturnDetails"] as List<Aquasip.EF.PurchaseReturnDetail>;
+    var listSalesReturnDetail = ViewData["SalesReturnDetails"] as List<Aquasip.EF.SalesReturnDetail>;
 }
 
-<h3>Edit PurchaseOrder</h3>
+<h3>Edit SalesOrder</h3>
 
 <div class="row">
     <div class="col-md-6">
@@ -14,9 +14,9 @@
         <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PurchaseReturnId" />
-            <input type="hidden" asp-for="PurchaseOrderId" />
-            <input type="hidden" asp-for="SupplierId" />
+            <input type="hidden" asp-for="SalesReturnId" />
+            <input type="hidden" asp-for="SalesOrderId" />
+            <input type="hidden" asp-for="CustomerId" />
             <input type="hidden" asp-for="IsActive" value="True" />
             <div class="form-group">
                 <label asp-for="ReturnNumber" class="control-label"></label>
@@ -29,8 +29,8 @@
                 <span asp-validation-for="ReturnDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="SupplierName" class="control-label"></label>
-                <input type="text" id="SupplierName" class="form-control" value="@Model.Supplier.SupplierName" readonly />
+                <label for="FullName" class="control-label"></label>
+                <input type="text" id="FullName" class="form-control" value="@Model.Customer.FullName" readonly />
                 @* <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId"></select>
                 <span asp-validation-for="SupplierId" class="text-danger"></span> *@
             </div>
@@ -73,9 +73,9 @@
                 <span asp-validation-for="PurchaseStateId" class="text-danger"></span>
             </div> *@
             <div class="form-group">
-                <label asp-for="Remark" class="control-label"></label>
-                <input asp-for="Remark" class="form-control" />
-                <span asp-validation-for="Remark" class="text-danger"></span>
+                <label asp-for="Notes" class="control-label"></label>
+                <input asp-for="Notes" class="form-control" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
             <div class="form-group pt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -83,7 +83,7 @@
         </form>
     </div>
     <div class="col-md-6">
-        <h4>Details : <a href="/PurchaseReturnDetails/Create?PurchaseReturnId=@Model.PurchaseReturnId">Add Purchase Return item</a></h4>
+        <h4>Details : <a href="/SalesReturnDetails/Create?SalesReturnId=@Model.SalesReturnId">Add Purchase Return item</a></h4>
         <hr />
         <table class="table">
             <thead>
@@ -95,15 +95,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in listPurchaseReturnDetail)
+                @foreach (var item in listSalesReturnDetail)
                 {
                     <tr>
                         <td>@item.Product.ProductName</td>
-                        <td>@item.UnitCost</td>
+                        <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
                         <td>
-                            @* <a href="/PurchaseOrderDetails/Delete/@item.PurchaseOrderDetailId">Delete</a> *@
-                            <a href="/PurchaseReturnDetails/Edit/@item.PurchaseReturnDetailId">Remove</a>
+                            <a href="/SalesReturnDetails/Edit/@item.SalesReturnDetailId">Remove</a>
                         </td>
                     </tr>
                 }
@@ -123,7 +122,7 @@
 
 <script>
     function calculateLineTotal(){
-        var UnitCost = parseFloat(document.getElementById('UnitCost').value);
+        var UnitCost = parseFloat(document.getElementById('UnitPrice').value);
         var Qty = parseFloat(document.getElementById('Qty').value);
         var DiscountAmount = parseFloat(document.getElementById('DiscountAmount').value);
         document.getElementById('LineTotal').value = (UnitCost * Qty) - DiscountAmount;

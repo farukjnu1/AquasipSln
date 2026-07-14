@@ -1,11 +1,11 @@
-﻿@model IEnumerable<Aquasip.EF.PurchaseOrderDetail>
+﻿@model IEnumerable<Aquasip.EF.SalesReturnDetail>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Index</h1>
+<h3>Index</h3>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -17,11 +17,9 @@
                 @Html.DisplayNameFor(model => model.Qty)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UnitCost)
+                @Html.DisplayNameFor(model => model.UnitPrice)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountAmount)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.LineTotal)
             </th>
@@ -35,7 +33,7 @@
                 @Html.DisplayNameFor(model => model.Product)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PurchaseOrder)
+                @Html.DisplayNameFor(model => model.SalesReturn)
             </th>
             <th></th>
         </tr>
@@ -47,10 +45,7 @@
                 @Html.DisplayFor(modelItem => item.Qty)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnitCost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DiscountAmount)
+                @Html.DisplayFor(modelItem => item.UnitPrice)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LineTotal)
@@ -65,12 +60,10 @@
                 @Html.DisplayFor(modelItem => item.Product.ProductId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseOrder.PurchaseOrderId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PurchaseOrderDetailId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PurchaseOrderDetailId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PurchaseOrderDetailId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.SalesReturnDetailId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.SalesReturnDetailId">Details</a> 
+                    @* |
+                    <a asp-action="Delete" asp-route-id="@item.SalesReturnDetailId">Delete</a> *@
             </td>
         </tr>
 }

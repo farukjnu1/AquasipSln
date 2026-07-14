@@ -49,19 +49,19 @@ namespace Aquasip.Controllers
         }
 
         // GET: PurchaseOrderDetails/Create
-        public IActionResult Create(long PurchaseReturnId)
+        public IActionResult Create(long salesReturnId)
         {
-            var oPurchaseReturn = _context.PurchaseReturns.Where(x => x.PurchaseReturnId == PurchaseReturnId).Include(i => i.Supplier).FirstOrDefault();
-            if (oPurchaseReturn != null)
+            var oSalesReturn = _context.SalesReturns.Where(x => x.SalesReturnId == salesReturnId).Include(i => i.Customer).FirstOrDefault();
+            if (oSalesReturn != null)
             {
-                var oPurchaseOrder = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == oPurchaseReturn.PurchaseOrderId).Include(i => i.Supplier).FirstOrDefault();
-                if (oPurchaseOrder != null)
+                var oSalesOrder = _context.SalesOrders.Where(x => x.OrderId == oSalesReturn.SalesOrderId).Include(i => i.Customer).FirstOrDefault();
+                if (oSalesOrder != null)
                 {
-                    oPurchaseOrder.PurchaseOrderDetails = _context.PurchaseOrderDetails.Include(x => x.Product).Where(x => x.PurchaseOrderId == oPurchaseOrder.PurchaseOrderId && x.IsActive == true).ToList();
+                    oSalesOrder.SalesOrderDetails = _context.SalesOrderDetails.Include(x => x.Product).Where(x => x.OrderId == oSalesOrder.OrderId && x.IsActive == true).ToList();
                 }
-                ViewData["PurchaseOrder"] = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == oPurchaseReturn.PurchaseOrderId).Include(i => i.Supplier).FirstOrDefault();
+                ViewData["SalesOrder"] = _context.SalesOrders.Where(x => x.OrderId == oSalesReturn.SalesOrderId).Include(i => i.Customer).FirstOrDefault();
             }
-            ViewData["PurchaseReturn"] = oPurchaseReturn;
+            ViewData["SalesReturn"] = oSalesReturn;
             #region dropdown list
             var listProducts = new List<SelectListItem>();
             listProducts.AddRange(_context.Products.Where(x => x.IsActive == true).OrderBy(x => x.ProductName).Select(x => new SelectListItem
@@ -80,7 +80,7 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PurchaseReturnDetailId,PurchaseReturnId,ProductId,Qty,UnitCost,LineTotal,StoreId,IsActive")] PurchaseReturnDetail purchaseReturnDetail)
+        public async Task<IActionResult> Create([Bind("SalesReturnDetailId,SalesReturnId,ProductId,Qty,UnitPrice,LineTotal,StoreId,IsActive")] SalesReturnDetail salesReturnDetail)
         {
             using (var _context = new AquasipContext())
             {
@@ -92,15 +92,15 @@ namespace Aquasip.Controllers
                     // =========================
                     // Save Order Details
                     // =========================
-                    purchaseReturnDetail.IsActive = true;
-                    _context.Add(purchaseReturnDetail);
+                    salesReturnDetail.IsActive = true;
+                    _context.Add(salesReturnDetail);
                     await _context.SaveChangesAsync();
                     #endregion
                     #region order-summery
-                    var oPurchaseReturn = _context.PurchaseReturns.Where(x => x.PurchaseReturnId == purchaseReturnDetail.PurchaseReturnId).FirstOrDefault();
-                    if (oPurchaseReturn != null) 
+                    var oSalesReturn = _context.SalesReturns.Where(x => x.SalesReturnId == salesReturnDetail.SalesReturnId).FirstOrDefault();
+                    if (oSalesReturn != null) 
                     {
-                        oPurchaseReturn.IsActive = true;
+                        oSalesReturn.IsActive = true;
                         // =========================
                         // Save Order Header
                         // =========================
@@ -111,8 +111,7 @@ namespace Aquasip.Controllers
                     // Commit Transaction
                     // =========================
                     transaction.Commit();
-                    ViewData["PurchaseReturn"] = _context.PurchaseReturns.Where(x => x.PurchaseReturnId == purchaseReturnDetail.PurchaseReturnId).FirstOrDefault();
-                    return RedirectToAction("Edit", "PurchaseReturns", new { id = purchaseReturnDetail.PurchaseReturnId });
+                    return RedirectToAction("Edit", "SalesReturns", new { id = salesReturnDetail.SalesReturnId });
                 }
                 catch (Exception ex)
                 {
@@ -133,8 +132,8 @@ namespace Aquasip.Controllers
                 .ToList());
             ViewData["ProductId"] = listProducts;
             #endregion
-            ViewData["PurchaseReturn"] = _context.PurchaseReturns.Where(x => x.PurchaseReturnId == purchaseReturnDetail.PurchaseReturnId).FirstOrDefault();
-            return View(purchaseReturnDetail);
+            ViewData["SalesReturn"] = _context.SalesReturns.Where(x => x.SalesReturnId == salesReturnDetail.SalesReturnId).FirstOrDefault();
+            return View(salesReturnDetail);
         }
 
         // GET: PurchaseOrderDetails/Edit/5

@@ -1,14 +1,14 @@
-﻿@model IEnumerable<Aquasip.EF.PurchaseReturn>
+﻿@model IEnumerable<Aquasip.EF.SalesReturn>
 
 @{
-    ViewData["Title"] = "Purchase Returns";
+    ViewData["Title"] = "Sales Returns";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var poNumber = (string?)ViewData["Ponumber"];
+    var orderNumber = (string?)ViewData["OrderNumber"];
     var pageSize = (int?)ViewData["PageSize"];
-    var listPurchaseOrder = ViewData["PurchaseOrders"] as List<Aquasip.EF.PurchaseOrder>;
+    var listSalesOrder = ViewData["SalesOrders"] as List<Aquasip.EF.SalesOrder>;
 }
 
-<h3>Purchase Returns</h3>
+<h3>Sales Returns</h3>
 @* 
 <p>
     <a asp-action="Create">Create New</a>
@@ -16,9 +16,9 @@
 
 <div class="row">
     <div class="col-md-3">
-        <input type="hidden" id="strPoNumber" value="@poNumber" />
-        <label for="poNumber" class="control-label">Purchase No.</label>
-        <input type="text" id="poNumber" value="@poNumber" />
+        <input type="hidden" id="strOrderNum" value="@orderNumber" />
+        <label for="orderNum" class="control-label">Order Num.</label>
+        <input type="text" id="orderNum" value="@orderNumber" />
     </div>
     <div class="col-md-1">
         <input type="hidden" id="nPageSize" value="@pageSize" />
@@ -35,25 +35,25 @@
     </div>
     <div class="col-md-7">
         <table class="table">
-            @if (listPurchaseOrder.Count > 0)
+            @if (listSalesOrder.Count > 0)
             {
                 <thead>
                     <tr>
-                        <th>PO No.</th>
+                        <th>Order Num</th>
                         <th>Date</th>
-                        <th>Supplier</th>
+                        <th>Customer</th>
                         <th>#</th>
                     </tr>
                 </thead>
             }
             <tbody>
-                @foreach (var item in listPurchaseOrder)
+                @foreach (var item in listSalesOrder)
                 {
                     <tr>
-                        <td>@item.Ponumber</td>
-                        <td>@item.Podate</td>
-                        <td>@item.Supplier.SupplierName</td>
-                        <td><a asp-action="Create" asp-route-id="@item.PurchaseOrderId">Create</a></td>
+                        <td>@item.OrderNumber</td>
+                        <td>@item.OrderDate</td>
+                        <td>@item.Customer.FullName</td>
+                        <td><a asp-action="Create" asp-route-id="@item.OrderId">Create</a></td>
                     </tr>
                 }
             </tbody>
@@ -71,10 +71,10 @@
                 Return Date
             </th>
             <th>
-                Purchase No.
+                Order No.
             </th>
             <th>
-                Supplier
+                Customer
             </th>
             <th></th>
         </tr>
@@ -89,15 +89,15 @@
                 @Html.DisplayFor(modelItem => item.ReturnDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseOrder.Ponumber)
+                @Html.DisplayFor(modelItem => item.SalesOrder.OrderNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+                @Html.DisplayFor(modelItem => item.Customer.FullName)
             </td>
             
             <td>
-                <a asp-action="Edit" asp-route-id="@item.PurchaseReturnId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PurchaseReturnId">Stocks</a>
+                    <a asp-action="Edit" asp-route-id="@item.SalesReturnId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.SalesReturnId">Stocks</a>
                 @* <a asp-action="Delete" asp-route-id="@item.PurchaseOrderId">Delete</a> *@
             </td>
         </tr>
@@ -118,8 +118,8 @@
         document.getElementById('poNumber').value = poNumber;
     }
     function search(){
-        var poNumber = document.getElementById('poNumber').value;
+        var orderNum = document.getElementById('orderNum').value;
         var PageSize = document.getElementById('PageSize').value;
-        location.href = '/PurchaseReturns/Index?poNumber=' + poNumber + '&PageSize=' + PageSize;
+        location.href = '/SalesReturns/Index?orderNum=' + orderNum + '&PageSize=' + PageSize;
     }
 </script>

@@ -1,4 +1,4 @@
-﻿@model Aquasip.EF.PurchaseReturnDetail
+﻿@model Aquasip.EF.SalesReturnDetail
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,14 +13,14 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PurchaseReturnDetailId" />
-            <input type="hidden" asp-for="PurchaseReturnId" />
+            <input type="hidden" asp-for="SalesReturnDetailId" />
+            <input type="hidden" asp-for="SalesReturnId" />
             <input type="hidden" asp-for="ProductId" />
             <div class="form-group">
-                <label asp-for="PurchaseReturn.ReturnNumber" class="control-label"></label>
+                <label asp-for="SalesReturn.ReturnNumber" class="control-label"></label>
                 @* <select asp-for="PurchaseOrderId" class="form-control" asp-items="ViewBag.PurchaseOrderId"></select> *@
-                <input asp-for="PurchaseReturn.ReturnNumber" class="form-control" readonly />
-                <span asp-validation-for="PurchaseReturn.ReturnNumber" class="text-danger"></span>
+                <input asp-for="SalesReturn.ReturnNumber" class="form-control" readonly />
+                <span asp-validation-for="SalesReturn.ReturnNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ProductId" class="control-label"></label>
@@ -33,9 +33,9 @@
                 <span asp-validation-for="Qty" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UnitCost" class="control-label"></label>
-                <input asp-for="UnitCost" class="form-control" readonly />
-                <span asp-validation-for="UnitCost" class="text-danger"></span>
+                <label asp-for="UnitPrice" class="control-label"></label>
+                <input asp-for="UnitPrice" class="form-control" readonly />
+                <span asp-validation-for="UnitPrice" class="text-danger"></span>
             </div>
             @* <div class="form-group">
                 <label asp-for="DiscountAmount" class="control-label"></label>
@@ -74,7 +74,7 @@
 </div>
 
 <div>
-    <a href="/PurchaseReturns/Edit/@Model.PurchaseReturnId">Back</a>
+    <a href="/SalesReturns/Edit/@Model.SalesReturnId">Back</a>
     @* <a asp-action="Index">Back to List</a> *@
 </div>
 

@@ -20,15 +20,6 @@
                 @Html.DisplayNameFor(model => model.Podate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SubTotal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaxAmount)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.TotalAmount)
             </th>
             <th>
@@ -53,15 +44,6 @@
                 @Html.DisplayFor(modelItem => item.Podate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SubTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DiscountAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaxAmount)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.TotalAmount)
             </td>
             <td>
@@ -75,7 +57,7 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.PurchaseOrderId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PurchaseOrderId">Payments</a> |
+                <a asp-action="Details" asp-route-id="@item.PurchaseOrderId">Pays</a> |
                 <a asp-action="Details" asp-route-id="@item.PurchaseOrderId">Stocks</a>
                 @* |
                 <a asp-action="Delete" asp-route-id="@item.PurchaseOrderId">Delete</a> *@

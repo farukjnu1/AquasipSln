@@ -127,7 +127,8 @@ namespace Aquasip.Repositories
                             ProductId = item.ProductId,
                             Qty = item.Qty,
                             UnitPrice = item.UnitPrice,
-                            TotalPrice = item.TotalPrice
+                            TotalPrice = item.TotalPrice,
+                            IsActive = true
                         };
                         _context.SalesOrderDetails.Add(orderDetail);
                     }

@@ -1,18 +1,18 @@
-﻿@model Aquasip.EF.PurchaseReturnDetail
+﻿@model Aquasip.EF.SalesReturnDetail
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var oPurchaseOrder = ViewData["PurchaseOrder"] as Aquasip.EF.PurchaseOrder;
-    var oPurchaseReturn = ViewData["PurchaseReturn"] as Aquasip.EF.PurchaseReturn;
+    var oSalesOrder = ViewData["SalesOrder"] as Aquasip.EF.SalesOrder;
+    var oSalesReturn = ViewData["SalesReturn"] as Aquasip.EF.SalesReturn;
 }
-<h3>Create</h3>
+<h4>Create</h4>
 <div class="row">
     <div class="col-md-4">
-        <h4>Purchase Return Detail</h4>
+        <h5>Sales Return Detail</h5>
         <hr />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PurchaseReturnId" />
+            <input type="hidden" asp-for="SalesReturnId" />
             @* <input type="hidden" id="PurchaseOrderId" value="@oPurchaseOrder.PurchaseOrderId" /> *@
             <input type="hidden" asp-for="IsActive" value="True" />
             @* <div class="form-group">
@@ -59,35 +59,39 @@
         </form>
     </div>
     <div class="col-md-6">
-        <h4>Purchase Return</h4>
+        <h5>Return Summery</h5>
         <hr />
         <dl class="row">
             <dt class="col-sm-4">
                 Return number
             </dt>
             <dd class="col-sm-8">
-                @oPurchaseReturn.ReturnNumber
+                @oSalesReturn.ReturnNumber
             </dd>
             <dt class="col-sm-4">
                 ReturnDate
             </dt>
             <dd class="col-sm-8">
-                @oPurchaseReturn.ReturnDate
+                @oSalesReturn.ReturnDate
             </dd>
             <dt class="col-sm-4">
-                Supplier
+                Customer
             </dt>
             <dd class="col-sm-8">
-                @oPurchaseReturn.Supplier.SupplierName
+                @oSalesReturn.Customer.FullName
             </dd>
             <dt class="col-sm-4">
                 IsActive
             </dt>
             <dd class="col-sm-8">
-                @oPurchaseReturn.IsActive
+                @oSalesReturn.IsActive
             </dd>
         </dl>
-        <h4>From Purchase Order :</h4>
+        <h5>
+            Order Details ::
+            OrderNum: <span class="text-success">@oSalesOrder.OrderNumber</span>
+            Date: <span class="text-success">@oSalesOrder.OrderDate</span>
+        </h5>
         <hr />
         <table class="table">
             <thead>
@@ -99,13 +103,13 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in oPurchaseOrder.PurchaseOrderDetails)
+                @foreach (var item in oSalesOrder.SalesOrderDetails)
                 {
                     <tr>
                         <td>@item.Product.ProductName</td>
-                        <td>@item.UnitCost</td>
+                        <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
-                        <td align="right">@item.LineTotal</td>
+                        <td align="right">@item.TotalPrice</td>
                     </tr>
                 }
 
@@ -116,7 +120,7 @@
 
 <div>
     @* <a asp-action="Index">Back to List</a> *@
-    <a href="/PurchaseReturns/Edit/@oPurchaseReturn.PurchaseReturnId">Back</a>
+    <a href="/PurchaseReturns/Edit/@oSalesReturn.SalesReturnId">Back</a>
 </div>
 
 @* 

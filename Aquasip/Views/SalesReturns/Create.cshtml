@@ -1,23 +1,21 @@
-﻿@model Aquasip.EF.PurchaseReturn
+﻿@model Aquasip.EF.SalesReturn
 
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var oPurchaseOrder = ViewData["PurchaseOrder"] as Aquasip.EF.PurchaseOrder;
-    var listPurchaseReturnDetail = ViewData["PurchaseReturnDetails"] as List<Aquasip.EF.PurchaseReturnDetail>;
+    var oSalesOrder = ViewData["SalesOrder"] as Aquasip.EF.SalesOrder;
+    var listSalesReturnDetail = ViewData["SalesReturnDetails"] as List<Aquasip.EF.SalesReturnDetail>;
 }
 
-<h3>Create</h3>
-
-
+<h4>Create</h4>
 <div class="row">
     <div class="col-md-4">
-        <h4>Purchase Return</h4>
+        <h5>Sales Return</h5>
         <hr />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @* <input type="hidden" asp-for="PurchaseStateId" value="1" /> *@
-            <input type="hidden" asp-for="PurchaseOrderId" value="@oPurchaseOrder.PurchaseOrderId" />
+            <input type="hidden" asp-for="SalesOrderId" value="@oSalesOrder.OrderId" />
             <input type="hidden" asp-for="IsActive" value="true" />
             @* <div class="form-group">
                 <label asp-for="Ponumber" class="control-label"></label>
@@ -30,9 +28,9 @@
                 <span asp-validation-for="ReturnDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="hidden" asp-for="SupplierId" value="@oPurchaseOrder.SupplierId" />
-                <label for="SupplierName" class="control-label"></label>
-                <input type="text" id="SupplierName" class="form-control" value="@oPurchaseOrder.Supplier.SupplierName" readonly />
+                <input type="hidden" asp-for="CustomerId" value="@oSalesOrder.CustomerId" />
+                <label for="FullName" class="control-label"></label>
+                <input type="text" id="FullName" class="form-control" value="@oSalesOrder.Customer.FullName" readonly />
             </div>
             @* <div class="form-group">
                 <label asp-for="SubTotal" class="control-label"></label>
@@ -60,30 +58,33 @@
                 <span asp-validation-for="IsActive" class="text-danger"></span>
             </div> *@
             <div class="form-group pt-3">
-                <input type="submit" value="Add Purchase Return Items" class="btn btn-primary" />
+                <input type="submit" value="Add Sales Return Items" class="btn btn-primary" />
             </div>
         </form>
     </div>
     <div class="col-md-8">
-        <h4>Purchase Order Details:</h4>
+        <h5>Order Details :: 
+            OrderNum: <span class="text-success">@oSalesOrder.OrderNumber</span> 
+            Date: <span class="text-success">@oSalesOrder.OrderDate</span>
+        </h5>
         <hr />
         <table class="table">
             <thead>
                 <tr>
                     <th>Product</th>
-                    <th>UnitCost</th>
+                    <th>UnitPrice</th>
                     <th>Qty</th>
                     <th style="text-align:right">Total</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in oPurchaseOrder.PurchaseOrderDetails)
+                @foreach (var item in oSalesOrder.SalesOrderDetails)
                 {
                     <tr>
                         <td>@item.Product.ProductName</td>
-                        <td>@item.UnitCost</td>
+                        <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
-                        <td align="right">@item.LineTotal</td>
+                        <td align="right">@item.TotalPrice</td>
                     </tr>
                 }
 

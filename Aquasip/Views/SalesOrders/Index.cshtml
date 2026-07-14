@@ -60,7 +60,8 @@
         <tr>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.OrderId">Payments</a>
+                <a asp-action="Details" asp-route-id="@item.OrderId">Pays</a> |
+                <a asp-action="Details" asp-route-id="@item.OrderId">Stocks</a>
             </td>
             <td style="font-weight:bolder;color:@item.SalesOrderState.ColorCode">
                 @Html.DisplayFor(modelItem => item.SalesOrderState.OrderStatus)

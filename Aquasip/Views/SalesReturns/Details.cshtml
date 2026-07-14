@@ -1,4 +1,4 @@
-﻿@model Aquasip.Models.PurchaseReturnVM
+﻿@model Aquasip.Models.SalesReturnVM
 
 @{
     ViewData["Title"] = "Details";
@@ -43,10 +43,10 @@
                 @Html.DisplayFor(model => model.IsActive)
             </dd>
             <dt class="col-sm-4">
-                @Html.DisplayNameFor(model => model.Supplier)
+                @Html.DisplayNameFor(model => model.Customer)
             </dt>
             <dd class="col-sm-8">
-                @Html.DisplayFor(model => model.Supplier.SupplierName)
+                @Html.DisplayFor(model => model.Customer.FullName)
             </dd>
         </dl>
     </div>
@@ -64,11 +64,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.PurchaseReturnDetails)
+                @foreach (var item in Model.SalesReturnDetails)
                 {
                     <tr>
                         <td>@item.Product.ProductName</td>
-                        <td>@item.UnitCost</td>
+                        <td>@item.UnitPrice</td>
                         <td>@item.Qty</td>
                         <td align="right">@item.LineTotal</td>
                         <td>         
@@ -78,7 +78,7 @@
                             }
                             else
                             {
-                                <a href="/StockTransactions/PurchaseReturnDetail?id=@item.PurchaseReturnDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Remove from Stocks">Remove from Stocks</a>
+                                <a href="/StockTransactions/PurchaseReturnDetail?id=@item.SalesReturnDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Remove from Stocks">Remove from Stocks</a>
                             }
                         </td>
                     </tr>
@@ -91,6 +91,6 @@
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.PurchaseReturnId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.SalesReturnId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

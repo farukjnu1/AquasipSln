@@ -148,11 +148,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                salesReturn.ReturnNumber = CodeGenerate.PurchaseReturnNum(DateTime.Now);
+                salesReturn.ReturnNumber = CodeGenerate.SalesReturnNum(DateTime.Now);
                 _context.Add(salesReturn);
                 await _context.SaveChangesAsync();
-                TempData["message"] = "Please Add Purchase-Return items";
-                return RedirectToAction("Create", "SalesReturnDetails", new { purchaseReturnId = salesReturn.SalesReturnId });
+                TempData["message"] = "Please Add Sales-Return items";
+                return RedirectToAction("Create", "SalesReturnDetails", new { salesReturnId = salesReturn.SalesReturnId });
             }
             catch 
             {

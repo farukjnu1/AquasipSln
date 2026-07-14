@@ -3,14 +3,15 @@
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var listPurchaseReturnDetail = ViewData["PurchaseReturnDetails"] as List<Aquasip.EF.PurchaseReturnDetail>;
+    //var listPurchaseReturnDetail = ViewData["PurchaseReturnDetails"] as List<Aquasip.EF.PurchaseReturnDetail>;
+    var oPurchaseOrder = ViewData["PurchaseOrder"] as Aquasip.EF.PurchaseOrder;
 }
 
-<h3>Edit PurchaseOrder</h3>
+<h4>Edit Purchase Return</h4>
 
 <div class="row">
     <div class="col-md-6">
-        <h4>Summery</h4>
+        <h5>Return Summery</h5>
         <hr />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -83,7 +84,7 @@
         </form>
     </div>
     <div class="col-md-6">
-        <h4>Details : <a href="/PurchaseReturnDetails/Create?PurchaseReturnId=@Model.PurchaseReturnId">Add Purchase Return item</a></h4>
+        <h5>Return Details : <a href="/PurchaseReturnDetails/Create?PurchaseReturnId=@Model.PurchaseReturnId">Add Return item</a></h5>
         <hr />
         <table class="table">
             <thead>
@@ -95,16 +96,42 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in listPurchaseReturnDetail)
+                @foreach (var item in Model.PurchaseReturnDetails)
                 {
                     <tr>
                         <td>@item.Product.ProductName</td>
                         <td>@item.UnitCost</td>
                         <td>@item.Qty</td>
                         <td>
-                            @* <a href="/PurchaseOrderDetails/Delete/@item.PurchaseOrderDetailId">Delete</a> *@
                             <a href="/PurchaseReturnDetails/Edit/@item.PurchaseReturnDetailId">Remove</a>
                         </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h5>
+            Order Details ::
+            OrderNum: <span class="text-success">@oPurchaseOrder.Ponumber</span>
+            Date: <span class="text-success">@oPurchaseOrder.Podate</span>
+        </h5>
+        <hr />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>UnitPrice</th>
+                    <th>Qty</th>
+                    <th style="text-align:right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in oPurchaseOrder.PurchaseOrderDetails)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>@item.UnitCost</td>
+                        <td>@item.Qty</td>
+                        <td align="right">@item.LineTotal</td>
                     </tr>
                 }
 

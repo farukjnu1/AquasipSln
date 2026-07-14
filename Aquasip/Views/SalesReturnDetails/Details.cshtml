@@ -1,4 +1,4 @@
-﻿@model Aquasip.EF.PurchaseReturnDetail
+﻿@model Aquasip.EF.SalesReturnDetail
 
 @{
     ViewData["Title"] = "Details";
@@ -18,10 +18,10 @@
             @Html.DisplayFor(model => model.Qty)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UnitCost)
+            @Html.DisplayNameFor(model => model.UnitPrice)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UnitCost)
+            @Html.DisplayFor(model => model.UnitPrice)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StoreId)
@@ -45,6 +45,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.PurchaseReturnDetailId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.SalesReturnDetailId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
