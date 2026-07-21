@@ -39,6 +39,7 @@
 @* <p>
     <a asp-action="Create">Create New</a>
 </p> *@
+
 <table class="table">
     <thead>
         <tr>
@@ -48,16 +49,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.Store)
             </th>
-            <th>
+            <th style="text-align:right">
                 @Html.DisplayNameFor(model => model.QtyIn)
             </th>
-            <th>
+            <th style="text-align:right">
                 @Html.DisplayNameFor(model => model.QtyOut)
             </th>
-            <th>
+            <th style="text-align:right">
                 @Html.DisplayNameFor(model => model.CurrentStock)
             </th>
-
             <th>
                 @Html.DisplayNameFor(model => model.TransactionDate)
             </th>
@@ -68,19 +68,6 @@
                 @Html.DisplayNameFor(model => model.ReferenceType)
             </th>
             
-            @* <th>
-                @Html.DisplayNameFor(model => model.ReferenceId)
-            </th> *@
-            
-            @* <th>
-                @Html.DisplayNameFor(model => model.UnitCost)
-            </th> *@
-            
-            @* <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th> *@
-            
-            @* <th></th> *@
         </tr>
     </thead>
     <tbody>
@@ -92,13 +79,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Store.StoreName)
             </td>
-            <td>
+            <td style="text-align:right">
                 @Html.DisplayFor(modelItem => item.QtyIn)
             </td>
-            <td>
+            <td style="text-align:right">
                 @Html.DisplayFor(modelItem => item.QtyOut)
             </td>
-            <td>
+            <td style="text-align:right">
                 @Html.DisplayFor(modelItem => item.CurrentStock)
             </td>
             <td>
@@ -110,20 +97,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ReferenceType.Name)
             </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.ReferenceId)
-            </td> *@
             
-            
-            @* <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td> *@
-            
-            @* <td>
-                <a asp-action="Edit" asp-route-id="@item.StockTransactionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.StockTransactionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.StockTransactionId">Delete</a>
-            </td> *@
         </tr>
 }
     </tbody>

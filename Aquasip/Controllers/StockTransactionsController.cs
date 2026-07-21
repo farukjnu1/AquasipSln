@@ -105,7 +105,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var stockTransaction = await _context.StockTransactions
                 .Include(s => s.Product)
                 .FirstOrDefaultAsync(m => m.StockTransactionId == id);
@@ -113,7 +112,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             return View(stockTransaction);
         }
 
@@ -130,20 +128,17 @@ namespace Aquasip.Controllers
                 }).ToList());
             ViewData["StoreId"] = listStore;
             #endregion
-            //ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
-            #region Model of StockTransaction
+            #region Validation of StockTransaction
             var referenceCode = CodeGenerate.HexToText(referenceToken);
             var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
             if (referenceType == null)
             {
-                //return NotFound();
                 TempData["message"] = "Reference not valid.";
                 return RedirectToAction("Index", "PurchaseOrders");
             }
             var transactionTypeId = Convert.ToInt32(_tokenService.Decrypt(transactionType));
             if (transactionTypeId != 1) // 1 for plus stock, 2 for minus stock
             {
-                //return NotFound();
                 TempData["message"] = "Transaction not valid.";
                 return RedirectToAction("Index", "PurchaseOrders");
             }
@@ -151,7 +146,6 @@ namespace Aquasip.Controllers
             decimal? unitCost = 0, qtyIn = 0, qtyOut = 0;
             if (referenceCode != "PurchaseOrderDetail")
             {
-                //return NotFound();
                 TempData["message"] = "Purchase not valid.";
                 return RedirectToAction("Index", "PurchaseOrders");
             }
@@ -160,7 +154,6 @@ namespace Aquasip.Controllers
                 var oPurchaseOrderDetail = _context.PurchaseOrderDetails.FirstOrDefault(x => x.PurchaseOrderDetailId == id);
                 if (oPurchaseOrderDetail == null)
                 {
-                    //return NotFound();
                     TempData["message"] = "Purchase not found.";
                     return RedirectToAction("Index", "PurchaseOrders");
                 }
@@ -171,10 +164,11 @@ namespace Aquasip.Controllers
             var oProduct = _context.Products.Where(x => x.IsActive == true).FirstOrDefault(x => x.ProductId == productId);
             if (oProduct == null)
             {
-                //return NotFound();
                 TempData["message"] = "Product not found.";
                 return RedirectToAction("Index", "PurchaseOrders");
             }
+            #endregion
+            #region Model of StockTransaction
             StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
             var listStock = stockRepo.GetCurrentStock(productId);
             StockTransaction stockTransaction = new StockTransaction
@@ -192,9 +186,9 @@ namespace Aquasip.Controllers
                 TransactionTypeId = transactionTypeId,
                 UnitCost = unitCost,
             };
-            #endregion
             ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
             ViewData["Stocks"] = listStock;
+            #endregion
             return View("Create", stockTransaction);
         }
 
@@ -211,7 +205,7 @@ namespace Aquasip.Controllers
                 }).ToList());
             ViewData["StoreId"] = listStore;
             #endregion
-            #region Model of StockTransaction
+            #region Validation of StockTransaction
             var referenceCode = CodeGenerate.HexToText(referenceToken);
             var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
             if (referenceType == null)
@@ -255,8 +249,23 @@ namespace Aquasip.Controllers
                 TempData["message"] = "Product not found.";
                 return RedirectToAction("Index", "PurchaseReturns");
             }
+            #endregion
+            #region Stocks check
             StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
             var listStock = stockRepo.GetCurrentStock(productId);
+            var oStock = listStock.Where(x => x.ProductId == productId).FirstOrDefault();
+            if (oStock == null)
+            {
+                TempData["message"] = "Stock not found.";
+                return RedirectToAction("Index", "SalesReturns");
+            }
+            if (oStock.CurrentStock < qtyOut)
+            {
+                TempData["message"] = "Not enough stock. Current stock is " + oStock.CurrentStock;
+                return RedirectToAction("Index", "SalesReturns");
+            }
+            #endregion
+            #region Model of StockTransaction
             StockTransaction stockTransaction = new StockTransaction
             {
                 IsActive = true,
@@ -272,9 +281,9 @@ namespace Aquasip.Controllers
                 TransactionTypeId = transactionTypeId,
                 UnitCost = unitCost,
             };
-            #endregion
             ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
             ViewData["Stocks"] = listStock;
+            #endregion
             return View("Create", stockTransaction);
         }
 
@@ -291,8 +300,7 @@ namespace Aquasip.Controllers
                 }).ToList());
             ViewData["StoreId"] = listStore;
             #endregion
-            //ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
-            #region Model of StockTransaction
+            #region Validation of StockTransaction
             var referenceCode = CodeGenerate.HexToText(referenceToken);
             var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
             if (referenceType == null)
@@ -336,21 +344,23 @@ namespace Aquasip.Controllers
                 TempData["message"] = "Product not found.";
                 return RedirectToAction("Index", "SalesOrders");
             }
+            #endregion
+            #region Stocks check
             StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
             var listStock = stockRepo.GetCurrentStock(productId);
-            var oStock = listStock.Where(x=>x.ProductId == productId).FirstOrDefault();
+            var oStock = listStock.Where(x => x.ProductId == productId).FirstOrDefault();
             if (oStock == null)
             {
-                //return NotFound();
                 TempData["message"] = "Stock not found.";
                 return RedirectToAction("Index", "SalesOrders");
             }
-            if(oStock.CurrentStock < qtyOut)
+            if (oStock.CurrentStock < qtyOut)
             {
-                //return NotFound();
                 TempData["message"] = "Not enough stock. Current stock is " + oStock.CurrentStock;
                 return RedirectToAction("Index", "SalesOrders");
             }
+            #endregion
+            #region Model of StockTransaction
             StockTransaction stockTransaction = new StockTransaction
             {
                 IsActive = true,
@@ -366,9 +376,86 @@ namespace Aquasip.Controllers
                 TransactionTypeId = transactionTypeId,
                 UnitCost = unitCost,
             };
-            #endregion
             ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
             ViewData["Stocks"] = listStock;
+            #endregion
+            return View("Create", stockTransaction);
+        }
+
+        //SalesReturnDetail
+        public IActionResult SalesReturnDetail(long id, string referenceToken, string transactionType)
+        {
+            #region Dropdown list
+            var listStore = new List<SelectListItem>();
+            listStore.AddRange(_context.Stores.Where(x => x.IsActive == true).OrderBy(x => x.StoreName)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.StoreId.ToString(),
+                    Text = x.StoreName
+                }).ToList());
+            ViewData["StoreId"] = listStore;
+            #endregion
+            #region Model of StockTransaction
+            var referenceCode = CodeGenerate.HexToText(referenceToken);
+            var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);
+            if (referenceType == null)
+            {
+                TempData["message"] = "Reference not valid.";
+                return RedirectToAction("Index", "SalesReturns");
+            }
+            var transactionTypeId = Convert.ToInt32(_tokenService.Decrypt(transactionType));
+            if (transactionTypeId != 1) // 1 for plus stock, 2 for minus stock
+            {
+                TempData["message"] = "Transaction not valid.";
+                return RedirectToAction("Index", "SalesReturns");
+            }
+            long productId = 0;
+            decimal? unitCost = 0, qtyIn = 0, qtyOut = 0;
+            if (referenceCode != "SalesReturnDetail")
+            {
+                TempData["message"] = "Sales not valid.";
+                return RedirectToAction("Index", "SalesReturns");
+            }
+            if (referenceCode == "SalesReturnDetail")
+            {
+                var oSalesReturnDetail = _context.SalesReturnDetails.FirstOrDefault(x => x.SalesReturnDetailId == id);
+                if (oSalesReturnDetail == null)
+                {
+                    TempData["message"] = "Sales not found.";
+                    return RedirectToAction("Index", "SalesReturns");
+                }
+                productId = oSalesReturnDetail.ProductId;
+                unitCost = oSalesReturnDetail.UnitPrice;
+                qtyIn = oSalesReturnDetail.Qty;
+            }
+            var oProduct = _context.Products.Where(x => x.ProductId == productId).FirstOrDefault();
+            if (oProduct == null)
+            {
+                TempData["message"] = "Product not found.";
+                return RedirectToAction("Index", "SalesReturns");
+            }
+            #endregion
+            #region Model of StockTransaction
+            StockTransactionRepository stockRepo = new StockTransactionRepository(_connectionString);
+            var listStock = stockRepo.GetCurrentStock(productId);
+            StockTransaction stockTransaction = new StockTransaction
+            {
+                IsActive = true,
+                ProductId = productId,
+                Product = oProduct,
+                QtyIn = qtyIn,
+                QtyOut = qtyOut,
+                ReferenceId = id,
+                ReferenceTypeId = referenceType != null ? referenceType.ReferenceTypeId : (int?)null,
+                StockTransactionId = 0,
+                StoreId = 0,
+                TransactionDate = DateTime.Now,
+                TransactionTypeId = transactionTypeId,
+                UnitCost = unitCost,
+            };
+            ViewData["ReferenceType"] = new ReferenceTypeVM { ReferenceTypeId = referenceType.ReferenceTypeId, Code = referenceType.Code, Name = referenceType.Name };
+            ViewData["Stocks"] = listStock;
+            #endregion
             return View("Create", stockTransaction);
         }
 

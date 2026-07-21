@@ -11,7 +11,7 @@
     //string paymentStatusColor = totalPaidAmount < Model.TotalAmount ? "badge bg-danger" : "badge bg-success";
 }
 
-<h3>Purchase Return</h3>
+<h3>Sales Return for Stocks</h3>
 
 <div class="row">
     <div class="col-md-6">
@@ -78,7 +78,7 @@
                             }
                             else
                             {
-                                <a href="/StockTransactions/PurchaseReturnDetail?id=@item.SalesReturnDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Remove from Stocks">Remove from Stocks</a>
+                                <a href="/StockTransactions/SalesReturnDetail?id=@item.SalesReturnDetailId&referenceToken=@item.ReferenceToken&transactionType=@item.TransactionTypeToken" title="Remove from Stocks">Remove from Stocks</a>
                             }
                         </td>
                     </tr>

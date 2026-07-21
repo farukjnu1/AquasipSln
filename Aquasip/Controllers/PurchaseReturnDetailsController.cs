@@ -164,7 +164,7 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("PurchaseOrderDetailId,PurchaseOrderId,ProductId,Qty,UnitCost,DiscountAmount,LineTotal,StoreId,IsActive")] PurchaseOrderDetail purchaseOrderDetail)
+        public async Task<IActionResult> Edit(long id, [Bind("PurchaseReturnDetailId,PurchaseReturnId,ProductId,Qty,UnitCost,LineTotal,StoreId,IsActive")] PurchaseReturnDetail purchaseReturnDetail)
         {
             using (var _context = new AquasipContext())
             {
@@ -179,7 +179,7 @@ namespace Aquasip.Controllers
                     {
                         return NotFound();
                     }
-                    oPurchaseReturnDetail.IsActive = purchaseOrderDetail.IsActive;
+                    oPurchaseReturnDetail.IsActive = oPurchaseReturnDetail.IsActive;
                     // =========================
                     // Save Order-Details
                     // =========================
@@ -218,7 +218,7 @@ namespace Aquasip.Controllers
                     TempData["message"] = "Exceptions!";
                 }
             }
-            return View(purchaseOrderDetail);
+            return View(purchaseReturnDetail);
         }
 
         // GET: PurchaseOrderDetails/Delete/5
