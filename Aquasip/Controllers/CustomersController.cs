@@ -24,12 +24,12 @@ namespace Aquasip.Controllers
         //    _context = context;
         //}
 
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<CustomersController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
         private readonly IEmailService _emailService;
         private readonly ITokenService _tokenService;
-        public CustomersController(ILogger<HomeController> logger, IConfiguration configuration, IWebHostEnvironment environment, IEmailService emailService, ITokenService tokenService, AquasipContext context)
+        public CustomersController(ILogger<CustomersController> logger, IConfiguration configuration, IWebHostEnvironment environment, IEmailService emailService, ITokenService tokenService, AquasipContext context)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");

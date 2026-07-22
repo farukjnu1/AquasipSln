@@ -16,27 +16,28 @@ namespace Aquasip.Controllers
     [AdminFilter]
     public class ProductsController : Controller
     {
-        //private readonly AquasipContext _context;
+        private readonly AquasipContext _context;
 
-        //public ProductsController(AquasipContext context)
-        //{
-        //    _context = context;
-        //}
+        /* public ProductsController(AquasipContext context)
+         {
+             _context = context;
+         }*/
 
-        private readonly ILogger<PagesController> _logger;
+        private readonly ILogger<ProductsController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
-        public ProductsController(ILogger<PagesController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        public ProductsController(ILogger<ProductsController> logger, IConfiguration configuration, IWebHostEnvironment environment, AquasipContext context)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");
             _environment = environment;
+            _context = context;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             return View(await _context.Products.ToListAsync());
         }
 
@@ -47,14 +48,12 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m=> m.ProductId == id);
+            //AquasipContext _context = new AquasipContext();
+            var product = await _context.Products.FirstOrDefaultAsync(m=> m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
-
             var oProduct = new Models.ProductVM();
             oProduct.ListProductMedia = (from x in _context.ProductMedia
                                          where x.ProductId == product.ProductId
@@ -96,11 +95,9 @@ namespace Aquasip.Controllers
             if (ModelState.IsValid)
             {
                 int? UploadedBy = HttpContext.Session.GetInt32("UserID");
-
-                AquasipContext _context = new AquasipContext();
+                //AquasipContext _context = new AquasipContext();
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-
                 if (product.Price != null)
                 {
                     var oProductPrice = new ProductPrice();
@@ -110,11 +107,9 @@ namespace Aquasip.Controllers
                     oProductPrice.IsActive = true;
                     oProductPrice.UploadedAt = DateTime.Now;
                     oProductPrice.UploadedBy = UploadedBy;
-
                     _context.ProductPrices.Add(oProductPrice);
                     await _context.SaveChangesAsync();
                 }
-
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -134,14 +129,11 @@ namespace Aquasip.Controllers
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
-
                 string extension = Path.GetExtension(model.MediaFile.FileName);
                 DateTime currentDateTime = DateTime.Now;
                 string timeStamp = currentDateTime.ToString("yyyyMMdd") + "_" + currentDateTime.ToString("HHmmss") + "_" + currentDateTime.ToString("fff");
                 string uniqueFileName = $"{timeStamp}{extension}";
-
                 var filePath = Path.Combine(uploadsFolder, Path.GetFileName(uniqueFileName));
-
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     model.MediaFile.CopyTo(stream);
@@ -150,7 +142,7 @@ namespace Aquasip.Controllers
                 #region Media Update
                 //model.MediaId = mediaVm.MediaId;
                 //TempData["message"] = pcRepo.Update(model);
-                AquasipContext _context = new AquasipContext();
+                //AquasipContext _context = new AquasipContext();
                 ProductMedium productMedium = new ProductMedium
                 {
                     ProductId = model.ProductId,
@@ -166,7 +158,6 @@ namespace Aquasip.Controllers
                 #endregion
             }
             #endregion
-
             return RedirectToAction(nameof(Details), new { id = model.ProductId });
         }
 
@@ -176,7 +167,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var productMedia = await _context.ProductMedia
                 .FirstOrDefaultAsync(m => m.ProductMediaId == id);
             if (productMedia == null)
@@ -211,7 +202,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var product = await _context.Products.Where(x=>x.ProductId == id).FirstOrDefaultAsync();
             if (product == null)
             {
@@ -231,15 +222,12 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
                     int? UploadedBy = HttpContext.Session.GetInt32("UserID");
-
-                    AquasipContext _context = new AquasipContext();
-
+                    //AquasipContext _context = new AquasipContext();
                     var price = await (from x in _context.Products where x.ProductId == id select x.Price).FirstOrDefaultAsync();
                     if (price != null)
                     {
@@ -252,13 +240,10 @@ namespace Aquasip.Controllers
                             oProductPrice.IsActive = true;
                             oProductPrice.UploadedAt = DateTime.Now;
                             oProductPrice.UploadedBy = UploadedBy;
-
                             _context.ProductPrices.Add(oProductPrice);
                         }
                     }
-
                     _context.Update(product);
-
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)
@@ -284,7 +269,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var product = await _context.Products
                 .FirstOrDefaultAsync(m=> m.ProductId == id);
             if (product == null)
@@ -313,7 +298,7 @@ namespace Aquasip.Controllers
 
         private bool ProductExists(long id)
         {
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             return _context.Products.Any(e=> e.ProductId == id);
         }
 

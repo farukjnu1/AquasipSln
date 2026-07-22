@@ -16,27 +16,28 @@ namespace Aquasip.Controllers
     [AdminFilter]
     public class ReviewsController : Controller
     {
-        //private readonly AquasipContext _context;
+        private readonly AquasipContext _context;
 
         //public ProductsController(AquasipContext context)
         //{
         //    _context = context;
         //}
 
-        private readonly ILogger<PagesController> _logger;
+        private readonly ILogger<ReviewsController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
-        public ReviewsController(ILogger<PagesController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        public ReviewsController(ILogger<ReviewsController> logger, IConfiguration configuration, IWebHostEnvironment environment, AquasipContext context)
         {
             _logger = logger;
             _connectionString = configuration.GetConnectionString("AquasipContext");
             _environment = environment;
+            _context = context;
         }
 
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var aquasipContext = _context.Reviews.Include(r => r.Customer).Include(r => r.Product);
             return View(await aquasipContext.ToListAsync());
         }
@@ -48,7 +49,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var review = await _context.Reviews
                 .Include(r => r.Customer)
                 .Include(r => r.Product)
@@ -64,7 +65,7 @@ namespace Aquasip.Controllers
         // GET: Reviews/Create
         public IActionResult Create()
         {
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
             ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
             return View();
@@ -89,7 +90,7 @@ namespace Aquasip.Controllers
             }
 
             #region Review
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
 
             Review oReview = new Review
             {
@@ -162,7 +163,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             //var review = await _context.Reviews.FindAsync(id);
             var review = await _context.Reviews
                 .Where(x => x.ReviewId == id)
@@ -189,7 +190,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             try
             {
                 _context.Update(review);
@@ -220,7 +221,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var review = await _context.Reviews
                 .Include(r => r.Customer)
                 .Include(r => r.Product)
@@ -238,7 +239,7 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             var review = await _context.Reviews.FindAsync(id);
             if (review != null)
             {
@@ -251,7 +252,7 @@ namespace Aquasip.Controllers
 
         private bool ReviewExists(long id)
         {
-            AquasipContext _context = new AquasipContext();
+            //AquasipContext _context = new AquasipContext();
             return _context.Reviews.Any(e => e.ReviewId == id);
         }
     }
