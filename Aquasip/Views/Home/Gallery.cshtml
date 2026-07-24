@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Gallery | AquaSip";
     // Layout = "~/Views/Shared/_Layout.cshtml";
 
@@ -13,7 +12,7 @@
     var galleryContent = galleryPage.PageContents.Where(x => x.SlugPageContent == "gallery").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
                         galleryPage.PageContents.Where(x => x.SlugPageContent == "gallery").First();
 
-    var listProduct = galleryPage.Products;
+    var listGallery = galleryPage.Galleries;
 
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
@@ -27,65 +26,34 @@
 <!-- Navbar & Hero Start -->
 <partial name="_NavbarTop" model="oNavbar" />
 <!-- Navbar & Hero End -->
-<!-- Products Start -->
-<div class="container-fluid product py-5">
-    <div class="container py-5">
-        <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
-            <h4 class="text-uppercase text-primary">Our Products</h4>
-            <h1 class="display-3 text-capitalize mb-3">We Deliver Best Quality Bottle Packs.</h1>
-        </div>
-        <div class="row g-4 justify-content-center">
-            @for (var i = 0; i < listProduct.Count; i++)
-            {
-                var item = listProduct[i];
-                int dela = (i + 1) * 20;
-                double delas = dela / 100.0;
-                string delays = delas.ToString() + "s";
-                string FilePath = item.ListProductMedia.Count > 0 ? item.ListProductMedia[0].FilePath : "";
-                <div class="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="@delays">
-                    <div class="product-item">
-                        <img src="@FilePath" class="img-fluid w-100 rounded-top" alt="Image" />
-                        <div class="product-content bg-light text-center rounded-bottom p-4">
-                            <p>@item.ProductCode</p>
-                            <a href="#" class="h4 d-inline-block mb-3">@item.ProductName</a>
-                            <p class="fs-4 text-primary mb-3">BDT. @item.Price</p>
-                            <a href="/Home/Spec?id=@item.ProductId" class="btn btn-secondary rounded-pill py-2 px-4 m-1">Spec</a>
-                            <a href="/Home/Spec?id=@item.ProductId" class="btn btn-primary rounded-pill py-2 px-4 m-1">Order Now</a>
-                            <a href="/Home/Review?id=@item.ProductId" class="btn btn-warning rounded-pill py-2 px-4 m-1">Leave Review</a>
-                        </div>
-                        <div class="product-content bg-light text-center rounded-bottom p-4">
-                            @if (item.AverageRating < 2)
-                            {
-                                var starts = "Review: ⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 3)
-                            {
-                                var starts = "Review: ⭐⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 4)
-                            {
-                                var starts = "Review: ⭐⭐⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 5)
-                            {
-                                var starts = "Review: ⭐⭐⭐⭐";
-                                @starts
-                            }
-                            else if (item.AverageRating < 6)
-                            {
-                                var starts = "Review: ⭐⭐⭐⭐⭐";
-                                @starts
-                            }
-
+<!-- Gallery Start -->
+@foreach (var item in listGallery)
+{
+    <div class="container-fluid service bg-light overflow-hidden py-2">
+        <div class="container py-2">
+            <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px; visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+                <h4 class="text-uppercase text-primary">@item.Title</h4>
+                <h1 class="display-3 text-capitalize mb-3">@item.Header</h1>
+            </div>
+            <div class="row gx-0 gy-4 align-items-center">
+                @for (var i = 0; i < item.ListGalleryMedia.Count; i++)
+                {
+                    var galleryMedia = item.ListGalleryMedia;
+                    int dela = (i + 1) * 20;
+                    double delas = dela / 100.0;
+                    string delays = delas.ToString() + "s";
+                    string FilePath = item.ListGalleryMedia.Count > 0 ? item.ListGalleryMedia[0].FilePath : "";
+                    string fadeIn = "fadeInUp";
+                    fadeIn = i == 0 ? "fadeInLeft" : i == (item.ListGalleryMedia.Count - 1) ? "fadeInRight" : "fadeInUp";
+                    <div class="col-lg-6 col-xl-4 wow @fadeIn" data-wow-delay="@delays" style="visibility: visible; animation-delay: @delays; animation-name: @fadeIn;">
+                        <div class="bg-transparent">
+                            <img src="@galleryMedia[i].FilePath" class="img-fluid w-100" alt="">
                         </div>
                     </div>
-                </div>
-            }
-
+                }
+            </div>
         </div>
     </div>
-</div>
-<!-- Products End -->
+}
+
+<!-- Gallery End -->

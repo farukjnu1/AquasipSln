@@ -176,18 +176,16 @@ namespace Aquasip.Controllers
             var galleryPage = pageRepo.GetBySlug("gallery");
             galleryPage.PageContents = pageContentRepo.GetBySlugPage("gallery");
 
-            galleryPage.Products = new ProductRepository(_connectionString).GetAll();
+            galleryPage.Galleries = new GalleryRepository(_connectionString).GetAll();
 
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
-
-            //var siteSettingRepo = new SiteSettingRepository(_connectionString);
-            //layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
             listPage.Add(galleryPage);
             ViewData["aquasip"] = listPage;
+
             return View();
         }
 

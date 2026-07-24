@@ -21,5 +21,6 @@ namespace Aquasip.Models
         public List<PageContentVM> PageContents { get; set; } = new List<PageContentVM>();
         public List<SiteSettingVM> SiteSettings { get; set; } = new List<SiteSettingVM>();
         public List<ProductVM> Products { get; set; } = new List<ProductVM>();
+        public List<GalleryVM> Galleries { get; set; } = new List<GalleryVM>();
     }
 }

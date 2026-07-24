@@ -27,6 +27,10 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<Department> Departments { get; set; }
 
+    public virtual DbSet<Gallery> Galleries { get; set; }
+
+    public virtual DbSet<GalleryMedium> GalleryMedia { get; set; }
+
     public virtual DbSet<Medium> Media { get; set; }
 
     public virtual DbSet<Menu> Menus { get; set; }
@@ -206,6 +210,35 @@ public partial class AquasipContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Description).HasMaxLength(510);
             entity.Property(e => e.Name).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Gallery>(entity =>
+        {
+            entity.ToTable("Gallery");
+
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Title).HasMaxLength(255);
+            entity.Property(e => e.UploadedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<GalleryMedium>(entity =>
+        {
+            entity.HasKey(e => e.MediaId);
+
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.FileName).HasMaxLength(255);
+            entity.Property(e => e.FilePath).HasMaxLength(255);
+            entity.Property(e => e.UploadedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Gallery).WithMany(p => p.GalleryMedia)
+                .HasForeignKey(d => d.GalleryId)
+                .HasConstraintName("FK_GalleryMedia_Gallery");
         });
 
         modelBuilder.Entity<Medium>(entity =>

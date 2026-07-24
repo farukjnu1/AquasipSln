@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Aquasip.EF.Gallery>
+
+@{
+    ViewData["Title"] = "Galleries";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    int serial = 0;
+}
+
+<h3>Index</h3>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                Status
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Header)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+            serial += 1;
+            string status = item.IsActive == true ? "Enabled" : "Disabled";
+            string statusCss = item.IsActive == true ? "success" : "danger";
+        <tr>
+                <td>@serial</td>
+                <td>
+                    <div class="badge bg-@statusCss">@status</div>
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Header)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.GalleryId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.GalleryId">Media</a>
+                @* <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a> *@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

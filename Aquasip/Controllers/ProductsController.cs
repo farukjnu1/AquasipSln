@@ -95,7 +95,7 @@ namespace Aquasip.Controllers
             if (ModelState.IsValid)
             {
                 int? UploadedBy = HttpContext.Session.GetInt32("UserID");
-                //AquasipContext _context = new AquasipContext();
+                product.UploadedBy = UploadedBy;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 if (product.Price != null)
@@ -227,7 +227,7 @@ namespace Aquasip.Controllers
                 try
                 {
                     int? UploadedBy = HttpContext.Session.GetInt32("UserID");
-                    //AquasipContext _context = new AquasipContext();
+                    product.UploadedBy = UploadedBy;
                     var price = await (from x in _context.Products where x.ProductId == id select x.Price).FirstOrDefaultAsync();
                     if (price != null)
                     {
