@@ -1,7 +1,7 @@
 ﻿@model Aquasip.Models.SalesOrderVM
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
