@@ -189,6 +189,25 @@ namespace Aquasip.Controllers
             return View();
         }
 
+        public IActionResult BulkOrder()
+        {
+            PageRepository pageRepo = new PageRepository(_connectionString);
+            PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+
+            var bulk_orderPage = pageRepo.GetBySlug("bulk_order");
+            bulk_orderPage.PageContents = pageContentRepo.GetBySlugPage("bulk_order");
+
+            var layoutPage = pageRepo.GetBySlug("layout");
+            layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
+
+            var listPage = new List<PageVM>();
+            listPage.Add(layoutPage);
+            listPage.Add(bulk_orderPage);
+            ViewData["aquasip"] = listPage;
+
+            return View();
+        }
+
         public IActionResult Cart()
         {
             #region Read

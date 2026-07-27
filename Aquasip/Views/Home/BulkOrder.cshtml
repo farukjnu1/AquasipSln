@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Gallery | AquaSip";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+
+    var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "layout").First();
+
+    var bulk_orderPage = viewModel.Where(x => x.Slug == "bulk_order").FirstOrDefault() == null ? new PageVM()
+        : viewModel.Where(x => x.Slug == "bulk_order").First();
+    var bulk_orderContent = bulk_orderPage.PageContents.Where(x => x.SlugPageContent == "bulk_order").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        bulk_orderPage.PageContents.Where(x => x.SlugPageContent == "bulk_order").First();
+
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = bulk_orderPage.Title,
+        Slug = bulk_orderPage.Slug,
+        Pages = (List<PageVM>)viewModel
+    };
+    
+}
+
+<!-- Navbar & Hero Start -->
+<partial name="_NavbarTop" model="oNavbar" />
+<!-- Navbar & Hero End -->
+
+<div class="container">
+    @Html.Raw(bulk_orderContent.Header)
+
+    @Html.Raw(bulk_orderContent.Body)
+
+    @Html.Raw(bulk_orderContent.Footer)
+</div>

@@ -15,6 +15,7 @@
     string cartActive = Model.Slug == "cart" ? "active" : "";
     string contactActive = Model.Slug == "contact" ? "active" : "";
     string faqActive = Model.Slug == "faq" ? "active" : "";
+    string bulk_orderActive = Model.Slug == "bulk_order" ? "active" : "";
     string galleryActive = Model.Slug == "gallery" ? "active" : "";
     string productsActive = Model.Slug == "products" ? "active" : "";
     string reviewActive = Model.Slug == "review" ? "active" : "";
@@ -60,6 +61,7 @@
                 <a href="/Home/Contact" class="nav-item nav-link @contactActive">Contact</a>
                 <a href="/Home/Review" class="nav-item nav-link @reviewActive">Review</a>
                 <a href="/Home/Faq" class="nav-item nav-link @faqActive">FAQ</a>
+                <a href="/Home/BulkOrder" class="nav-item nav-link @bulk_orderActive">Bulk Order</a>
             </div>
             <div class="d-none d-xl-flex me-3">
                 

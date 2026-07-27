@@ -37,6 +37,9 @@
     var oLogo = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
     : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo").First();
 
+    var oLogoActual = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo_actual").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    : layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "logo_actual").First();
+
     var listQuickLink = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "quick_links").ToList();
     var listOurService = layoutPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "our_services").ToList();
 
@@ -117,11 +120,11 @@
             <div class="row g-5">
                 <div class="col-md-6 col-lg-6 col-xl-3">
                     <div class="footer-item d-flex flex-column">
-                        @if (oLogo.IsActive == true)
+                        @if (oLogoActual.IsActive == true)
                         {
-                            <h4 class="text-white mb-4"><img src="@oLogo.FilePath" style="width: 135px" /></h4>
+                            <h4 class="text-white mb-4"><img src="@oLogoActual.FilePath" style="width: 135px" /></h4>
                             <p>
-                                @oLogo.Body
+                                @oLogoActual.Body
                             </p>
                         }
                         else
