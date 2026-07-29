@@ -164,7 +164,7 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxAmount,TotalAmount,IsActive")] PurchaseOrder purchaseOrder)
+        public async Task<IActionResult> Create([Bind("PurchaseOrderId,Ponumber,Podate,SupplierId,SubTotal,DiscountAmount,TaxAmount,TotalAmount,IsActive,PurchaseStateId")] PurchaseOrder purchaseOrder)
         {
             try
             {
@@ -240,7 +240,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            
             try
             {
                 #region order-summery
@@ -273,7 +272,6 @@ namespace Aquasip.Controllers
                     throw;
                 }
             }
-
             var listSuppliers = new List<SelectListItem>();
             listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
                 .Select(x => new SelectListItem

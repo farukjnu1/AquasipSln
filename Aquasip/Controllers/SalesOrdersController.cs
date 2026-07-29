@@ -99,23 +99,6 @@ namespace Aquasip.Controllers
                 var oStock = _context.StockTransactions.Where(x => x.ReferenceId == item.OrderDetailId && x.ReferenceTypeId == oReferenceType.ReferenceTypeId).FirstOrDefault();
                 item.IsStockUpdated = oStock == null ? false : true;
             }
-            /*oSalesOrder.CustomerPayments = _context.CustomerPayments
-                    .Where(cp => cp.OrderId == oSalesOrder.OrderId)
-                    .Include(pm => pm.PaymentMethod)
-                    .Include(ps => ps.PaymentStatus).Select(x => new CustomerPaymentVM
-                    {
-                        PaidAmount = x.PaidAmount,
-                        PaymentMethodId = x.PaymentMethodId,
-                        PaymentStatusId = x.PaymentStatusId,
-                        PaymentDate = x.PaymentDate,
-                        Remarks = x.Remarks,
-                        PaymentId = x.PaymentId,
-                        IsActive = x.IsActive,
-                        PaymentMethod = new PaymentMethodVM { PaymentMethodId = x.PaymentMethod.PaymentMethodId, PaymentMethodName = x.PaymentMethod.PaymentMethodName },
-                        PaymentStatus = new PaymentStatusVM { PaymentStateId = x.PaymentStatus.PaymentStateId, PaymentStatus1 = x.PaymentStatus.PaymentStatus1 },
-                        OrderId = x.OrderId,
-                        TransactionNumber = x.TransactionNumber
-                    }).ToList();*/
             #endregion
             return View(oSalesOrder);
         }
@@ -138,6 +121,7 @@ namespace Aquasip.Controllers
         {
             if (ModelState.IsValid)
             {
+                order.OrderStateId = 1; // PENDING
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

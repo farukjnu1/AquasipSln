@@ -316,7 +316,6 @@ namespace Aquasip.Controllers
             listPage.Add(cartPage);
             ViewData["aquasip"] = listPage;
             #endregion
-
             var products = HttpContext.Session.GetString("Cart");
             var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
 
@@ -329,7 +328,6 @@ namespace Aquasip.Controllers
         {
             var products = HttpContext.Session.GetString("Cart");
             var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
-            
             #region order-details
             listProduct.ForEach(x =>
             {
@@ -388,6 +386,7 @@ namespace Aquasip.Controllers
             order.GatewayCharge = gateway_charge.IsActive == true ? Convert.ToDecimal(gateway_charge.Header) : 0;
             order.GrandTotal = grandTotal ?? 0;
             order.Notes = string.Join(", ", listProduct.Select(x => $"{x.ProductName} (Qty: {x.Quantity})"));
+            order.OrderStateId = 1; // PENDING
             #endregion
             #region save
             if (grandTotal > 0)
@@ -428,7 +427,6 @@ namespace Aquasip.Controllers
             listPage.Add(layoutPage);
             ViewData["aquasip"] = listPage;
             #endregion
-
             AquasipContext _context = new AquasipContext();
             var listProduct = (from x in _context.Products where x.IsActive == true select x).ToList();
             List<SelectListItem> selectList = new List<SelectListItem>();
@@ -442,7 +440,6 @@ namespace Aquasip.Controllers
                 ProductId = id ?? 0,
                 CustomerId = Convert.ToInt64(HttpContext.Session.GetString("CustomerId") ?? "0")
             };
-
             ReviewRepository reviewRepo = new ReviewRepository(_connectionString);
             var listReview = reviewRepo.GetAll();
             ViewData["Reviews"] = listReview;
@@ -467,7 +464,6 @@ namespace Aquasip.Controllers
             listPage.Add(layoutPage);
             ViewData["aquasip"] = listPage;
             #endregion
-
             return View();
         }
         #endregion
