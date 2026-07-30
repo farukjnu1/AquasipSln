@@ -7,25 +7,30 @@ namespace Aquasip.Repositories
     public class ContactMessageRepository
     {
         // Create
-        public string Add(ContactMessageVM model)
+        public string Add(ContactMessageVM model, out bool isSave)
         {
-            string message = "operation failed.";
-            using (var _context = new AquasipContext())
+            string message = "operation failed."; isSave = false;
+            try
             {
-                ContactMessage oContactMessage = new ContactMessage();
-                oContactMessage.CreateAt = DateTime.Now;
-                oContactMessage.Email = model.Email;
-                oContactMessage.FullName = model.FullName;
-                oContactMessage.IsActive = true;
-                oContactMessage.Message = model.Message;
-                oContactMessage.Phone = model.Phone;
-                oContactMessage.Subject = model.Subject;
-
-                _context.ContactMessages.Add(oContactMessage);
-
-                _context.SaveChanges();
-
-                message = "message has been sent successfully.";
+                using (var _context = new AquasipContext())
+                {
+                    ContactMessage oContactMessage = new ContactMessage();
+                    oContactMessage.CreateAt = DateTime.Now;
+                    oContactMessage.Email = model.Email;
+                    oContactMessage.FullName = model.FullName;
+                    oContactMessage.IsActive = true;
+                    oContactMessage.Message = model.Message;
+                    oContactMessage.Phone = model.Phone;
+                    oContactMessage.Subject = model.Subject;
+                    _context.ContactMessages.Add(oContactMessage);
+                    _context.SaveChanges();
+                    message = "message has been sent successfully.";
+                    isSave = true;
+                }
+            }
+            catch 
+            {
+                isSave = false;
             }
             return message;
         }

@@ -27,6 +27,10 @@ public partial class AquasipContext : DbContext
 
     public virtual DbSet<Department> Departments { get; set; }
 
+    public virtual DbSet<EmailRecipient> EmailRecipients { get; set; }
+
+    public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
+
     public virtual DbSet<Gallery> Galleries { get; set; }
 
     public virtual DbSet<GalleryMedium> GalleryMedia { get; set; }
@@ -210,6 +214,37 @@ public partial class AquasipContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Description).HasMaxLength(510);
             entity.Property(e => e.Name).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<EmailRecipient>(entity =>
+        {
+            entity.HasKey(e => e.RecipientId).HasName("PK__EmailRec__F0A6024DBCB0ABE4");
+
+            entity.Property(e => e.DisplayName).HasMaxLength(200);
+            entity.Property(e => e.EmailAddress).HasMaxLength(320);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+
+            entity.HasOne(d => d.Template).WithMany(p => p.EmailRecipients)
+                .HasForeignKey(d => d.TemplateId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EmailRecipients_EmailTemplates");
+        });
+
+        modelBuilder.Entity<EmailTemplate>(entity =>
+        {
+            entity.HasKey(e => e.TemplateId).HasName("PK__EmailTem__F87ADD27E55CC93D");
+
+            entity.HasIndex(e => e.TemplateCode, "UQ__EmailTem__0FDB5081D89EC251").IsUnique();
+
+            entity.Property(e => e.CreatedAt)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.IsHtml).HasDefaultValue(true);
+            entity.Property(e => e.SubjectTemplate).HasMaxLength(500);
+            entity.Property(e => e.TemplateCode).HasMaxLength(100);
+            entity.Property(e => e.TemplateName).HasMaxLength(200);
+            entity.Property(e => e.UpdatedAt).HasPrecision(0);
         });
 
         modelBuilder.Entity<Gallery>(entity =>

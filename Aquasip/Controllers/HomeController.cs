@@ -118,21 +118,40 @@ namespace Aquasip.Controllers
             listPage.Add(layoutPage);
             ViewData["aquasip"] = listPage;
             #endregion
-
             #region Create
             ContactMessageVM model = new ContactMessageVM();
             #endregion
-
             return View(model);
         }
 
         [HttpPost]
         public IActionResult Contact(ContactMessageVM model)
         {
+            bool isSave = false;
             try
             {
                 ContactMessageRepository contactRepo = new ContactMessageRepository();
-                TempData["message"] = contactRepo.Add(model);
+                TempData["message"] = contactRepo.Add(model, out isSave);
+                if (isSave == true)
+                {
+                    #region e-mail
+                    using (var _context = new AquasipContext())
+                    {
+                        var oEmailTemplate = _context.EmailTemplates.Where(x => x.TemplateCode == "so_bulk" && x.IsActive == true).FirstOrDefault();
+                        if (oEmailTemplate != null)
+                        {
+                            string subject = oEmailTemplate.SubjectTemplate ?? "";
+                            string body = oEmailTemplate.BodyTemplate ?? "";
+                            //body = body.Replace("{FullName}", model.FullName ?? "");
+                            var listEmailRecipient = _context.EmailRecipients.Where(x => x.TemplateId == oEmailTemplate.TemplateId && x.IsActive == true).ToList();
+                            foreach (var item in listEmailRecipient)
+                            {
+                                var message = _emailService.SendEmailAsync(item.EmailAddress, subject, body);
+                            }
+                        }
+                    }
+                    #endregion
+                }
             }
             catch (Exception ex)
             {
@@ -161,10 +180,8 @@ namespace Aquasip.Controllers
             listPage.Add(specPage);
             ViewData["aquasip"] = listPage;
             #endregion
-
             ProductRepository productRepo = new ProductRepository(_connectionString);
             var model = productRepo.GetById(id);
-
             return View(model);
         }
 
@@ -318,7 +335,6 @@ namespace Aquasip.Controllers
             #endregion
             var products = HttpContext.Session.GetString("Cart");
             var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
-
             return View(listProduct);
         }
 
@@ -399,6 +415,23 @@ namespace Aquasip.Controllers
                     {
                         HttpContext.Session.Remove("Cart");
                         TempData["message"] = response.Message;
+                        #region e-mail
+                        using (var _context = new AquasipContext())
+                        {
+                            var oEmailTemplate = _context.EmailTemplates.Where(x => x.TemplateCode == "so" && x.IsActive == true).FirstOrDefault();
+                            if (oEmailTemplate != null)
+                            {
+                                string subject = oEmailTemplate.SubjectTemplate ?? "";
+                                string body = oEmailTemplate.BodyTemplate ?? "";
+                                //body = body.Replace("{FullName}", model.FullName ?? "");
+                                var listEmailRecipient = _context.EmailRecipients.Where(x => x.TemplateId == oEmailTemplate.TemplateId && x.IsActive == true).ToList();
+                                foreach (var item in listEmailRecipient)
+                                {
+                                    var message = _emailService.SendEmailAsync(item.EmailAddress, subject, body);
+                                }
+                            }
+                        }
+                        #endregion
                     }
                     else
                     {
