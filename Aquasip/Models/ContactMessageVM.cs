@@ -22,5 +22,6 @@
 
         public bool? IsActive { get; set; }
         public int? CreateBy { get; set; }
+        public string MessageType { get; set; } = "";
     }
 }

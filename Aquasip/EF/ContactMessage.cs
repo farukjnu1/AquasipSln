@@ -7,6 +7,8 @@ public partial class ContactMessage
 {
     public int ContactMessageId { get; set; }
 
+    public string? Code { get; set; }
+
     public string? FullName { get; set; }
 
     public string? Email { get; set; }

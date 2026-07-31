@@ -101,7 +101,7 @@ namespace Aquasip.Controllers
             return View();
         }
 
-        public IActionResult Contact()
+        public IActionResult Contact(string messageType)
         {
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
@@ -120,6 +120,7 @@ namespace Aquasip.Controllers
             #endregion
             #region Create
             ContactMessageVM model = new ContactMessageVM();
+            model.MessageType = messageType;
             #endregion
             return View(model);
         }
@@ -127,30 +128,34 @@ namespace Aquasip.Controllers
         [HttpPost]
         public IActionResult Contact(ContactMessageVM model)
         {
-            bool isSave = false;
+            bool isSave = false; string code = "";
             try
             {
                 ContactMessageRepository contactRepo = new ContactMessageRepository();
-                TempData["message"] = contactRepo.Add(model, out isSave);
+                TempData["message"] = contactRepo.Add(model, out isSave, out code);
                 if (isSave == true)
                 {
-                    #region e-mail
-                    using (var _context = new AquasipContext())
+                    if(model.MessageType == "so_bulk")
                     {
-                        var oEmailTemplate = _context.EmailTemplates.Where(x => x.TemplateCode == "so_bulk" && x.IsActive == true).FirstOrDefault();
-                        if (oEmailTemplate != null)
+                        #region e-mail
+                        using (var _context = new AquasipContext())
                         {
-                            string subject = oEmailTemplate.SubjectTemplate ?? "";
-                            string body = oEmailTemplate.BodyTemplate ?? "";
-                            //body = body.Replace("{FullName}", model.FullName ?? "");
-                            var listEmailRecipient = _context.EmailRecipients.Where(x => x.TemplateId == oEmailTemplate.TemplateId && x.IsActive == true).ToList();
-                            foreach (var item in listEmailRecipient)
+                            var oEmailTemplate = _context.EmailTemplates.Where(x => x.TemplateCode == "so_bulk" && x.IsActive == true).FirstOrDefault();
+                            if (oEmailTemplate != null)
                             {
-                                var message = _emailService.SendEmailAsync(item.EmailAddress, subject, body);
+                                string subject = oEmailTemplate.SubjectTemplate ?? "";
+                                string body = oEmailTemplate.BodyTemplate ?? "";
+                                body += @"<p>Reference: " + code + @"</p>";
+                                //body = body.Replace("{FullName}", model.FullName ?? "");
+                                var listEmailRecipient = _context.EmailRecipients.Where(x => x.TemplateId == oEmailTemplate.TemplateId && x.IsActive == true).ToList();
+                                foreach (var item in listEmailRecipient)
+                                {
+                                    var message = _emailService.SendEmailAsync(item.EmailAddress, subject, body);
+                                }
                             }
                         }
-                    }
-                    #endregion
+                        #endregion
+                    } 
                 }
             }
             catch (Exception ex)
@@ -423,7 +428,6 @@ namespace Aquasip.Controllers
                             {
                                 string subject = oEmailTemplate.SubjectTemplate ?? "";
                                 string body = oEmailTemplate.BodyTemplate ?? "";
-                                //body = body.Replace("{FullName}", model.FullName ?? "");
                                 var listEmailRecipient = _context.EmailRecipients.Where(x => x.TemplateId == oEmailTemplate.TemplateId && x.IsActive == true).ToList();
                                 foreach (var item in listEmailRecipient)
                                 {

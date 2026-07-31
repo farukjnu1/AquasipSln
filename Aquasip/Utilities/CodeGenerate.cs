@@ -44,6 +44,13 @@ namespace Aquasip.Utilities
             return timestamp;
         }
 
+        public static string ContactMessageNum(DateTime dateTime)
+        {
+            // Calculate total seconds since epoch
+            string timestamp = "CM" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            return timestamp;
+        }
+
         public static string GenerateRandomCode(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

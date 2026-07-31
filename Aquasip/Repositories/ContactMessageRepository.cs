@@ -7,15 +7,17 @@ namespace Aquasip.Repositories
     public class ContactMessageRepository
     {
         // Create
-        public string Add(ContactMessageVM model, out bool isSave)
+        public string Add(ContactMessageVM model, out bool isSave, out string code)
         {
-            string message = "operation failed."; isSave = false;
+            string message = "operation failed."; isSave = false; code = string.Empty;
             try
             {
                 using (var _context = new AquasipContext())
                 {
+                    var currentDate = DateTime.Now;
                     ContactMessage oContactMessage = new ContactMessage();
-                    oContactMessage.CreateAt = DateTime.Now;
+                    oContactMessage.Code = "CM" + Utilities.CodeGenerate.ContactMessageNum(currentDate);
+                    oContactMessage.CreateAt = currentDate;
                     oContactMessage.Email = model.Email;
                     oContactMessage.FullName = model.FullName;
                     oContactMessage.IsActive = true;
@@ -26,6 +28,7 @@ namespace Aquasip.Repositories
                     _context.SaveChanges();
                     message = "message has been sent successfully.";
                     isSave = true;
+                    code = oContactMessage.Code;
                 }
             }
             catch 

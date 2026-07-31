@@ -151,6 +151,9 @@ public partial class AquasipContext : DbContext
         {
             entity.ToTable("ContactMessage");
 
+            entity.Property(e => e.Code)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.FullName).HasMaxLength(255);
