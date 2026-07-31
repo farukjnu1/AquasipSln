@@ -50,13 +50,6 @@ namespace Aquasip.Repositories
                     }
                     #endregion
                     #region shipping-address
-                    /*var oShippingAddress = (from x in _context.ShippingAddresses
-                                            where x.CustomerId == oCustomer.CustomerId
-                                            && x.City == order.ShippingAddress.City
-                                            && x.StateProvince == order.ShippingAddress.StateProvince
-                                            && x.PostalCode == order.ShippingAddress.PostalCode
-                                            && x.CountryCode == order.ShippingAddress.CountryCode
-                                            select x).FirstOrDefault();*/
                     var oShippingAddress = (from x in _context.ShippingAddresses
                                             where x.CustomerId == oCustomer.CustomerId
                                             select x).FirstOrDefault();

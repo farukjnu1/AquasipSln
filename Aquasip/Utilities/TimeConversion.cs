@@ -32,5 +32,11 @@
             return Math.Abs((endDate - startDate).TotalMinutes);
         }
 
+        public static double DateDifferenceInSeconds(DateTime startDate, DateTime endDate)
+        {
+            // Calculate the absolute difference in seconds
+            return Math.Abs((endDate - startDate).TotalSeconds);
+        }
+
     }
 }

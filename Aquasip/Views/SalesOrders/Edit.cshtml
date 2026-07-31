@@ -32,13 +32,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="ShippingAddressId" class="control-label"></label>
-                <input asp-for="ShippingAddress.StreetAddress" class="form-control" readonly disabled />
+                <input asp-for="ShippingAddress.StreetAddress" class="form-control" />
                 <input type="hidden" asp-for="ShippingAddressId" />
                 <span asp-validation-for="ShippingAddressId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PaymentMethodId" class="control-label"></label>
-                <input asp-for="PaymentMethod" class="form-control" readonly disabled />
+                <input asp-for="PaymentMethod.PaymentMethodName" class="form-control" />
                 <input type="hidden" asp-for="PaymentMethodId" />
                 <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
             </div>

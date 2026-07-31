@@ -16,7 +16,7 @@ namespace Aquasip.Repositories
                 {
                     var currentDate = DateTime.Now;
                     ContactMessage oContactMessage = new ContactMessage();
-                    oContactMessage.Code = "CM" + Utilities.CodeGenerate.ContactMessageNum(currentDate);
+                    oContactMessage.Code = Utilities.CodeGenerate.ContactMessageNum(currentDate);
                     oContactMessage.CreateAt = currentDate;
                     oContactMessage.Email = model.Email;
                     oContactMessage.FullName = model.FullName;
@@ -75,9 +75,7 @@ namespace Aquasip.Repositories
                 if (oContactMessage != null)
                 {
                     _context.ContactMessages.Remove(oContactMessage);
-
                     _context.SaveChanges();
-
                     message = "data has been removed successfully.";
                 }
             }
@@ -85,15 +83,15 @@ namespace Aquasip.Repositories
         }
 
         // Read all
-        public async Task<List<ContactMessage>> GetAll(int pageNumber = 1)
+        public async Task<List<ContactMessage>> GetAll(int pageNumber = 0, int pageSize = 20)
         {
             var list = new List<ContactMessage>();
             using (var _context = new AquasipContext())
             {
-                int pageSize = 10;
+                //int pageSize = 10;
                 var listContact = _context.ContactMessages.AsNoTracking();
                 list = await PaginatedList<ContactMessage>.CreateAsync(listContact, pageNumber, pageSize);
-                //list = await _context.ContactMessages.ToListAsync();
+                //list = await _context.ContactMessages.Skip(0).Take(pageSize).ToListAsync();
             }
             return list;
         }
@@ -102,7 +100,6 @@ namespace Aquasip.Repositories
         public ContactMessageVM? GetById(int id)
         {
             ContactMessageVM? model = null;
-
             using (var _context = new AquasipContext())
             {
                 model = (from x in _context.ContactMessages
@@ -121,7 +118,6 @@ namespace Aquasip.Repositories
                              ReadBy = x.ReadBy
                          }).FirstOrDefault();
             }
-
             return model;
         }
 

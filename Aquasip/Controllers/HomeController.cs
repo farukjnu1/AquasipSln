@@ -164,7 +164,7 @@ namespace Aquasip.Controllers
                 error.WriteLog(ex.StackTrace);
                 TempData["message"] = "Exception!";
             }
-            return RedirectToAction("Appointments");
+            return RedirectToAction("Contact");
         }
 
         public IActionResult Spec(long id)

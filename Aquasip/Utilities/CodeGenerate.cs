@@ -5,49 +5,52 @@ namespace Aquasip.Utilities
 {
     public class CodeGenerate
     {
-        public static string SalesOrderNum(DateTime dateTime)
+        public static string SalesOrderNum(DateTime currentDate)
         {
-            // Calculate total seconds since epoch
-            string timestamp = TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
-
+            var startDate = new DateTime(2026, 1, 1, 1, 1, 1);
+            // Calculate total seconds since start-date
+            string timestamp = TimeConversion.DateDifferenceInSeconds(currentDate, startDate).ToString("F0");
             // Combine last 2 digits of phone number with timestamp
             return "SO" + timestamp;
         }
 
-        public static string SalesReturnNum(DateTime dateTime)
+        public static string SalesReturnNum(DateTime currentDate)
         {
-            // Calculate total seconds since epoch
-            string timestamp = TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
-
-            // Combine last 2 digits of phone number with timestamp
+            var startDate = new DateTime(2026, 1, 1, 1, 1, 1);
+            // Calculate total seconds since start-date
+            string timestamp = TimeConversion.DateDifferenceInSeconds(currentDate, startDate).ToString("F0");
             return "SR" + timestamp;
         }
 
-        public static string PurchaseOrderNum(DateTime dateTime)
+        public static string PurchaseOrderNum(DateTime currentDate)
         {
-            // Calculate total seconds since epoch
-            string timestamp = "PO" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            var startDate = new DateTime(2026, 1, 1, 1, 1, 1);
+            // Calculate total seconds since start-date
+            string timestamp = "PO" + TimeConversion.DateDifferenceInSeconds(currentDate, startDate).ToString("F0");
             return timestamp;
         }
 
-        public static string PurchaseReturnNum(DateTime dateTime)
+        public static string PurchaseReturnNum(DateTime currentDate)
         {
-            // Calculate total seconds since epoch
-            string timestamp = "PR" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            var startDate = new DateTime(2026, 1, 1, 1, 1, 1);
+            // Calculate total seconds since start-date
+            string timestamp = "PR" + TimeConversion.DateDifferenceInSeconds(currentDate, startDate).ToString("F0");
             return timestamp;
         }
 
-        public static string CustomerNum(DateTime dateTime)
+        public static string CustomerNum(DateTime currentDate)
         {
-            // Calculate total seconds since epoch
-            string timestamp = "C" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            var startDate = new DateTime(2026, 1, 1, 1, 1, 1);
+            // Calculate total seconds since start-date
+            string timestamp = "C" + TimeConversion.DateDifferenceInSeconds(currentDate, startDate).ToString("F0");
             return timestamp;
         }
 
-        public static string ContactMessageNum(DateTime dateTime)
+        public static string ContactMessageNum(DateTime currentDate)
         {
-            // Calculate total seconds since epoch
-            string timestamp = "CM" + TimeConversion.DateTimeToUnixTimestamp(dateTime).ToString();
+            var startDate = new DateTime(2026, 1, 1, 1, 1, 1);
+            // Calculate total seconds since start-date
+            string timestamp = "CM" + TimeConversion.DateDifferenceInSeconds(currentDate, startDate).ToString("F0");
             return timestamp;
         }
 
