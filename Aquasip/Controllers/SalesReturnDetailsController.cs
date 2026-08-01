@@ -21,14 +21,14 @@ namespace Aquasip.Controllers
             _context = context;
         }
 
-        // GET: PurchaseOrderDetails
+        // GET: SalesReturnDetails
         public async Task<IActionResult> Index()
         {
-            var aquasipContext = _context.PurchaseOrderDetails.Include(p => p.Product).Include(p => p.PurchaseOrder);
+            var aquasipContext = _context.SalesReturnDetails.Include(p => p.Product).Include(p => p.SalesReturn);
             return View(await aquasipContext.ToListAsync());
         }
 
-        // GET: PurchaseOrderDetails/Details/5
+        // GET: SalesReturnDetails/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -36,19 +36,19 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var purchaseOrderDetail = await _context.PurchaseOrderDetails
+            var salesReturnDetail = await _context.SalesReturnDetails
                 .Include(p => p.Product)
-                .Include(p => p.PurchaseOrder)
-                .FirstOrDefaultAsync(m => m.PurchaseOrderDetailId == id);
-            if (purchaseOrderDetail == null)
+                .Include(p => p.SalesReturn)
+                .FirstOrDefaultAsync(m => m.SalesReturnDetailId == id);
+            if (salesReturnDetail == null)
             {
                 return NotFound();
             }
 
-            return View(purchaseOrderDetail);
+            return View(salesReturnDetail);
         }
 
-        // GET: PurchaseOrderDetails/Create
+        // GET: SalesReturnDetails/Create
         public IActionResult Create(long salesReturnId)
         {
             var oSalesReturn = _context.SalesReturns.Where(x => x.SalesReturnId == salesReturnId).Include(i => i.Customer).FirstOrDefault();
@@ -75,7 +75,7 @@ namespace Aquasip.Controllers
             return View();
         }
 
-        // POST: PurchaseOrderDetails/Create
+        // POST: SalesReturnDetails/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -136,14 +136,14 @@ namespace Aquasip.Controllers
             return View(salesReturnDetail);
         }
 
-        // GET: PurchaseOrderDetails/Edit/5
+        // GET: SalesReturnDetails/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            //var purchaseOrderDetail = await _context.PurchaseOrderDetails.FindAsync(id);
+            //var SalesReturnDetail = await _context.SalesReturnDetails.FindAsync(id);
             var salesReturnDetail = await _context.SalesReturnDetails
                 .Where(x=>x.SalesReturnDetailId == id)
                 .Include(x=>x.Product)
@@ -153,12 +153,11 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            //ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "ProductId", purchaseOrderDetail.ProductId);
-            //ViewData["PurchaseOrderId"] = new SelectList(_context.PurchaseOrders, "PurchaseOrderId", "PurchaseOrderId", purchaseOrderDetail.PurchaseOrderId);
+            
             return View(salesReturnDetail);
         }
 
-        // POST: PurchaseOrderDetails/Edit/5
+        // POST: SalesReturnDetails/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -188,10 +187,7 @@ namespace Aquasip.Controllers
                     if (oSalesReturn != null)
                     {
                         oSalesReturn.IsActive = true;
-                        //oPurchaseReturn.DiscountAmount = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId && x.IsActive == true).Sum(x => x.DiscountAmount);
-                        //oPurchaseReturn.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId && x.IsActive == true).Sum(x => x.LineTotal);
-                        //oPurchaseReturn.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
-                        //oPurchaseReturn.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
+                        
                         // =========================
                         // Save Order Header
                         // =========================
@@ -219,27 +215,25 @@ namespace Aquasip.Controllers
             return View(salesReturnDetail);
         }
 
-        // GET: PurchaseOrderDetails/Delete/5
+        // GET: SalesReturnDetails/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var purchaseOrderDetail = await _context.PurchaseOrderDetails
+            var salesReturnDetail = await _context.SalesReturnDetails
                 .Include(p => p.Product)
-                .Include(p => p.PurchaseOrder)
-                .FirstOrDefaultAsync(m => m.PurchaseOrderDetailId == id);
-            if (purchaseOrderDetail == null)
+                .Include(p => p.SalesReturn)
+                .FirstOrDefaultAsync(m => m.SalesReturnDetailId == id);
+            if (salesReturnDetail == null)
             {
                 return NotFound();
             }
-
-            return View(purchaseOrderDetail);
+            return View(salesReturnDetail);
         }
 
-        // POST: PurchaseOrderDetails/Delete/5
+        // POST: SalesReturnDetails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -251,26 +245,26 @@ namespace Aquasip.Controllers
                 try
                 {
                     #region order-details
-                    var oPurchaseOrderDetail = await _context.PurchaseOrderDetails.FindAsync(id);
-                    if (oPurchaseOrderDetail == null)
+                    var oSalesReturnDetail = await _context.SalesReturnDetails.FindAsync(id);
+                    if (oSalesReturnDetail == null)
                     {
                         return NotFound();
                     }
                     // =========================
                     // Delete Order-Details
                     // =========================
-                    _context.PurchaseOrderDetails.Remove(oPurchaseOrderDetail);
+                    _context.SalesReturnDetails.Remove(oSalesReturnDetail);
                     await _context.SaveChangesAsync();
                     #endregion
                     #region order-summery
-                    var oOrder = _context.PurchaseOrders.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId).FirstOrDefault();
-                    if (oOrder != null)
+                    var oReturn = _context.SalesReturns.Where(x => x.SalesReturnId == oSalesReturnDetail.SalesReturnId).FirstOrDefault();
+                    if (oReturn != null)
                     {
-                        oOrder.IsActive = true;
-                        oOrder.DiscountAmount = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId && x.IsActive == true).Sum(x => x.DiscountAmount);
-                        oOrder.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId && x.IsActive == true).Sum(x => x.LineTotal);
-                        oOrder.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
-                        oOrder.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
+                        oReturn.IsActive = true;
+                        //oReturn.DiscountAmount = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId && x.IsActive == true).Sum(x => x.DiscountAmount);
+                        //oReturn.SubTotal = _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == oPurchaseOrderDetail.PurchaseOrderId && x.IsActive == true).Sum(x => x.LineTotal);
+                        //oReturn.TaxAmount = (oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0)) * (oOrder.TaxPercent ?? 0) / 100;
+                        //oReturn.TotalAmount = oOrder.SubTotal - (oOrder.DiscountAmount ?? 0) + (oOrder.OtherCharge ?? 0) + (oOrder.TaxAmount ?? 0);
                         // =========================
                         // Save Order Header
                         // =========================
@@ -282,8 +276,8 @@ namespace Aquasip.Controllers
                     // Commit Transaction
                     // =========================
                     transaction.Commit();
-                    TempData["message"] = "Please Add Purchase items";
-                    return RedirectToAction("Edit", "PurchaseOrders", new { id = oPurchaseOrderDetail.PurchaseOrderId });
+                    TempData["message"] = "Please Add Sales Return items";
+                    return RedirectToAction("Edit", "SalesReturns", new { id = oSalesReturnDetail.SalesReturnId });
                     
                 }
                 catch (Exception ex)
@@ -295,12 +289,12 @@ namespace Aquasip.Controllers
                     TempData["message"] = "Exceptions!";
                 }
             }
-            return RedirectToAction("Index", "PurchaseOrders");
+            return RedirectToAction("Index", "SalesReturns");
         }
 
-        private bool PurchaseOrderDetailExists(long id)
+        private bool SalesReturnDetailsExists(long id)
         {
-            return _context.PurchaseOrderDetails.Any(e => e.PurchaseOrderDetailId == id);
+            return _context.SalesReturnDetails.Any(e => e.SalesReturnDetailId == id);
         }
     }
 }

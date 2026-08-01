@@ -133,8 +133,11 @@
 <script>
     function calculateLineTotal(){
         var UnitCost = parseFloat(document.getElementById('UnitCost').value);
+        UnitCost = isNaN(UnitCost) == true ? 0 : UnitCost;
         var Qty = parseFloat(document.getElementById('Qty').value);
+        Qty = isNaN(Qty) == true ? 0 : Qty;
         var DiscountAmount = parseFloat(document.getElementById('DiscountAmount').value);
+        DiscountAmount = isNaN(DiscountAmount) == true ? 0 : DiscountAmount;
         document.getElementById('LineTotal').value = (UnitCost * Qty) - DiscountAmount;
     }
 </script>

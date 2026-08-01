@@ -133,6 +133,7 @@ namespace Aquasip.Repositories
                     transaction.Commit();
                     response.Success = true;
                     response.Message = "Order has been submit successfully.";
+                    response.Status = oOrder.OrderId.ToString();
                 }
                 catch (Exception ex)
                 {

@@ -1,0 +1,82 @@
+﻿@model Aquasip.EF.SalesOrderDetail
+
+@{
+    ViewData["Title"] = "SalesOrderDetail Edit";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h3>Edit</h3>
+
+<h4>ReturnDetail</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="OrderDetailId" />
+            <input type="hidden" asp-for="OrderId" />
+            <input type="hidden" asp-for="ProductId" />
+            @* <div class="form-group">
+                <label asp-for="SalesReturn.ReturnNumber" class="control-label"></label>
+                <input asp-for="SalesReturn.ReturnNumber" class="form-control" readonly />
+                <span asp-validation-for="SalesReturn.ReturnNumber" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <input asp-for="Product.ProductName" class="form-control" readonly />
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Qty" class="control-label"></label>
+                <input asp-for="Qty" class="form-control" readonly />
+                <span asp-validation-for="Qty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UnitPrice" class="control-label"></label>
+                <input asp-for="UnitPrice" class="form-control" readonly />
+                <span asp-validation-for="UnitPrice" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="DiscountAmount" class="control-label"></label>
+                <input asp-for="DiscountAmount" class="form-control" readonly />
+                <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LineTotal" class="control-label"></label>
+                <input asp-for="LineTotal" class="form-control" readonly />
+                <span asp-validation-for="LineTotal" class="text-danger"></span>
+            </div> *@
+            @* <div class="form-group">
+                <label asp-for="StoreId" class="control-label"></label>
+                <input asp-for="StoreId" class="form-control" />
+                <span asp-validation-for="StoreId" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="IsActive" class="control-label"></label>
+                @* <input asp-for="IsApproved" class="form-control" /> *@
+                <select asp-for="IsActive" class="form-control">
+                    <option value="true">Keep</option>
+                    <option value="false">Remove</option>
+                </select>
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="IsActive" class="control-label"></label>
+                <input asp-for="IsActive" class="form-control" />
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div> *@
+            <div class="form-group pt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href="/SalesOrders/Edit/@Model.OrderId">Back</a>
+    @* <a asp-action="Index">Back to List</a> *@
+</div>
+
+@* @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@

@@ -354,13 +354,13 @@
 <!-- Navbar & Hero End -->
 
 <div class="terms-container">
-
-
-    @Html.Raw(termContent.Header)
-
-    @Html.Raw(termContent.Body)
-
-    @Html.Raw(termContent.Footer)
-
-    
+    <section class="py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="prose prose-lg max-w-none">
+                @Html.Raw(termContent.Header)
+                @Html.Raw(termContent.Body)
+                @Html.Raw(termContent.Footer)
+            </div>
+        </div>
+    </section>
 </div>

@@ -133,101 +133,108 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SalesOrderVM order)
         {
-            //var products = HttpContext.Session.GetString("Cart");
-            //var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
-            var listProduct = new List<ProductVM>();
-            #region order-details
-            listProduct.ForEach(x =>
+            try
             {
-                order.OrderDetails.Add(new SalesOrderVM.SalesOrderDetailVM
+                //var products = HttpContext.Session.GetString("Cart");
+                //var listProduct = string.IsNullOrEmpty(products) ? new List<ProductVM>() : JsonConversion.DeserializeObject<List<ProductVM>>(products);
+                var listProduct = new List<ProductVM>();
+                #region order-details
+                listProduct.ForEach(x =>
                 {
-                    ProductId = x.ProductId,
-                    Qty = (int)x.Quantity,
-                    UnitPrice = x.Price ?? 0,
-                    TotalPrice = x.Total ?? 0
+                    order.OrderDetails.Add(new SalesOrderVM.SalesOrderDetailVM
+                    {
+                        ProductId = x.ProductId,
+                        Qty = (int)x.Quantity,
+                        UnitPrice = x.Price ?? 0,
+                        TotalPrice = x.Total ?? 0
+                    });
                 });
-            });
-            #endregion
-            #region order-summary
-            //PageRepository pageRepo = new PageRepository(_connectionString);
-            //PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
-            //var cartPage = pageRepo.GetBySlug("cart");
-            //cartPage.PageContents = pageContentRepo.GetBySlugPage("cart");
-            //var delivery_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-            //    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").First();
-            //var gateway_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-            //    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").First();
-            //var vat = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-            //    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").First();
+                #endregion
+                #region order-summary
+                //PageRepository pageRepo = new PageRepository(_connectionString);
+                //PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
+                //var cartPage = pageRepo.GetBySlug("cart");
+                //cartPage.PageContents = pageContentRepo.GetBySlugPage("cart");
+                //var delivery_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+                //    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").First();
+                //var gateway_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+                //    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").First();
+                //var vat = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+                //    : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "vat").First();
 
-            decimal? grandTotal = 0;
-            decimal? subTotal = 0;
-            decimal? vatedValue = 0;
-            foreach (var item in listProduct)
-            {
-                subTotal += item.Total == null ? 0 : item.Total;
-            }
-            grandTotal += subTotal;
-            //if (grandTotal > 0)
-            //{
-            //    if (vat.IsActive == true)
-            //    {
-            //        grandTotal += subTotal * (Convert.ToDecimal(vat.Header) / 100);
-            //        vatedValue = subTotal * (Convert.ToDecimal(vat.Header) / 100);
-            //        vatedValue = Math.Round(Convert.ToDecimal(vatedValue), 2);
-            //    }
-            //    if (delivery_charge.IsActive == true)
-            //    {
-            //        grandTotal += Convert.ToDecimal(delivery_charge.Header);
-            //    }
-            //    if (gateway_charge.IsActive == true)
-            //    {
-            //        grandTotal += Convert.ToDecimal(gateway_charge.Header);
-            //    }
-            //    grandTotal = Math.Round(Convert.ToDecimal(grandTotal), 2);
-            //}
-            order.SubTotal = subTotal ?? 0;
-            //order.VatPercent = vat.IsActive == true ? Convert.ToDecimal(vat.Header) : 0;
-            order.VatAmount = vatedValue ?? 0;
-            //order.DeliveryCharge = delivery_charge.IsActive == true ? Convert.ToDecimal(delivery_charge.Header) : 0;
-            //order.GatewayCharge = gateway_charge.IsActive == true ? Convert.ToDecimal(gateway_charge.Header) : 0;
-            order.GrandTotal = grandTotal ?? 0;
-            //order.Notes = string.Join(", ", listProduct.Select(x => $"{x.ProductName} (Qty: {x.Quantity})"));
-            order.OrderStateId = 1; // PENDING
-            #endregion
-            #region save
-            SalesOrderRepository orderRepo = new SalesOrderRepository(_connectionString);
-            var response = orderRepo.Add(order);
-            if (response != null)
-            {
-                if (response.Success == true)
+                decimal? grandTotal = 0;
+                decimal? subTotal = 0;
+                decimal? vatedValue = 0;
+                foreach (var item in listProduct)
                 {
-                    //HttpContext.Session.Remove("Cart");
-                    TempData["message"] = response.Message;
+                    subTotal += item.Total == null ? 0 : item.Total;
                 }
-                else
+                grandTotal += subTotal;
+                //if (grandTotal > 0)
+                //{
+                //    if (vat.IsActive == true)
+                //    {
+                //        grandTotal += subTotal * (Convert.ToDecimal(vat.Header) / 100);
+                //        vatedValue = subTotal * (Convert.ToDecimal(vat.Header) / 100);
+                //        vatedValue = Math.Round(Convert.ToDecimal(vatedValue), 2);
+                //    }
+                //    if (delivery_charge.IsActive == true)
+                //    {
+                //        grandTotal += Convert.ToDecimal(delivery_charge.Header);
+                //    }
+                //    if (gateway_charge.IsActive == true)
+                //    {
+                //        grandTotal += Convert.ToDecimal(gateway_charge.Header);
+                //    }
+                //    grandTotal = Math.Round(Convert.ToDecimal(grandTotal), 2);
+                //}
+                order.SubTotal = subTotal ?? 0;
+                //order.VatPercent = vat.IsActive == true ? Convert.ToDecimal(vat.Header) : 0;
+                order.VatAmount = vatedValue ?? 0;
+                //order.DeliveryCharge = delivery_charge.IsActive == true ? Convert.ToDecimal(delivery_charge.Header) : 0;
+                //order.GatewayCharge = gateway_charge.IsActive == true ? Convert.ToDecimal(gateway_charge.Header) : 0;
+                order.GrandTotal = grandTotal ?? 0;
+                //order.Notes = string.Join(", ", listProduct.Select(x => $"{x.ProductName} (Qty: {x.Quantity})"));
+                order.OrderStateId = 1; // PENDING
+                #endregion
+                #region save
+                SalesOrderRepository orderRepo = new SalesOrderRepository(_connectionString);
+                var response = orderRepo.Add(order);
+                if (response != null)
                 {
-                    TempData["message"] = response.Message;
+                    if (response.Success == true)
+                    {
+                        //HttpContext.Session.Remove("Cart");
+                        TempData["message"] = response.Message;
+                    }
+                    else
+                    {
+                        TempData["message"] = response.Message;
+                    }
                 }
+                #endregion
+                #region Dropdown list
+                ViewData["OrderStateId"] = _context.SalesOrderStates.OrderBy(x => x.Sequence)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.OrderStateId.ToString(),
+                        Text = x.OrderStatus
+                    }).ToList();
+                ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.PaymentMethodId.ToString(),
+                        Text = x.PaymentMethodName
+                    }).ToList();
+                #endregion
+                TempData["message"] = "Please Add Sales-Order items";
+                var id = response != null ? Convert.ToInt64(response.Status) : 0;
+                return RedirectToAction("Create", "SalesOrderDetails", new { orderId = id });
             }
-            #endregion
-            #region Dropdown list
-            //ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
-            //ViewData["PaymentMethodId"] = new SelectList(_context.PaymentMethods, "PaymentMethodId", "PaymentMethodId");
-            //ViewData["ShippingAddressId"] = new SelectList(_context.ShippingAddresses, "ShippingAddressId", "ShippingAddressId");
-            ViewData["OrderStateId"] = _context.SalesOrderStates.OrderBy(x => x.Sequence)
-                .Select(x => new SelectListItem
-                {
-                    Value = x.OrderStateId.ToString(),
-                    Text = x.OrderStatus
-                }).ToList();
-            ViewData["PaymentMethodId"] = _context.PaymentMethods.OrderBy(x => x.PaymentMethodName)
-                .Select(x => new SelectListItem
-                {
-                    Value = x.PaymentMethodId.ToString(),
-                    Text = x.PaymentMethodName
-                }).ToList();
-            #endregion
+            catch 
+            {
+
+            }
             return View(order);
         }
 
