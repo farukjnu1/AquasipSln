@@ -146,16 +146,16 @@ namespace Aquasip.Controllers
         // GET: PurchaseOrders/Create
         public IActionResult Create()
         {
+            #region supplier list   
             var listSuppliers = new List<SelectListItem>();
-            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+            listSuppliers.AddRange(_context.Suppliers.Where(x => x.IsActive == true).OrderBy(x => x.SupplierName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.SupplierId.ToString(),
                     Text = x.SupplierName
-                })
-                .ToList());
+                }).ToList());
             ViewData["SupplierId"] = listSuppliers;
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId");
+            #endregion
             return View();
         }
 
@@ -178,16 +178,16 @@ namespace Aquasip.Controllers
             {
                 TempData["message"] = "Exceptions!";
             }
+            #region supplier list   
             var listSuppliers = new List<SelectListItem>();
-            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+            listSuppliers.AddRange(_context.Suppliers.Where(x=>x.IsActive == true).OrderBy(x => x.SupplierName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.SupplierId.ToString(),
                     Text = x.SupplierName
-                })
-                .ToList());
+                }).ToList());
             ViewData["SupplierId"] = listSuppliers;
-            
+            #endregion
             return View(purchaseOrder);
         }
 
@@ -198,34 +198,32 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var purchaseOrder = await _context.PurchaseOrders.FindAsync(id);
             if (purchaseOrder == null)
             {
                 return NotFound();
             }
-
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierId", purchaseOrder.SupplierId);
+            #region supplier list   
             var listSuppliers = new List<SelectListItem>();
-            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+            listSuppliers.AddRange(_context.Suppliers.Where(x => x.IsActive == true).OrderBy(x => x.SupplierName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.SupplierId.ToString(),
                     Text = x.SupplierName
-                })
-                .ToList());
+                }).ToList());
             ViewData["SupplierId"] = listSuppliers;
+            #endregion
+            #region listPurchaseOrderState
             var listPurchaseOrderState = new List<SelectListItem>();
             listPurchaseOrderState.AddRange(_context.PurchaseOrderStates.OrderBy(x => x.Sequence)
                 .Select(x => new SelectListItem
                 {
                     Value = x.PurchaseStateId.ToString(),
                     Text = x.PurchaseStatus
-                })
-                .ToList());
+                }).ToList());
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
+            #endregion
             ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x=>x.Product).ToListAsync();
-
             return View(purchaseOrder);
         }
 
@@ -272,26 +270,27 @@ namespace Aquasip.Controllers
                     throw;
                 }
             }
+            #region supplier list   
             var listSuppliers = new List<SelectListItem>();
-            listSuppliers.AddRange(_context.Suppliers.OrderBy(x => x.SupplierName)
+            listSuppliers.AddRange(_context.Suppliers.Where(x => x.IsActive == true).OrderBy(x => x.SupplierName)
                 .Select(x => new SelectListItem
                 {
                     Value = x.SupplierId.ToString(),
                     Text = x.SupplierName
-                })
-                .ToList());
+                }).ToList());
             ViewData["SupplierId"] = listSuppliers;
+            #endregion
+            #region listPurchaseOrderState
             var listPurchaseOrderState = new List<SelectListItem>();
             listPurchaseOrderState.AddRange(_context.PurchaseOrderStates.OrderBy(x => x.Sequence)
                 .Select(x => new SelectListItem
                 {
                     Value = x.PurchaseStateId.ToString(),
                     Text = x.PurchaseStatus
-                })
-                .ToList());
+                }).ToList());
             ViewData["PurchaseStateId"] = listPurchaseOrderState;
+            #endregion
             ViewData["PurchaseOrderDetails"] = await _context.PurchaseOrderDetails.Where(x => x.PurchaseOrderId == id && x.IsActive == true).Include(x => x.Product).ToListAsync();
-
             return View(purchaseOrder);
         }
 
@@ -302,7 +301,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var purchaseOrder = await _context.PurchaseOrders
                 .Include(p => p.Supplier)
                 .FirstOrDefaultAsync(m => m.PurchaseOrderId == id);
@@ -310,7 +308,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             return View(purchaseOrder);
         }
 
@@ -324,7 +321,6 @@ namespace Aquasip.Controllers
             {
                 _context.PurchaseOrders.Remove(purchaseOrder);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -333,5 +329,6 @@ namespace Aquasip.Controllers
         {
             return _context.PurchaseOrders.Any(e => e.PurchaseOrderId == id);
         }
+
     }
 }

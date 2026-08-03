@@ -14,14 +14,16 @@
     var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
         : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
 
-    var oContact = viewModel.Where(x => x.Slug == "contact").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "contact").First();
-    var contact = oContact.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        oContact.PageContents.Where(x => x.SlugPageContent == "contact").First();
+    var contactPage = viewModel.Where(x => x.Slug == "contact").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "contact").First();
+    var oContact = contactPage.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        contactPage.PageContents.Where(x => x.SlugPageContent == "contact").First();
+    var oMap = contactPage.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+    contactPage.PageContents.Where(x => x.SlugPageContent == "map").First();
 
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
-        Name = oContact.Title,
-        Slug = oContact.Slug,
+        Name = contactPage.Title,
+        Slug = contactPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
                             
@@ -37,10 +39,10 @@
         <div class="row g-5">
             <div class="col-lg-6 h-100 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="text-center mx-auto pb-5" style="max-width: 800px;">
-                    <h4 class="text-uppercase text-primary">@contact.Header</h4>
-                    <h1 class="display-3 text-capitalize mb-3">@contact.Description</h1>
+                    <h4 class="text-uppercase text-primary">@oContact.Header</h4>
+                    <h1 class="display-3 text-capitalize mb-3">@oContact.Description</h1>
                     <h6 class="lh-base mb-0">
-                        @contact.Body
+                        @oContact.Body
                     </h6>
                 </div>
                 <form method="post">
@@ -112,11 +114,7 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="h-100 overflow-hidden">
-                            <iframe class="w-100 rounded" style="height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                                    src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Banasree+M+block&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-                            </iframe>
-                        </div>
+                        @Html.Raw(oMap.Header)
                     </div>
                 </div>
             </div>
