@@ -89,9 +89,8 @@ namespace Aquasip.Repositories
             using (var _context = new AquasipContext())
             {
                 //int pageSize = 10;
-                var listContact = _context.ContactMessages.AsNoTracking();
+                var listContact = _context.ContactMessages.OrderByDescending(x=>x.ContactMessageId).AsNoTracking();
                 list = await PaginatedList<ContactMessage>.CreateAsync(listContact, pageNumber, pageSize);
-                //list = await _context.ContactMessages.Skip(0).Take(pageSize).ToListAsync();
             }
             return list;
         }

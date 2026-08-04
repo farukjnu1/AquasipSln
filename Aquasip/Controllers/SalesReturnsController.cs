@@ -204,7 +204,7 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("SalesOrderId,ReturnDate,CustomerId,IsActive,Notes")] SalesReturn salesReturn)
+        public async Task<IActionResult> Edit(long id, SalesReturn salesReturn)
         {
             if (id != salesReturn.SalesReturnId)
             {

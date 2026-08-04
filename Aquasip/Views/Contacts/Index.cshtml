@@ -15,6 +15,9 @@
         <tr>
             <th>#</th>
             <th>
+                Time
+            </th>
+            <th>
                 Full-Name
             </th>
             <th>
@@ -39,10 +42,14 @@
             var statusCommand = item.IsActive == true ? "Suspend" : "Restore";
             var status = item.IsActive == true ? "Restored" : "Suspended";
             var statusCSS = item.IsActive == true ? "badge text-bg-success" : "badge text-bg-danger";
+            string CreateAt = item.CreateAt == null ? "" : Convert.ToDateTime(item.CreateAt).ToString("yyyy-MMM-d H:m tt");
             <tr style="font-weight: @fontWeight;">
             <td>
                 <a asp-action="Details" asp-route-id="@item.ContactMessageId">@markCommand</a> |
                 <a asp-action="Edit" asp-route-id="@item.ContactMessageId">@statusCommand</a>
+            </td>
+            <td>
+                @CreateAt
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FullName)

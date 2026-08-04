@@ -233,7 +233,6 @@ namespace Aquasip.Controllers
             }
             catch 
             {
-
             }
             return View(order);
         }

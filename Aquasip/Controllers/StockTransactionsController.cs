@@ -472,7 +472,7 @@ namespace Aquasip.Controllers
                 }).ToList());
             ViewData["StoreId"] = listStore;
             #endregion
-            //ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
+            
             #region Model of StockTransaction
             var referenceCode = _tokenService.Decrypt(referenceToken);
             var referenceType = _context.ReferenceTypes.FirstOrDefault(x => x.Code == referenceCode);

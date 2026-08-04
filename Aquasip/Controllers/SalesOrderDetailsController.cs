@@ -1,6 +1,7 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
 using Aquasip.Models;
+using Aquasip.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -62,8 +63,7 @@ namespace Aquasip.Controllers
             {
                 Value = x.ProductId.ToString(),
                 Text = x.ProductName
-            })
-                .ToList());
+            }).ToList());
             ViewData["Products"] = listProducts;
             #endregion
             return View();
@@ -94,6 +94,21 @@ namespace Aquasip.Controllers
                     var oSalesOrder = _context.SalesOrders.Where(x => x.OrderId == salesOrderDetail.OrderId).FirstOrDefault();
                     if (oSalesOrder != null) 
                     {
+                        decimal? grandTotal = 0;
+                        decimal? subTotals = 0;
+                        var listSalesOrderDetails = _context.SalesOrderDetails.Include(x=>x.Product).Where(x => x.OrderId == salesOrderDetail.OrderId).ToList();
+                        foreach (var item in listSalesOrderDetails)
+                        {
+                            subTotals += item.TotalPrice;
+                        }
+                        oSalesOrder.SubTotal = subTotals ?? 0;
+                        oSalesOrder.VatPercent = 0;
+                        oSalesOrder.VatAmount = 0;
+                        oSalesOrder.DeliveryCharge = 0;
+                        oSalesOrder.GatewayCharge = 0;
+                        oSalesOrder.GrandTotal = grandTotal ?? 0;
+                        oSalesOrder.Notes = string.Join(", ", listSalesOrderDetails.Select(x => $"{x.Product.ProductName} (Qty: {x.Qty})"));
+                        oSalesOrder.OrderStateId = 1; // PENDING
                         oSalesOrder.IsActive = true;
                         // =========================
                         // Save Order Header
@@ -116,7 +131,6 @@ namespace Aquasip.Controllers
                     transaction.Rollback();
                 }
             }
-            
             #region dropDown list
             var listProducts = new List<SelectListItem>();
             listProducts.AddRange(_context.Products.Where(x => x.IsActive == true).OrderBy(x => x.ProductName)
@@ -147,7 +161,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            
             return View(salesOrderDetail);
         }
 

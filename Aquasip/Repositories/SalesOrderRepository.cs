@@ -227,7 +227,7 @@ namespace Aquasip.Repositories
                                 model.GatewayCharge = reader.GetValue("GatewayCharge") == DBNull.Value ? 0 : reader.GetDecimal("GatewayCharge");
                                 model.VatPercent = reader.GetValue("VatPercent") == DBNull.Value ? 0 : reader.GetDecimal("VatPercent");
                                 model.VatAmount = reader.GetValue("VatAmount") == DBNull.Value ? 0 : reader.GetDecimal("VatAmount");
-                                model.SubTotal = reader.GetValue("SubTotal") == DBNull.Value ? 0 : reader.GetDecimal("GatewayCharge");
+                                model.SubTotal = reader.GetValue("SubTotal") == DBNull.Value ? 0 : reader.GetDecimal("SubTotal");
                                 model.OrderStateId = reader.GetValue("OrderStateId") == DBNull.Value ? 0 : reader.GetInt32("OrderStateId");
                                 model.OrderDate = reader.GetValue("OrderDate") == DBNull.Value ? DateTime.Now : reader.GetDateTime("OrderDate");
                                 model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? false : reader.GetBoolean("IsActive");

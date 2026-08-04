@@ -37,8 +37,7 @@ namespace Aquasip.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            //AquasipContext _context = new AquasipContext();
-            return View(await _context.Products.ToListAsync());
+            return View(await _context.Products.OrderByDescending(x=>x.IsActive).ThenBy(x=>x.ProductName).ToListAsync());
         }
 
         // GET: Products/Details/5
