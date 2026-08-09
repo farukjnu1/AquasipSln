@@ -26,8 +26,8 @@ namespace Aquasip.Models
 
         public DateTime CreatedDate { get; set; }
 
-        public virtual Customer Customer { get; set; } = null!;
+        public virtual CustomerVM customer { get; set; } = null!;
 
-        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        public virtual ICollection<SalesOrder> Orders { get; set; } = new List<SalesOrder>();
     }
 }

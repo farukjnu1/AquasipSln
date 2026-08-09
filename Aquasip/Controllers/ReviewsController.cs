@@ -17,12 +17,6 @@ namespace Aquasip.Controllers
     public class ReviewsController : Controller
     {
         private readonly AquasipContext _context;
-
-        //public ProductsController(AquasipContext context)
-        //{
-        //    _context = context;
-        //}
-
         private readonly ILogger<ReviewsController> _logger;
         private readonly string _connectionString;
         private readonly IWebHostEnvironment _environment;
@@ -37,7 +31,6 @@ namespace Aquasip.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            //AquasipContext _context = new AquasipContext();
             var aquasipContext = _context.Reviews.Include(r => r.Customer).Include(r => r.Product);
             return View(await aquasipContext.ToListAsync());
         }
@@ -49,7 +42,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            //AquasipContext _context = new AquasipContext();
             var review = await _context.Reviews
                 .Include(r => r.Customer)
                 .Include(r => r.Product)
@@ -58,16 +50,89 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
+            review.ReviewMedia = _context.ReviewMedia.Where(x => x.ReviewId == id).ToList();
+            var oReview = new ReviewVM()
+            {
+                CreatedAt = review.CreatedAt,
+                CustomerId = review.CustomerId,
+                IsApproved = review.IsApproved,
+                IsDeleted = review.IsDeleted,
+                ModerationStatus = review.ModerationStatus,
+                ProductId = review.ProductId,
+                Rating = review.Rating,
+                ReviewId = review.ReviewId,
+                ReviewText = review.ReviewText,
+                Title = review.Title
+            };
+            oReview.ReviewMedia = (from x in _context.ReviewMedia
+                                   where x.ReviewId == id
+                                   select new ReviewMediumVM
+                                   {
+                                       CreatedAt = x.CreatedAt,
+                                       MediaId = x.MediaId,
+                                       MediaType = x.MediaType,
+                                       ReviewId = x.ReviewId,
+                                       MediaUrl = x.MediaUrl
+                                   }).ToList();
+            return View(oReview);
+        }
 
-            return View(review);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(ReviewVM model)
+        {
+            int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+            #region Media
+            if (model.MediaFile != null && model.MediaFile.Length > 0)
+            {
+                #region Create File
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "img");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                string extension = Path.GetExtension(model.MediaFile.FileName);
+                DateTime currentDateTime = DateTime.Now;
+                string timeStamp = currentDateTime.ToString("yyyyMMdd") + "_" + currentDateTime.ToString("HHmmss") + "_" + currentDateTime.ToString("fff");
+                string uniqueFileName = $"{timeStamp}{extension}";
+                var filePath = Path.Combine(uploadsFolder, Path.GetFileName(uniqueFileName));
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.MediaFile.CopyTo(stream);
+                }
+                #endregion
+                #region Media Update
+                ReviewMedium oMedia = new ReviewMedium
+                {
+                    ReviewId = model.ReviewId,
+                    MediaUrl = "/img/" + uniqueFileName,
+                    CreatedAt = DateTime.Now
+                };
+                _context.Add(oMedia);
+                await _context.SaveChangesAsync();
+                #endregion
+            }
+            #endregion
+            return RedirectToAction(nameof(Details), new { id = model.ReviewId });
         }
 
         // GET: Reviews/Create
         public IActionResult Create()
         {
-            //AquasipContext _context = new AquasipContext();
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
-            ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId");
+            #region dropdown list
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ProductId"] = _context.Products.Where(x => x.IsActive == true).OrderBy(x => x.ProductName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ProductId.ToString(),
+                        Text = x.ProductName
+                    }).ToList();
+            #endregion
             return View();
         }
 
@@ -88,10 +153,7 @@ namespace Aquasip.Controllers
                 TempData["message"] = "Please, Sign-in to review a product.";
                 return RedirectToAction("Review", "Home");
             }
-
             #region Review
-            //AquasipContext _context = new AquasipContext();
-
             Review oReview = new Review
             {
                 ProductId = review.ProductId,
@@ -152,7 +214,6 @@ namespace Aquasip.Controllers
                 }
             }
             #endregion
-            
             return RedirectToAction("Review", "Home");
         }
 
@@ -163,8 +224,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            //AquasipContext _context = new AquasipContext();
-            //var review = await _context.Reviews.FindAsync(id);
             var review = await _context.Reviews
                 .Where(x => x.ReviewId == id)
                 .Include(r => r.Customer)
@@ -174,8 +233,20 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", review.CustomerId);
-            ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId", review.ProductId);
+            #region dropdown list
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ProductId"] = _context.Products.Where(x => x.IsActive == true).OrderBy(x => x.ProductName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ProductId.ToString(),
+                        Text = x.ProductName
+                    }).ToList();
+            #endregion
             return View(review);
         }
 
@@ -190,12 +261,10 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            //AquasipContext _context = new AquasipContext();
             try
             {
                 _context.Update(review);
                 await _context.SaveChangesAsync();
-                
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -209,8 +278,20 @@ namespace Aquasip.Controllers
                     //throw;
                 }
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", review.CustomerId);
-            ViewData["ProductId"] = new SelectList(_context.Products.Where(x=>x.IsActive == true), "ProductId", "ProductId", review.ProductId);
+            #region dropdown list
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ProductId"] = _context.Products.Where(x => x.IsActive == true).OrderBy(x => x.ProductName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ProductId.ToString(),
+                        Text = x.ProductName
+                    }).ToList();
+            #endregion
             return RedirectToAction(nameof(Index));
         }
 
@@ -221,7 +302,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            //AquasipContext _context = new AquasipContext();
             var review = await _context.Reviews
                 .Include(r => r.Customer)
                 .Include(r => r.Product)
@@ -230,7 +310,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             return View(review);
         }
 
@@ -239,20 +318,47 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            //AquasipContext _context = new AquasipContext();
             var review = await _context.Reviews.FindAsync(id);
             if (review != null)
             {
                 _context.Reviews.Remove(review);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> DeleteMedia(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var oMedia = await _context.ReviewMedia.FirstOrDefaultAsync(m => m.MediaId == id);
+            if (oMedia == null)
+            {
+                return NotFound();
+            }
+            string fileName = FileValidation.GetFileNameFromURL(oMedia.MediaUrl);
+            #region Delete Record
+            _context.ReviewMedia.Remove(oMedia);
+            await _context.SaveChangesAsync();
+            #endregion
+            #region Delete File
+            if (!string.IsNullOrEmpty(oMedia.MediaUrl))
+            {
+                string uploadPath = Path.Combine(_environment.WebRootPath, "img");
+                string delFilePath = Path.Combine(uploadPath, fileName);
+                if (System.IO.File.Exists(delFilePath))
+                {
+                    System.IO.File.Delete(delFilePath);
+                }
+            }
+            #endregion
+            return RedirectToAction(nameof(Details), new { id = oMedia.ReviewId });
+        }
+
         private bool ReviewExists(long id)
         {
-            //AquasipContext _context = new AquasipContext();
             return _context.Reviews.Any(e => e.ReviewId == id);
         }
     }

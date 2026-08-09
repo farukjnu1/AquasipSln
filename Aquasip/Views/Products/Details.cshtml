@@ -6,6 +6,7 @@
 <h3>Media of Product</h3>
 <div class="row">
     <div class="col-6">
+        <h3>Create Media</h3>
         <hr />
         <form asp-action="Details" asp-controller="Products" method="post" enctype="multipart/form-data">
             <dl class="row">
@@ -57,6 +58,8 @@
         </div>
     </div>
     <div class="col-6">
+        <h3>Details Media</h3>
+        <hr />
         <table>
             @foreach (var item in Model.ListProductMedia)
             {

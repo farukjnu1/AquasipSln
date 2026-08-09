@@ -16,5 +16,13 @@
 
             return allowedExtensions.Contains(extension);
         }
+
+        public static string GetFileNameFromURL(string url)
+        {
+            var nDirectories = url.Split('/').Length;
+            var fileName = url.Split('/')[nDirectories - 1];
+            return fileName;
+        }
+
     }
 }

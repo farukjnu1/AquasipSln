@@ -38,6 +38,7 @@ namespace Aquasip.Models
         public List<IFormFile> Attachments { get; set; } = new List<IFormFile>();
         public int Helpful { get; set; }
         public int NotHelpful { get; set; }
+        public IFormFile? MediaFile { get; set; }
         public enum QueryType
         {
             GetAll = 0, GetById = 1, Insert = 2, Update = 3, Delete = 4

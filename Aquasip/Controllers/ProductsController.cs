@@ -141,7 +141,6 @@ namespace Aquasip.Controllers
                 #region Media Update
                 //model.MediaId = mediaVm.MediaId;
                 //TempData["message"] = pcRepo.Update(model);
-                //AquasipContext _context = new AquasipContext();
                 ProductMedium productMedium = new ProductMedium
                 {
                     ProductId = model.ProductId,
@@ -166,7 +165,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            //AquasipContext _context = new AquasipContext();
             var productMedia = await _context.ProductMedia
                 .FirstOrDefaultAsync(m => m.ProductMediaId == id);
             if (productMedia == null)
@@ -182,7 +180,6 @@ namespace Aquasip.Controllers
             {
                 string uploadPath = Path.Combine(_environment.WebRootPath, "img");
                 string delFilePath = Path.Combine(uploadPath, productMedia.FileName);
-
                 if (System.IO.File.Exists(delFilePath))
                 {
                     System.IO.File.Delete(delFilePath);
@@ -190,7 +187,6 @@ namespace Aquasip.Controllers
             }
             #endregion
             return RedirectToAction(nameof(Details), new { id = productMedia.ProductId });
-            //return View(productMedia);
         }
 
         // GET: Products/Edit/5

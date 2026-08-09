@@ -1,5 +1,6 @@
 ﻿using Aquasip.EF;
 using Aquasip.Fiters;
+using Aquasip.Models;
 using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,10 +25,9 @@ namespace Aquasip.Controllers
         // GET: Suppliers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            return View(await _context.Customers.OrderBy(x=>x.FullName).ToListAsync());
         }
 
-        // GET: Suppliers/Details/5
         // GET: Suppliers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -35,14 +35,38 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
             }
-
-            return View(customer);
+            var shippingAddress = (from x in _context.ShippingAddresses where x.CustomerId == id select 
+                                   new ShippingAddressVM { 
+                                       City = x.City,
+                                       CountryCode =x.CountryCode,
+                                       CreatedDate =x.CreatedDate,
+                                       CustomerId = x.CustomerId,
+                                       EmailAddress = x.EmailAddress,
+                                       FullName = x.FullName,
+                                       PhoneNumber = x.PhoneNumber,
+                                       PostalCode = x.PostalCode,
+                                       ShippingAddressId = x.ShippingAddressId,
+                                       StateProvince = x.StateProvince,
+                                       StreetAddress = x.StreetAddress
+                                   }).FirstOrDefault();
+            if (shippingAddress == null)
+            {
+                shippingAddress = new ShippingAddressVM();
+            }
+            shippingAddress.customer = new CustomerVM();
+            shippingAddress.customer.CreatedAt = customer.CreatedAt;
+            shippingAddress.customer.CustomerCode = customer.CustomerCode;
+            shippingAddress.customer.CustomerId = customer.CustomerId;
+            shippingAddress.customer.Email = customer.Email;
+            shippingAddress.customer.FullName = customer.FullName;
+            shippingAddress.customer.IsActive = customer.IsActive == null ? false : Convert.ToBoolean(customer.IsActive);
+            shippingAddress.customer.PhoneNumber = customer.PhoneNumber;
+            return View(shippingAddress);
         }
 
         // GET: Suppliers/Create
@@ -56,14 +80,23 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,CustomerCode,FullName,PhoneNumber,Email,IsActive")] Customer customer)
+        public async Task<IActionResult> Create(Customer customer)
         {
             if (ModelState.IsValid)
             {
-                customer.CustomerCode = CodeGenerate.CustomerNum(DateTime.Now);
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var oCustomer = _context.Customers.Where(x => x.Email.Trim() == customer.Email.Trim()).FirstAsync();
+                if (oCustomer != null)
+                {
+                    TempData["message"] = "Customer already saved with e-mail '" + customer.Email.Trim() + "'";
+                    return View(customer);
+                }
+                else 
+                {
+                    customer.CustomerCode = CodeGenerate.CustomerNum(DateTime.Now);
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(customer);
         }
@@ -75,7 +108,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
@@ -89,19 +121,39 @@ namespace Aquasip.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,CustomerCode,FullName,PhoneNumber,Email,IsActive")] Customer customer)
+        public async Task<IActionResult> Edit(int id, Customer customer)
         {
             if (id != customer.CustomerId)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    var oCustomer = _context.Customers.Where(x => x.CustomerId == customer.CustomerId).FirstOrDefault();
+                    if (oCustomer != null)
+                    {
+                        if (oCustomer.Email.Trim() == customer.Email.Trim())
+                        {
+                            _context.Update(customer);
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            var oCustomer2 = _context.Customers.Where(x => x.Email.Trim() == customer.Email.Trim()).FirstOrDefault();
+                            if (oCustomer != null)
+                            {
+                                TempData["message"] = "Customer already saved with e-mail '" + customer.Email.Trim() + "'";
+                                return View(customer);
+                            }
+                            else
+                            {
+                                _context.Update(customer);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -119,7 +171,50 @@ namespace Aquasip.Controllers
             return View(customer);
         }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ShippingAddress(ShippingAddressVM shippingAddress)
+        {
+            #region shipping-address
+            var oShippingAddress = (from x in _context.ShippingAddresses
+                                    where x.CustomerId == shippingAddress.CustomerId
+                                    select x).FirstOrDefault();
+            if (oShippingAddress == null)
+            {
+                oShippingAddress = new ShippingAddress
+                {
+                    CustomerId = shippingAddress.CustomerId,
+                    City = shippingAddress.City,
+                    StateProvince = shippingAddress.StateProvince,
+                    PostalCode = shippingAddress.PostalCode,
+                    CountryCode = shippingAddress.CountryCode,
+                    StreetAddress = shippingAddress.StreetAddress,
+                    FullName = shippingAddress.customer.FullName ?? "",
+                    EmailAddress = shippingAddress.customer.Email,
+                    PhoneNumber = shippingAddress.customer.PhoneNumber
+                };
+                _context.ShippingAddresses.Add(oShippingAddress);
+                _context.SaveChanges();
+                TempData["message"] = "Shipping address is added.";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                oShippingAddress.City = shippingAddress.City;
+                oShippingAddress.StateProvince = shippingAddress.StateProvince;
+                oShippingAddress.PostalCode = shippingAddress.PostalCode;
+                oShippingAddress.CountryCode = shippingAddress.CountryCode;
+                oShippingAddress.StreetAddress = shippingAddress.StreetAddress;
+                oShippingAddress.FullName = shippingAddress.customer.FullName ?? "";
+                oShippingAddress.EmailAddress = shippingAddress.customer.Email;
+                oShippingAddress.PhoneNumber = shippingAddress.customer.PhoneNumber;
+                _context.SaveChanges();
+                TempData["message"] = "Shipping address is updated.";
+                return RedirectToAction(nameof(Index));
+            }
+            #endregion
+            return View(oShippingAddress);
+        }
 
         private bool CustomerExists(long id)
         {

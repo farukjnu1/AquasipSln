@@ -1,48 +1,96 @@
-﻿@model Aquasip.EF.Customer
+﻿@model Aquasip.Models.ShippingAddressVM
 
 @{
     ViewData["Title"] = "Customer Details";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h3>Details Customer</h3>
+<h3>Shipping Address</h3>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Create Shipping</h4>
+        <hr />
+        <form asp-action="ShippingAddress">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="hidden" asp-for="ShippingAddressId" />
+                <input type="hidden" asp-for="CustomerId" />
+                <input type="hidden" asp-for="customer.CustomerId" />
+                <input type="hidden" asp-for="customer.FullName" />
+                <input type="hidden" asp-for="customer.Email" />
+                <input type="hidden" asp-for="customer.PhoneNumber" />
+                <label asp-for="StreetAddress" class="control-label"></label>
+                <input asp-for="StreetAddress" class="form-control" />
+                <span asp-validation-for="ShippingAddressId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StateProvince" class="control-label"></label>
+                <input asp-for="StateProvince" class="form-control" />
+                <span asp-validation-for="StateProvince" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PostalCode" class="control-label"></label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CountryCode" class="control-label"></label>
+                <select asp-for="CountryCode" class="form-control">
+                    <option value="bd">Bangladesh</option>
+                    <option value="us">United States</option>
+                    <option value="other">Other</option>
+                </select>
+                <span asp-validation-for="CountryCode" class="text-danger"></span>
+            </div>
+            <div class="form-group pt-3">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Details Customer</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.customer.CustomerCode)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.customer.CustomerCode)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.FullName)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.FullName)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.customer.Email)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.customer.Email)
+            </dd>
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-    </dl>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.customer.IsActive)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.customer.IsActive)
+            </dd>
+        </dl>
+    </div>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.CustomerId">Edit</a> |
     <a asp-action="Index">Back to List</a>
