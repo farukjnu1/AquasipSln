@@ -32,7 +32,7 @@ namespace Aquasip.Controllers
         public async Task<IActionResult> Index()
         {
             var aquasipContext = _context.Reviews.Include(r => r.Customer).Include(r => r.Product);
-            return View(await aquasipContext.ToListAsync());
+            return View(await aquasipContext.OrderByDescending(x=>x.IsApproved).ThenByDescending(x=>x.CreatedAt).ToListAsync());
         }
 
         // GET: Reviews/Details/5
@@ -64,6 +64,8 @@ namespace Aquasip.Controllers
                 ReviewText = review.ReviewText,
                 Title = review.Title
             };
+            oReview.Product = new ProductVM() { ProductId = review.ProductId, ProductName = review.Product.ProductName };
+            oReview.Customer = new CustomerVM() { CustomerId = review.CustomerId, FullName = review.Customer.FullName };
             oReview.ReviewMedia = (from x in _context.ReviewMedia
                                    where x.ReviewId == id
                                    select new ReviewMediumVM
@@ -74,6 +76,15 @@ namespace Aquasip.Controllers
                                        ReviewId = x.ReviewId,
                                        MediaUrl = x.MediaUrl
                                    }).ToList();
+            oReview.ReviewVotes = (from x in _context.ReviewVotes
+                               where x.ReviewId == id
+                               select new ReviewVoteVM
+                               {
+                                   VoteId=x.VoteId,
+                                   IsHelpful = x.IsHelpful
+                               }).ToList();
+            oReview.Helpful = oReview.ReviewVotes.Where(x => x.IsHelpful == true).Count();
+            oReview.NotHelpful = oReview.ReviewVotes.Where(x => x.IsHelpful != true).Count();
             return View(oReview);
         }
 
@@ -145,7 +156,7 @@ namespace Aquasip.Controllers
         {
             if(review.ProductId == 0)
             {
-                TempData["message"] = "Product is required";
+                TempData["message"] = "Product is required.";
                 return RedirectToAction("Review", "Home");
             }
             if (review.CustomerId == 0)
