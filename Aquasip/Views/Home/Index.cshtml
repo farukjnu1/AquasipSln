@@ -14,8 +14,22 @@
     var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
 
     var listSlide = oHome.PageContents.Where(x => x.SlugPageContent == "slides" && x.IsActive == true).ToList();
-    var oSlide0 = listSlide.Count() > 0 ? listSlide[0] : new PageContentVM();
-    var oSlide1 = listSlide.Count() > 1 ? listSlide[1] : new PageContentVM();
+    var oSlide0 = listSlide.Count() > 0 ? listSlide[0] : new PageContentVM() 
+    {
+        FilePath = "/img/slide0.jpg",
+        Title = "Foldable Silicone Bottle",
+        Header = "Drink Better, Live Lighter",
+        Body = "•Food-Grade Silicone •Foldable & Eco-Friendly •BPA-Free & Leak-Proof •Lightweight & Travel-Friendly",
+        Footer = ""
+    };
+    var oSlide1 = listSlide.Count() > 1 ? listSlide[1] : new PageContentVM()
+    {
+        FilePath = "/img/slide1.jpg",
+        Title = "Insulated Steel Bottle",
+        Header = "Where Modern Design Meets Everyday Hydration",
+        Body = "•Premium Food-Grade Stainless Steel •Double Wall Vacuum insulation •100% Leak-Proof Lid •BPA-Free & Non-Toxic Materials •Comfortable Ergonomic Grip •Lightweight & Travel-Friendly",
+        Footer = ""
+    };
 
     var oService = Model.Where(x => x.Slug == "services").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "services").First();
     var ourService = oService.PageContents.Where(x => x.SlugPageContent == "our_services").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
@@ -50,32 +64,72 @@
     : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
 
     //var websiteName = layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").FirstOrDefault() == null ? new SiteSettingVM() : layoutPage.SiteSettings.Where(x => x.SettingKey == "website-name").First();
-
     //var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
+
     var listProduct = oHome.Products;
+    var listProductMedia = new List<ProductMediumVM>();
+    listProductMedia.Add(new ProductMediumVM() {FilePath = "", };
+    )
+    if (listProduct.Count == 0)
+    {
+        listProduct.Add(new ProductVM() { ListProductMedia = new List<ProductMediumVM>() { }.Add(new ProductMediumVM() { }) });   
+    }
+
     var section1 = oHome.PageContents.Where(x => x.SlugPageContent == "section1" && x.IsActive == true).FirstOrDefault();
+    if (section1 == null)
+    {
+        section1 = new PageContentVM()
+        {
+            Title = "Find Your Perfect Bottle",
+            Header = "Designed for Every Sip"
+        };
+    }
     var section1_img1 = oHome.PageContents.Where(x => x.SlugPageContent == "section1-img1" && x.IsActive == true).FirstOrDefault();
     var section1_img2 = oHome.PageContents.Where(x => x.SlugPageContent == "section1-img2" && x.IsActive == true).FirstOrDefault();
-    var section1_img1_Src = section1_img1 == null ? "/img/No_Image_Available.jpg" : section1_img1.FilePath;
-    var section1_img2_Src = section1_img2 == null ? "/img/No_Image_Available.jpg" : section1_img2.FilePath;
+    var section1_img1_Src = section1_img1 == null ? "/img/section1_img1.jpg" : section1_img1.FilePath;
+    var section1_img2_Src = section1_img2 == null ? "/img/section1_img2.png" : section1_img2.FilePath;
 
     var section2 = oHome.PageContents.Where(x => x.SlugPageContent == "section2" && x.IsActive == true).FirstOrDefault();
+    if (section2 == null)
+    {
+        section2 = new PageContentVM()
+        {
+            Title = "Premium Stainless Steel Bottles",
+            Header = "Your daily hydration partner"
+        };
+    }
     var section2_img1 = oHome.PageContents.Where(x => x.SlugPageContent == "section2-img1" && x.IsActive == true).FirstOrDefault();
     var section2_img2 = oHome.PageContents.Where(x => x.SlugPageContent == "section2-img2" && x.IsActive == true).FirstOrDefault();
     var section2_img3 = oHome.PageContents.Where(x => x.SlugPageContent == "section2-img3" && x.IsActive == true).FirstOrDefault();
-    var section2_img1_Src = section2_img1 == null ? "/img/No_Image_Available.jpg" : section2_img1.FilePath;
-    var section2_img2_Src = section2_img2 == null ? "/img/No_Image_Available.jpg" : section2_img2.FilePath;
-    var section2_img3_Src = section2_img3 == null ? "/img/No_Image_Available.jpg" : section2_img3.FilePath;
-    
+    var section2_img1_Src = section2_img1 == null ? "/img/section2_img1.png" : section2_img1.FilePath;
+    var section2_img2_Src = section2_img2 == null ? "/img/section2_img2.jpg" : section2_img2.FilePath;
+    var section2_img3_Src = section2_img3 == null ? "/img/section2_img3.png" : section2_img3.FilePath;
+
     var section3 = oHome.PageContents.Where(x => x.SlugPageContent == "section3" && x.IsActive == true).FirstOrDefault();
+    if (section3 == null)
+    {
+        section3 = new PageContentVM()
+        {
+            Title = "Smart Silicone Bottles",
+            Header = "Portable, Durable & Eco-Friendly"
+        };
+    }
     var section3_img1 = oHome.PageContents.Where(x => x.SlugPageContent == "section3-img1" && x.IsActive == true).FirstOrDefault();
     var section3_img2 = oHome.PageContents.Where(x => x.SlugPageContent == "section3-img2" && x.IsActive == true).FirstOrDefault();
     var section3_img3 = oHome.PageContents.Where(x => x.SlugPageContent == "section3-img3" && x.IsActive == true).FirstOrDefault();
-    var section3_img1_Src = section3_img1 == null ? "/img/No_Image_Available.jpg" : section3_img1.FilePath;
-    var section3_img2_Src = section3_img2 == null ? "/img/No_Image_Available.jpg" : section3_img2.FilePath;
-    var section3_img3_Src = section3_img3 == null ? "/img/No_Image_Available.jpg" : section3_img3.FilePath;
+    var section3_img1_Src = section3_img1 == null ? "/img/section3_img1.png" : section3_img1.FilePath;
+    var section3_img2_Src = section3_img2 == null ? "/img/section3_img2.jpg" : section3_img2.FilePath;
+    var section3_img3_Src = section3_img3 == null ? "/img/section3_img3.jpg" : section3_img3.FilePath;
 
     var productsSection = oHome.PageContents.Where(x => x.SlugPageContent == "products" && x.IsActive == true).FirstOrDefault();
+    if (productsSection == null)
+    {
+        productsSection = new PageContentVM()
+        {
+            Title = "Our Products",
+            Header = "Collect Your Favorite One"
+        };   
+    }
 
     ViewData["Title"] = "Home";
     string? CustomerId = Context.Session.GetString("CustomerId");
@@ -93,7 +147,7 @@
             }
             else
             {
-                <h1 class="text-primary m-0"><img src="/img/No_Image_Available.jpg" /></h1>
+                <h1 class="text-primary m-0"><img src="/img/logo.png" /></h1>
             }
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">

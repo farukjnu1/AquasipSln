@@ -24,28 +24,33 @@ namespace Aquasip.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@QueryType", QueryType.GetAll);
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try 
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            ProductVM model = new ProductVM();
-                            model.ProductId = reader.GetInt64("ProductId");
-                            model.ProductCode = reader.GetValue("ProductCode") == DBNull.Value ? "" : reader.GetString("ProductCode");
-                            model.ProductName = reader.GetValue("ProductName") == DBNull.Value ? "" : reader.GetString("ProductName");
-                            model.Description = reader.GetValue("Description") == DBNull.Value ? (string?)null : reader.GetString("Description");
-                            model.Price = reader.GetValue("Price") == DBNull.Value ? (decimal?)null : reader.GetDecimal("Price");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
-                            model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
-                            model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
-                            model.AverageRating = reader.GetValue("AverageRating") == DBNull.Value ? (decimal?)null : reader.GetDecimal("AverageRating");
-                            model.TotalReviews = reader.GetValue("TotalReviews") == DBNull.Value ? (int?)null : reader.GetInt32("TotalReviews");
-                            model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
-                            model.ListProductMedia = string.IsNullOrEmpty(model.Medias) ? new List<ProductMediumVM>() : JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias);
-                            list.Add(model);
+                            while (reader.Read())
+                            {
+                                ProductVM model = new ProductVM();
+                                model.ProductId = reader.GetInt64("ProductId");
+                                model.ProductCode = reader.GetValue("ProductCode") == DBNull.Value ? "" : reader.GetString("ProductCode");
+                                model.ProductName = reader.GetValue("ProductName") == DBNull.Value ? "" : reader.GetString("ProductName");
+                                model.Description = reader.GetValue("Description") == DBNull.Value ? (string?)null : reader.GetString("Description");
+                                model.Price = reader.GetValue("Price") == DBNull.Value ? (decimal?)null : reader.GetDecimal("Price");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
+                                model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
+                                model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
+                                model.AverageRating = reader.GetValue("AverageRating") == DBNull.Value ? (decimal?)null : reader.GetDecimal("AverageRating");
+                                model.TotalReviews = reader.GetValue("TotalReviews") == DBNull.Value ? (int?)null : reader.GetInt32("TotalReviews");
+                                model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
+                                model.ListProductMedia = string.IsNullOrEmpty(model.Medias) ? new List<ProductMediumVM>() : JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias);
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch
+                    { }
                 }
             }
             return list;

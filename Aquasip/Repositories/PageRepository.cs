@@ -86,7 +86,7 @@ namespace Aquasip.Repositories
 
         public PageVM GetBySlug(string Slug)
         {
-            PageVM model = null;
+            PageVM model = new PageVM();
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("Page_Read", conn))
@@ -95,24 +95,29 @@ namespace Aquasip.Repositories
 
                     cmd.Parameters.AddWithValue("@Slug", Slug);
                     cmd.Parameters.AddWithValue("@QueryType", QueryType.GetBySlug);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            model = new PageVM();
-                            model.PageId = reader.GetInt32("PageId");
-                            model.AuthorId = reader.GetValue("AuthorId") == DBNull.Value ? (int?)null : reader.GetInt32("AuthorId");
-                            model.Slug = reader.GetValue("Slug") == DBNull.Value ? (string?)null : reader.GetString("Slug");
-                            model.Status = reader.GetValue("Status") == DBNull.Value ? (string?)null : reader.GetString("Status");
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.PublishedAt = reader.GetValue("PublishedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("PublishedAt");
-                            model.Title = reader.GetValue("Title") == DBNull.Value ? (string?)null : reader.GetString("Title");
-                            model.Content = reader.GetValue("Content") == DBNull.Value ? (string?)null : reader.GetString("Content");
+                            while (reader.Read())
+                            {
+                                model = new PageVM();
+                                model.PageId = reader.GetInt32("PageId");
+                                model.AuthorId = reader.GetValue("AuthorId") == DBNull.Value ? (int?)null : reader.GetInt32("AuthorId");
+                                model.Slug = reader.GetValue("Slug") == DBNull.Value ? (string?)null : reader.GetString("Slug");
+                                model.Status = reader.GetValue("Status") == DBNull.Value ? (string?)null : reader.GetString("Status");
+                                model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
+                                model.PublishedAt = reader.GetValue("PublishedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("PublishedAt");
+                                model.Title = reader.GetValue("Title") == DBNull.Value ? (string?)null : reader.GetString("Title");
+                                model.Content = reader.GetValue("Content") == DBNull.Value ? (string?)null : reader.GetString("Content");
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch
+                    {
+                    }
                 }
             }
             return model;

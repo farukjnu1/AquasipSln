@@ -22,33 +22,35 @@ namespace Aquasip.Repositories
                 using (SqlCommand cmd = new SqlCommand("Menu_Read", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     cmd.Parameters.AddWithValue("@QueryType", QueryType.GetAll);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try 
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            MenuVM model = new MenuVM();
-                            model.MenuId = reader.GetValue("MenuId") == DBNull.Value ? 0 : reader.GetInt32("MenuId");
-                            model.Label = reader.GetValue("Label") == DBNull.Value ? "" : reader.GetString("Label");
-                            model.PageId = reader.GetValue("PageId") == DBNull.Value ? 0 : reader.GetInt32("PageId");
-                            model.ParentId = reader.GetValue("ParentId") == DBNull.Value ? 0 : reader.GetInt32("ParentId");
-                            model.Position = reader.GetValue("Position") == DBNull.Value ? 0 : reader.GetInt32("Position");
+                            while (reader.Read())
+                            {
+                                MenuVM model = new MenuVM();
+                                model.MenuId = reader.GetValue("MenuId") == DBNull.Value ? 0 : reader.GetInt32("MenuId");
+                                model.Label = reader.GetValue("Label") == DBNull.Value ? "" : reader.GetString("Label");
+                                model.PageId = reader.GetValue("PageId") == DBNull.Value ? 0 : reader.GetInt32("PageId");
+                                model.ParentId = reader.GetValue("ParentId") == DBNull.Value ? 0 : reader.GetInt32("ParentId");
+                                model.Position = reader.GetValue("Position") == DBNull.Value ? 0 : reader.GetInt32("Position");
 
-                            model.AuthorId = reader.GetValue("AuthorId") == DBNull.Value ? 0 : reader.GetInt32("AuthorId");
-                            model.Slug = reader.GetValue("Slug") == DBNull.Value ? "" : reader.GetString("Slug");
-                            model.Status = reader.GetValue("Status") == DBNull.Value ? "" : reader.GetString("Status");
-                            model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
-                            model.PublishedAt = reader.GetValue("PublishedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("PublishedAt");
-                            model.Title = reader.GetValue("Title") == DBNull.Value ? "" : reader.GetString("Title");
-                            model.Content = reader.GetValue("Content") == DBNull.Value ? "" : reader.GetString("Content");
+                                model.AuthorId = reader.GetValue("AuthorId") == DBNull.Value ? 0 : reader.GetInt32("AuthorId");
+                                model.Slug = reader.GetValue("Slug") == DBNull.Value ? "" : reader.GetString("Slug");
+                                model.Status = reader.GetValue("Status") == DBNull.Value ? "" : reader.GetString("Status");
+                                model.CreatedAt = reader.GetValue("CreatedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("CreatedAt");
+                                model.PublishedAt = reader.GetValue("PublishedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("PublishedAt");
+                                model.Title = reader.GetValue("Title") == DBNull.Value ? "" : reader.GetString("Title");
+                                model.Content = reader.GetValue("Content") == DBNull.Value ? "" : reader.GetString("Content");
 
-                            list.Add(model);
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch { }
                 }
             }
             return list;

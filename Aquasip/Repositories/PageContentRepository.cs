@@ -164,31 +164,34 @@ namespace Aquasip.Repositories
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@SlugPage", SlugPage);
                     cmd.Parameters.AddWithValue("@QueryType", QueryType.GetByPageSlug);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try 
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            PageContentVM model = new PageContentVM();
-                            model.PageContentId = reader.GetInt32("PageContentId");
-                            model.SlugPageContent = reader.GetValue("SlugPageContent") == DBNull.Value ? "" : reader.GetString("SlugPageContent");
-                            model.SlugPage = reader.GetValue("SlugPage") == DBNull.Value ? "" : reader.GetString("SlugPage");
-                            model.Title = reader.GetValue("Title") == DBNull.Value ? "" : reader.GetString("Title");
-                            model.Header = reader.GetValue("Header") == DBNull.Value ? (string?)null : reader.GetString("Header");
-                            model.Body = reader.GetValue("Body") == DBNull.Value ? (string?)null : reader.GetString("Body");
-                            model.Footer = reader.GetValue("Footer") == DBNull.Value ? (string?)null : reader.GetString("Footer");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
-                            model.MediaId = reader.GetValue("MediaId") == DBNull.Value ? (int?)null : reader.GetInt32("MediaId");
-                            model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
-                            model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
-                            model.FileName = reader.GetValue("FileName") == DBNull.Value ? "" : reader.GetString("FileName");
-                            model.FilePath = reader.GetValue("FilePath") == DBNull.Value ? "" : reader.GetString("FilePath");
-                            model.Description = reader.GetValue("Description") == DBNull.Value ? "" : reader.GetString("Description");
-                            list.Add(model);
+                            while (reader.Read())
+                            {
+                                PageContentVM model = new PageContentVM();
+                                model.PageContentId = reader.GetInt32("PageContentId");
+                                model.SlugPageContent = reader.GetValue("SlugPageContent") == DBNull.Value ? "" : reader.GetString("SlugPageContent");
+                                model.SlugPage = reader.GetValue("SlugPage") == DBNull.Value ? "" : reader.GetString("SlugPage");
+                                model.Title = reader.GetValue("Title") == DBNull.Value ? "" : reader.GetString("Title");
+                                model.Header = reader.GetValue("Header") == DBNull.Value ? (string?)null : reader.GetString("Header");
+                                model.Body = reader.GetValue("Body") == DBNull.Value ? (string?)null : reader.GetString("Body");
+                                model.Footer = reader.GetValue("Footer") == DBNull.Value ? (string?)null : reader.GetString("Footer");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
+                                model.MediaId = reader.GetValue("MediaId") == DBNull.Value ? (int?)null : reader.GetInt32("MediaId");
+                                model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
+                                model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
+                                model.FileName = reader.GetValue("FileName") == DBNull.Value ? "" : reader.GetString("FileName");
+                                model.FilePath = reader.GetValue("FilePath") == DBNull.Value ? "" : reader.GetString("FilePath");
+                                model.Description = reader.GetValue("Description") == DBNull.Value ? "" : reader.GetString("Description");
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch { }
                 }
             }
             return list;

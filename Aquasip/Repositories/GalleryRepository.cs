@@ -24,29 +24,34 @@ namespace Aquasip.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@QueryType", QueryType.GetAll);
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try 
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            GalleryVM model = new GalleryVM();
-                            model.GalleryId = reader.GetInt32("GalleryId");
-                            model.Code = reader.GetValue("Code") == DBNull.Value ? "" : reader.GetString("Code");
-                            model.Title = reader.GetValue("Title") == DBNull.Value ? "" : reader.GetString("Title");
-                            model.Header = reader.GetValue("Header") == DBNull.Value ? (string?)null : reader.GetString("Header");
-                            model.Body = reader.GetValue("Body") == DBNull.Value ? (string?)null : reader.GetString("Body");
-                            model.Footer = reader.GetValue("Footer") == DBNull.Value ? (string?)null : reader.GetString("Footer");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
-                            model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
-                            model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
-                            model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
+                            while (reader.Read())
+                            {
+                                GalleryVM model = new GalleryVM();
+                                model.GalleryId = reader.GetInt32("GalleryId");
+                                model.Code = reader.GetValue("Code") == DBNull.Value ? "" : reader.GetString("Code");
+                                model.Title = reader.GetValue("Title") == DBNull.Value ? "" : reader.GetString("Title");
+                                model.Header = reader.GetValue("Header") == DBNull.Value ? (string?)null : reader.GetString("Header");
+                                model.Body = reader.GetValue("Body") == DBNull.Value ? (string?)null : reader.GetString("Body");
+                                model.Footer = reader.GetValue("Footer") == DBNull.Value ? (string?)null : reader.GetString("Footer");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
+                                model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
+                                model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
+                                model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
 
-                            model.ListGalleryMedia = string.IsNullOrEmpty(model.Medias) ? new List<GalleryMediumVM>() : JsonConversion.DeserializeObject<List<GalleryMediumVM>>(model.Medias);
+                                model.ListGalleryMedia = string.IsNullOrEmpty(model.Medias) ? new List<GalleryMediumVM>() : JsonConversion.DeserializeObject<List<GalleryMediumVM>>(model.Medias);
 
-                            list.Add(model);
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch
+                    { }
                 }
             }
             return list;

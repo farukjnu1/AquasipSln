@@ -129,8 +129,10 @@
                         }
                         else
                         {
-                            <h4 class="text-white mb-4">YOUR-LOGO</h4>
-                            <p></p>
+                            <h4 class="text-white mb-4"><img src="/img/logo.jpg" style="width: 135px" /></h4>
+                            <p>
+                                Welcome to Aquasip, Light and compact, reduce travel burden, save space weight, fashion color matching, variable style, outdoor partner, silicone software design, easy storage, not afraid of breaking, high temperature resistance
+                            </p>
                         }
                         <div class="d-flex align-items-center">
                             <i class="fas fa-share fa-2x text-white me-2"></i>
@@ -138,17 +140,36 @@
                             {
                                 <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oFacebook.Header" target="_blank"><i class="fab fa-facebook-f"></i></a>
                             }
+                            else
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="javascript:void(0)" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            }
+
                             @if (oTwitter.IsActive == true)
                             {
                                 <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oTwitter.Header" target="_blank"><i class="fab fa-twitter"></i></a>
                             }
+                            else
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="javascript:void(0)" target="_blank"><i class="fab fa-twitter"></i></a>
+                            }
+
                             @if (oInstagram.IsActive == true)
                             {
                                 <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oInstagram.Header" target="_blank"><i class="fab fa-instagram"></i></a>
                             }
+                            else
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="javascript:void(0)" target="_blank"><i class="fab fa-instagram"></i></a>
+                            }
+
                             @if (oLinkedin.IsActive == true)
                             {
                                 <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="@oLinkedin.Header" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            }
+                            else
+                            {
+                                <a class="btn-square btn btn-primary text-white rounded-circle mx-1" href="javascript:void(0)" target="_blank"><i class="fab fa-linkedin-in"></i></a>
                             }
                         </div>
                     </div>
@@ -163,12 +184,35 @@
                                 <a href="@item.Header"><i class="fas fa-angle-right me-2"></i> @item.Title</a>
                             }
                         }
+                        @if (listQuickLink.Count == 0)
+                        {
+                            <a b-ifztwd03j4="" href="/Home/About"><i b-ifztwd03j4="" class="fas fa-angle-right me-2"></i> About Us</a>
+                            <a b-ifztwd03j4="" href="/Home/Contact"><i b-ifztwd03j4="" class="fas fa-angle-right me-2"></i> Contact Us</a>
+                            <a b-ifztwd03j4="" href="/Home/Privacy"><i b-ifztwd03j4="" class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a b-ifztwd03j4="" href="/Home/Terms"><i b-ifztwd03j4="" class="fas fa-angle-right me-2"></i> Terms &amp; Conditions</a>
+                        }
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6 col-xl-3">
                     <div class="footer-item d-flex flex-column">
-                        <h4 class="mb-4 text-white">@Html.Raw(oBusinessHour.Title)</h4>
-                        @Html.Raw(oBusinessHour.Body)
+                        <h4 class="mb-4 text-white">
+                            @if (!string.IsNullOrEmpty(oBusinessHour.Title))
+                            {
+                                @Html.Raw(oBusinessHour.Title)
+                            }
+                            else
+                            {
+                                @Html.Raw("Business Hours")
+                            }
+                        </h4>
+                        @if (!string.IsNullOrEmpty(oBusinessHour.Title))
+                        {
+                            @Html.Raw(oBusinessHour.Body)
+                        }
+                        else
+                        {
+                            @Html.Raw("Saturday - Friday: Always Open")
+                        }
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6 col-xl-3">
@@ -178,21 +222,48 @@
                         {
                             <a href="javascript:void(0)"><i class="fa fa-map-marker-alt me-2"></i> @oAddress.Header</a>
                         }
+                        else
+                        {
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-map-marker-alt me-2"></i>  
+                                House# 927, Road# 13/A, Avenue# 03, Mirpur DOHS, Dhaka, Bangladesh.
+                            </a>
+                        }
+
                         @if (oEmail.IsActive == true)
                         {
                             <a href="@oEmail.Header"><i class="fas fa-envelope me-2"></i> @oEmail.Body</a>
                         }
+                        else
+                        {
+                            <a href="mailto:support@aquasip.shop"><i class="fas fa-envelope me-2"></i> support@aquasip.shop</a>
+                        }
+
                         @if (oEmail2.IsActive == true)
                         {
                             <a href="@oEmail2.Header"><i class="fas fa-envelope me-2"></i> @oEmail2.Body</a>
                         }
+                        else
+                        {
+                            <a href="mailto:aquasip2025@gmail.com"><i class="fas fa-envelope me-2"></i> aquasip2025@gmail.com</a>
+                        }
+
                         @if (oPhone.IsActive == true)
                         {
                             <a href="@oPhone.Header"><i class="fas fa-phone me-2"></i> @oPhone.Body</a>
                         }
+                        else
+                        {
+                            <a href="tel:+8801831828580"><i class="fas fa-phone me-2"></i> +8801831828580</a>
+                        }
+
                         @if (oWhatsapp.IsActive == true)
                         {
                             <a href="@oWhatsapp.Header" class="mb-3"><i class="fab fa-whatsapp me-2"></i> @oWhatsapp.Body</a>
+                        }
+                        else
+                        {
+                            <a href="https://wa.me/+8801831828580" class="mb-3"><i class="fab fa-whatsapp me-2"></i>  +880 1831-828580</a>
                         }
                     </div>
                 </div>
@@ -210,6 +281,10 @@
                     {
                         <span class="text-white"><a href="@oCopyRight.Header" target="_blank"><i class="fas fa-copyright text-light me-2"></i>@oCopyRight.Title</a>, @oCopyRight.Body</span>
                     }
+                    else
+                    {
+                        <span b-ifztwd03j4="" class="text-white"><a b-ifztwd03j4="" href="http://aquasip.shop/contact" target="_blank"><i b-ifztwd03j4="" class="fas fa-copyright text-light me-2"></i>All right reserved</a>, aquasip.shop</span>
+                    }
                 </div>
                 <div class="col-md-6 text-center text-md-end text-white">
                     <span>Designed By</span>
@@ -220,6 +295,10 @@
                             <span> & </span>
                         }
                         <a class="border-bottom" href="@listDesignedBy[i].Header" target="_blank">@listDesignedBy[i].Body</a>
+                    }
+                    @if (listDesignedBy.Count == 0)
+                    {
+                        <a class="border-bottom" href="http://faruk-abdullah.runasp.net/" target="_blank">OffLine</a>
                     }
                 </div>
             </div>

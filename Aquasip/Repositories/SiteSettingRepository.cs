@@ -23,20 +23,23 @@ namespace Aquasip.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@QueryType", SiteSettingVM.QueryType.GetAll);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try 
                     {
-                        while (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            SiteSettingVM model = new SiteSettingVM();
-                            model.SettingValue = reader.IsDBNull("SettingValue") ? "" : reader.GetString("SettingValue");
-                            model.SettingKey = reader.IsDBNull("SettingKey") ? "" : reader.GetString("SettingKey");
+                            while (reader.Read())
+                            {
+                                SiteSettingVM model = new SiteSettingVM();
+                                model.SettingValue = reader.IsDBNull("SettingValue") ? "" : reader.GetString("SettingValue");
+                                model.SettingKey = reader.IsDBNull("SettingKey") ? "" : reader.GetString("SettingKey");
 
-                            list.Add(model);
+                                list.Add(model);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch { }
                 }
             }
             return list;
