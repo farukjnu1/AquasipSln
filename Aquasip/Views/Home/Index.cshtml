@@ -67,12 +67,33 @@
     //var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
 
     var listProduct = oHome.Products;
-    var listProductMedia = new List<ProductMediumVM>();
-    listProductMedia.Add(new ProductMediumVM() {FilePath = "", };
-    )
-    if (listProduct.Count == 0)
+
+    if (listProduct.Count == 0) //
     {
-        listProduct.Add(new ProductVM() { ListProductMedia = new List<ProductMediumVM>() { }.Add(new ProductMediumVM() { }) });   
+        listProduct.Add(new ProductVM() 
+        { 
+            ProductId = 0,
+            ProductCode = "STL101",
+            ProductName = "Insulated Steel Bottle (With Grip/Sleeve)",
+            Price = 1099,
+            ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/steel_bottle_grip.png", } }
+        });
+        listProduct.Add(new ProductVM()
+        {
+            ProductId = 0,
+            ProductCode = "STL102",
+            ProductName = "Insulated Steel Bottle(With Grip / Sleeve)",
+            Price = 999,
+            ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/steel_bottle.png", } }
+        });
+        listProduct.Add(new ProductVM()
+        {
+            ProductId = 0,
+            ProductCode = "SL201",
+            ProductName = "Silicone Water Bottle",
+            Price = 850,
+            ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/silicone_bottle.png", } }
+        });
     }
 
     var section1 = oHome.PageContents.Where(x => x.SlugPageContent == "section1" && x.IsActive == true).FirstOrDefault();

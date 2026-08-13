@@ -3,6 +3,7 @@ using Aquasip.Models;
 using Aquasip.Utilities;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Threading;
 
 namespace Aquasip.Repositories
 {
@@ -50,7 +51,8 @@ namespace Aquasip.Repositories
                         conn.Close();
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
             }
             return list;
@@ -59,7 +61,7 @@ namespace Aquasip.Repositories
         // Read by id
         public ProductVM? GetById(long productId)
         {
-            ProductVM? model = null;
+            ProductVM? model = new ProductVM();
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("Product_Read", conn))
@@ -67,30 +69,35 @@ namespace Aquasip.Repositories
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ProductId", productId);
                     cmd.Parameters.AddWithValue("@QueryType", QueryType.GetById);
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    try
                     {
-                        if (reader.Read())
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            model = new ProductVM();
-                            model.ProductId = reader.GetInt64("ProductId");
-                            model.ProductCode = reader.GetValue("ProductCode") == DBNull.Value ? "" : reader.GetString("ProductCode");
-                            model.ProductName = reader.GetValue("ProductName") == DBNull.Value ? "" : reader.GetString("ProductName");
-                            model.Description = reader.GetValue("Description") == DBNull.Value ? (string?)null : reader.GetString("Description");
-                            model.Price = reader.GetValue("Price") == DBNull.Value ? (decimal?)null : reader.GetDecimal("Price");
-                            model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
-                            model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
-                            model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
-                            model.AverageRating = reader.GetValue("AverageRating") == DBNull.Value ? (decimal?)null : reader.GetDecimal("AverageRating");
-                            model.TotalReviews = reader.GetValue("TotalReviews") == DBNull.Value ? (int?)null : reader.GetInt32("TotalReviews");
-                            model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
-                            model.ListProductMedia = string.IsNullOrEmpty(model.Medias) ? new List<ProductMediumVM>() : JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias);
-                            model.Reviews = reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews");
-                            //model.ListReview = JsonConversion.DeserializeObject<List<ReviewVM>>(reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews")) ?? new List<ReviewVM>();
-                            model.ListReview = string.IsNullOrEmpty(model.Reviews) ? new List<ReviewVM>() : JsonConversion.DeserializeObject<List<ReviewVM>>(model.Reviews);
+                            if (reader.Read())
+                            {
+                                model = new ProductVM();
+                                model.ProductId = reader.GetInt64("ProductId");
+                                model.ProductCode = reader.GetValue("ProductCode") == DBNull.Value ? "" : reader.GetString("ProductCode");
+                                model.ProductName = reader.GetValue("ProductName") == DBNull.Value ? "" : reader.GetString("ProductName");
+                                model.Description = reader.GetValue("Description") == DBNull.Value ? (string?)null : reader.GetString("Description");
+                                model.Price = reader.GetValue("Price") == DBNull.Value ? (decimal?)null : reader.GetDecimal("Price");
+                                model.IsActive = reader.GetValue("IsActive") == DBNull.Value ? (bool?)null : reader.GetBoolean("IsActive");
+                                model.UploadedBy = reader.GetValue("UploadedBy") == DBNull.Value ? (int?)null : reader.GetInt32("UploadedBy");
+                                model.UploadedAt = reader.GetValue("UploadedAt") == DBNull.Value ? (DateTime?)null : reader.GetDateTime("UploadedAt");
+                                model.AverageRating = reader.GetValue("AverageRating") == DBNull.Value ? (decimal?)null : reader.GetDecimal("AverageRating");
+                                model.TotalReviews = reader.GetValue("TotalReviews") == DBNull.Value ? (int?)null : reader.GetInt32("TotalReviews");
+                                model.Medias = reader.GetValue("Medias") == DBNull.Value ? "" : reader.GetString("Medias");
+                                model.ListProductMedia = string.IsNullOrEmpty(model.Medias) ? new List<ProductMediumVM>() : JsonConversion.DeserializeObject<List<ProductMediumVM>>(model.Medias);
+                                model.Reviews = reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews");
+                                //model.ListReview = JsonConversion.DeserializeObject<List<ReviewVM>>(reader.GetValue("Reviews") == DBNull.Value ? "" : reader.GetString("Reviews")) ?? new List<ReviewVM>();
+                                model.ListReview = string.IsNullOrEmpty(model.Reviews) ? new List<ReviewVM>() : JsonConversion.DeserializeObject<List<ReviewVM>>(model.Reviews);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    catch
+                    { }
                 }
             }
             return model;

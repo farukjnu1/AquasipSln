@@ -13,7 +13,7 @@ builder.Services.AddDistributedMemoryCache(); // Required for Session
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Optional
+    options.IdleTimeout = TimeSpan.FromDays(7); // Optional
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true; // Required for GDPR compliance
 });
@@ -29,7 +29,7 @@ builder.Services.AddDataProtection();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-string connectionString = builder.Configuration["ConnectionStrings:AquasipContext"];
+//string Aquasip = builder.Configuration["ConnectionStrings:AquasipContext"];
 
 builder.Services.AddDbContext<AquasipContext>(options =>
     options.UseSqlServer(
@@ -66,6 +66,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

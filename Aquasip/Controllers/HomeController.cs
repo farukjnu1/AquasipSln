@@ -24,6 +24,7 @@ namespace Aquasip.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly IEmailService _emailService;
         private readonly ITokenService _tokenService;
+
         public HomeController(ILogger<HomeController> logger, IConfiguration configuration, IWebHostEnvironment environment, IEmailService emailService, ITokenService tokenService)
         {
             _logger = logger;
@@ -46,9 +47,6 @@ namespace Aquasip.Controllers
 
             var layoutPage = pageRepo.GetBySlug("layout");
             layoutPage.PageContents = pageContentRepo.GetBySlugPage("layout");
-
-            //var siteSettingRepo = new SiteSettingRepository(_connectionString);
-            //layoutPage.SiteSettings = siteSettingRepo.GetAll();
 
             var listPage = new List<PageVM>();
             listPage.Add(homePage);
@@ -135,7 +133,7 @@ namespace Aquasip.Controllers
                 TempData["message"] = contactRepo.Add(model, out isSave, out code);
                 if (isSave == true)
                 {
-                    if(model.MessageType == "so_bulk")
+                    if (model.MessageType == "so_bulk")
                     {
                         #region e-mail
                         using (var _context = new AquasipContext())
@@ -155,7 +153,7 @@ namespace Aquasip.Controllers
                             }
                         }
                         #endregion
-                    } 
+                    }
                 }
             }
             catch (Exception ex)
@@ -169,6 +167,10 @@ namespace Aquasip.Controllers
 
         public IActionResult Spec(long id)
         {
+            if (id == 0)
+            {
+                return NotFound();
+            }
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
@@ -449,6 +451,10 @@ namespace Aquasip.Controllers
 
         public IActionResult Review(int? id)
         {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
             #region Read
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
