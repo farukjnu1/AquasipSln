@@ -7,11 +7,23 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "layout").First();
 
-    var galleryPage = viewModel.Where(x => x.Slug == "gallery").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "gallery").First();
-    var galleryContent = galleryPage.PageContents.Where(x => x.SlugPageContent == "gallery").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        galleryPage.PageContents.Where(x => x.SlugPageContent == "gallery").First();
+    var galleryPage = viewModel.Where(x => x.Slug == "gallery").FirstOrDefault();
+    if (galleryPage == null)
+    {
+        galleryPage = new PageVM()
+        {
+            Title = "Gallery",
+            Slug = "gallery"
+        };
+    }
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = galleryPage.Title,
+        Slug = galleryPage.Slug,
+        Pages = (List<PageVM>)viewModel
+    };
 
+    var galleryContent = galleryPage.PageContents.Where(x => x.SlugPageContent == "gallery").FirstOrDefault();
     var listGallery = galleryPage.Galleries;
     if (listGallery.Count == 0)
     {
@@ -117,12 +129,6 @@
         });
     }
 
-    var oNavbar = new Aquasip.Models.NavbarVM()
-    {
-        Name = galleryPage.Title,
-        Slug = galleryPage.Slug,
-        Pages = (List<PageVM>)viewModel
-    };
 }
 
 <!-- Navbar & Hero Start -->

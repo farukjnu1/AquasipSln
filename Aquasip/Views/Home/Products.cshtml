@@ -6,13 +6,21 @@
 
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "layout").First();
-    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
+    // var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+    //     : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
 
-    var productPage = viewModel.Where(x => x.Slug == "products").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "products").First();
-    var listProduct = productPage.Products;
+    var productPage = viewModel.Where(x => x.Slug == "products").FirstOrDefault();
+    if (productPage == null)
+    {
+        productPage = new PageVM()
+        {
+            Title = "Products",
+            Slug = "products"
+        };
+    }
+    
     #region Products
+    var listProduct = productPage.Products;
     if (listProduct.Count == 0)
     {
         listProduct.Add(new ProductVM()

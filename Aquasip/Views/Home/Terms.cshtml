@@ -8,17 +8,24 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "layout").First();
 
-    var oTerm = viewModel.Where(x => x.Slug == "terms_condition").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "terms_condition").First();
-    var termContent = oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        oTerm.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
-
+    var oTermPage = viewModel.Where(x => x.Slug == "terms_condition").FirstOrDefault();
+    if (oTermPage == null)
+    {
+        oTermPage = new PageVM()
+        {
+            Title = "Terms of Service",
+            Slug = "terms_condition"
+        };
+    }
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
-        Name = oTerm.Title,
-        Slug = oTerm.Slug,
+        Name = oTermPage.Title,
+        Slug = oTermPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
+
+    var termContent = oTermPage.PageContents.Where(x => x.SlugPageContent == "terms_condition").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oTermPage.PageContents.Where(x => x.SlugPageContent == "terms_condition").First();
 }
 
 <style>

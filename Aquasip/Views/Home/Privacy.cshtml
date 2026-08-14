@@ -8,18 +8,24 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
     : viewModel.Where(x => x.Slug == "layout").First();
 
-    var oPrivacy = viewModel.Where(x => x.Slug == "privacy_policy").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "privacy_policy").First();
-    var privacyContent = oPrivacy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        oPrivacy.PageContents.Where(x => x.SlugPageContent == "privacy_policy").First();
-
+    var oPrivacyPage = viewModel.Where(x => x.Slug == "privacy_policy").FirstOrDefault();
+    if (oPrivacyPage == null)
+    {
+        oPrivacyPage = new PageVM()
+        {
+            Title = "Privacy Policy",
+            Slug = "privacy_policy"
+        };
+    }
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
-        Name = oPrivacy.Title,
-        Slug = oPrivacy.Slug,
+        Name = oPrivacyPage.Title,
+        Slug = oPrivacyPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
 
+    var privacyContent = oPrivacyPage.PageContents.Where(x => x.SlugPageContent == "privacy_policy").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        oPrivacyPage.PageContents.Where(x => x.SlugPageContent == "privacy_policy").First();
 }
 
 <style>

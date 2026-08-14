@@ -8,17 +8,24 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "layout").First();
 
-    var faqPage = viewModel.Where(x => x.Slug == "faq").FirstOrDefault() == null ? new PageVM()
-        : viewModel.Where(x => x.Slug == "faq").First();
-    var faqContent = faqPage.PageContents.Where(x => x.SlugPageContent == "faq").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : faqPage.PageContents.Where(x => x.SlugPageContent == "faq").First();
-
+    var faqPage = viewModel.Where(x => x.Slug == "faq").FirstOrDefault();
+    if (faqPage == null)
+    {
+        faqPage = new PageVM()
+        {
+            Title = "FAQ",
+            Slug = "faq"
+        };
+    }
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
         Name = faqPage.Title,
         Slug = faqPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
+
+    var faqContent = faqPage.PageContents.Where(x => x.SlugPageContent == "faq").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+        : faqPage.PageContents.Where(x => x.SlugPageContent == "faq").First();   
 }
 
 <style>

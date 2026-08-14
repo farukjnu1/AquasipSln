@@ -8,8 +8,22 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM() 
     : viewModel.Where(x => x.Slug == "layout").First();
 
-    var cartPage = viewModel.Where(x => x.Slug == "cart").FirstOrDefault() == null ? new PageVM() 
-        : viewModel.Where(x => x.Slug == "cart").First();
+    var cartPage = viewModel.Where(x => x.Slug == "cart").FirstOrDefault();
+    if (cartPage == null)
+    {
+        cartPage = new PageVM()
+        {
+            Title = "Cart",
+            Slug = "cart"
+        };
+    }
+    var oNavbar = new Aquasip.Models.NavbarVM()
+    {
+        Name = cartPage.Title,
+        Slug = cartPage.Slug,
+        Pages = (List<PageVM>)viewModel
+    };
+
     var delivery_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
         : cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "delivery_charge").First();
     var gateway_charge = cartPage.PageContents.Where(x => x.IsActive == true && x.SlugPageContent == "gateway_charge").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
@@ -44,12 +58,7 @@
         grandTotal = Math.Round(Convert.ToDecimal(grandTotal), 2);
     }
 
-    var oNavbar = new Aquasip.Models.NavbarVM()
-    {
-        Name = cartPage.Title,
-        Slug = cartPage.Slug,
-        Pages = (List<PageVM>)viewModel
-    };
+    
 }
 
 <style>

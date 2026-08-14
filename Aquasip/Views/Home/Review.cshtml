@@ -4,15 +4,20 @@
     // Layout = "~/Views/Shared/_Layout.cshtml";
 
     var viewModel = (IEnumerable<Aquasip.Models.PageVM>)ViewData["aquasip"];
+    var reviews = (IEnumerable<Aquasip.Models.ReviewVM>)ViewData["Reviews"];
 
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "layout").First();
 
-    var reviewPage = viewModel.Where(x => x.Slug == "review").FirstOrDefault() == null ? new PageVM() 
-        : viewModel.Where(x => x.Slug == "review").First();
-    var reviewContent = reviewPage.PageContents.Where(x => x.SlugPageContent == "review").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        reviewPage.PageContents.Where(x => x.SlugPageContent == "review").First();
-
+    var reviewPage = viewModel.Where(x => x.Slug == "review").FirstOrDefault();
+    if (reviewPage == null)
+    {
+        reviewPage = new PageVM() 
+        { 
+            Title = "Review", 
+            Slug = "review"
+        };
+    }
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
         Name = reviewPage.Title,
@@ -20,8 +25,8 @@
         Pages = (List<PageVM>)viewModel
     };
 
-    var reviews = (IEnumerable<Aquasip.Models.ReviewVM>)ViewData["Reviews"];
-
+    var reviewContent = reviewPage.PageContents.Where(x => x.SlugPageContent == "review").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
+                        reviewPage.PageContents.Where(x => x.SlugPageContent == "review").First();
 }
 
 <style>

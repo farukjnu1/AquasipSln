@@ -7,19 +7,16 @@
 
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "layout").First();
-    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-            : layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").First();
-    var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : layoutPage.PageContents.Where(x => x.SlugPageContent == "email").First();
-    var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
-        : layoutPage.PageContents.Where(x => x.SlugPageContent == "address").First();
-
-    var contactPage = viewModel.Where(x => x.Slug == "contact").FirstOrDefault() == null ? new PageVM() : viewModel.Where(x => x.Slug == "contact").First();
-    var oContact = contactPage.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-                        contactPage.PageContents.Where(x => x.SlugPageContent == "contact").First();
-    var oMap = contactPage.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() :
-    contactPage.PageContents.Where(x => x.SlugPageContent == "map").First();
-
+    
+    var contactPage = viewModel.Where(x => x.Slug == "contact").FirstOrDefault();
+    if (contactPage == null)
+    {
+        contactPage = new PageVM()
+        {
+            Title = "Contact",
+            Slug = "contact"
+        };
+    }
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
         Name = contactPage.Title,
@@ -27,15 +24,21 @@
         Pages = (List<PageVM>)viewModel
     };
 
-    oPhone.Body = oPhone == null ? @"+880 1831-828580" : oPhone.Body;
-    oEmail.Body = oEmail == null ? @"support@aquasip.shop" : oEmail.Body;
-    oAddress.Body = oAddress == null ? @"House# 927, Road# 13/A, Avenue# 03, Mirpur DOHS, Dhaka, Bangladesh." : oAddress.Body;
+    var oPhone = layoutPage.PageContents.Where(x => x.SlugPageContent == "phone").FirstOrDefault();
+    var oEmail = layoutPage.PageContents.Where(x => x.SlugPageContent == "email").FirstOrDefault();
+    var oAddress = layoutPage.PageContents.Where(x => x.SlugPageContent == "address").FirstOrDefault();
+    var phone = oPhone == null ? @"+880 1831-828580" : oPhone.Body;
+    var email = oEmail == null ? @"support@aquasip.shop" : oEmail.Body;
+    var address = oAddress == null ? @"House# 927, Road# 13/A, Avenue# 03, Mirpur DOHS, Dhaka, Bangladesh." : oAddress.Body;
+
+    var oContact = contactPage.PageContents.Where(x => x.SlugPageContent == "contact").FirstOrDefault();
+    var oMap = contactPage.PageContents.Where(x => x.SlugPageContent == "map").FirstOrDefault();
     if (oContact == null)
     {
         oContact = new PageContentVM();
         oContact.Header = "Let’s Connect";
-        oContact.Description = @"Have a question, need product support, or want to know more about AquaSip? We're here to help. Our team is committed to providing fast, friendly, and reliable assistance. Whether it's an order inquiry, product information, or feedback, we'd love to hear from you. Your satisfaction is our priority—reach out anytime, and we'll get back to you as soon as possible. Stay Hydrated. Stay Connected. Choose AquaSip.";
-        oContact.Body = "";
+        oContact.Description = @"";
+        oContact.Body = @"Have a question, need product support, or want to know more about AquaSip? We're here to help. Our team is committed to providing fast, friendly, and reliable assistance. Whether it's an order inquiry, product information, or feedback, we'd love to hear from you. Your satisfaction is our priority—reach out anytime, and we'll get back to you as soon as possible. Stay Hydrated. Stay Connected. Choose AquaSip.";
     }
     if (oMap == null)
     {
@@ -106,7 +109,7 @@
                             <i class="fas fa-map-marker-alt fa-2x text-secondary me-4"></i>
                             <div>
                                 <h4>Address</h4>
-                                <p class="mb-0">@oAddress.Header</p>
+                                <p class="mb-0">@address</p>
                             </div>
                         </div>
                     </div>
@@ -115,7 +118,7 @@
                             <i class="fas fa-envelope fa-2x text-secondary me-4"></i>
                             <div>
                                 <h4>Mail Us</h4>
-                                <p class="mb-0">@oEmail.Body</p>
+                                <p class="mb-0">@email</p>
                             </div>
                         </div>
                     </div>
@@ -124,7 +127,7 @@
                             <i class="fa fa-phone-alt fa-2x text-secondary me-4"></i>
                             <div>
                                 <h4>Telephone</h4>
-                                <p class="mb-0">@oPhone.Body</p>
+                                <p class="mb-0">@phone</p>
                             </div>
                         </div>
                     </div>

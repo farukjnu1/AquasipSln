@@ -81,7 +81,7 @@ namespace Aquasip.Controllers
 
         public IActionResult About()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -101,7 +101,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Contact(string messageType)
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -171,7 +171,7 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -234,7 +234,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Cart()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -325,7 +325,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Checkout()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -451,11 +451,11 @@ namespace Aquasip.Controllers
 
         public IActionResult Review(int? id)
         {
-            if (id == null || id == 0)
+            if (id == 0)
             {
                 return NotFound();
             }
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -470,14 +470,23 @@ namespace Aquasip.Controllers
             listPage.Add(layoutPage);
             ViewData["aquasip"] = listPage;
             #endregion
-            AquasipContext _context = new AquasipContext();
-            var listProduct = (from x in _context.Products where x.IsActive == true select x).ToList();
+            #region Product dropdown list
+            var listProduct = new List<EF.Product>();
+            try
+            {
+                AquasipContext _context = new AquasipContext();
+                listProduct = (from x in _context.Products where x.IsActive == true select x).ToList();
+            }
+            catch
+            { }
             List<SelectListItem> selectList = new List<SelectListItem>();
             foreach (var item in listProduct)
             {
                 selectList.Add(new SelectListItem { Text = item.ProductName, Value = item.ProductId.ToString() });
             }
             ViewData["ProductId"] = selectList;
+            #endregion
+            #region review data
             var customer = HttpContext.Session.GetObject<CustomerVM>("Customer");
             long CustomerId = customer == null ? 0 : customer.CustomerId;
             //int? UploadedBy = UserId;
@@ -489,13 +498,13 @@ namespace Aquasip.Controllers
             ReviewRepository reviewRepo = new ReviewRepository(_connectionString);
             var listReview = reviewRepo.GetAll();
             ViewData["Reviews"] = listReview;
-
+            #endregion
             return View(oReview);
         }
 
         public IActionResult Faq()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -558,7 +567,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Appointments()
         {
-            #region Read
+            #region  Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -587,7 +596,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Privacy()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -608,7 +617,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Terms()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -636,7 +645,7 @@ namespace Aquasip.Controllers
         #region customer-signin-signup
         public IActionResult Signup()
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -646,7 +655,6 @@ namespace Aquasip.Controllers
             var homePage = pageRepo.GetBySlug("home");
             homePage.PageContents = pageContentRepo.GetBySlugPage("home");
 
-            //
             var listPage = new List<PageVM>();
             listPage.Add(layoutPage);
             listPage.Add(homePage);
@@ -675,7 +683,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Signin(string callbackAction, string callbackController)
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 
@@ -905,7 +913,7 @@ namespace Aquasip.Controllers
 
         public IActionResult PassReset(string token)
         {
-            #region Read
+            #region Read website data
             PageRepository pageRepo = new PageRepository(_connectionString);
             PageContentRepository pageContentRepo = new PageContentRepository(_connectionString);
 

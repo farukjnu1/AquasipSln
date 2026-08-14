@@ -8,18 +8,24 @@
     var layoutPage = viewModel.Where(x => x.Slug == "layout").FirstOrDefault() == null ? new PageVM()
     : viewModel.Where(x => x.Slug == "layout").First();
 
-    var oAbout = viewModel.Where(x => x.Slug == "about").FirstOrDefault() == null ? new PageVM() 
-        : viewModel.Where(x => x.Slug == "about").First();
-    var about = oAbout.PageContents.Where(x => x.SlugPageContent == "about").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM() 
-        :oAbout.PageContents.Where(x => x.SlugPageContent == "about").First();
-
+    var oAboutPage = viewModel.Where(x => x.Slug == "about").FirstOrDefault();
+    if (oAboutPage == null)
+    {
+        oAboutPage = new PageVM()
+        {
+            Title = "About Us",
+            Slug = "about"
+        };
+    }
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
-        Name = oAbout.Title,
-        Slug = oAbout.Slug,
+        Name = oAboutPage.Title,
+        Slug = oAboutPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
 
+    var aboutContent = oAboutPage.PageContents.Where(x => x.SlugPageContent == "about").FirstOrDefault() == null ? new Aquasip.Models.PageContentVM()
+        : oAboutPage.PageContents.Where(x => x.SlugPageContent == "about").First();
 }
 
 <!-- Navbar & Hero Start -->
@@ -32,18 +38,18 @@
         <div class="row g-5">
             <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
                 <div class="about-img rounded h-100">
-                    <img src="@about.FilePath" class="img-fluid rounded h-100 w-100" style="object-fit: cover;" alt="">
-                    <div class="about-exp"><span>@about.Title</span></div>
+                    <img src="@aboutContent.FilePath" class="img-fluid rounded h-100 w-100" style="object-fit: cover;" alt="">
+                    <div class="about-exp"><span>@aboutContent.Title</span></div>
                 </div>
             </div>
             <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
                 <div class="about-item">
-                    <h4 class="text-primary text-uppercase">@about.Title</h4>
-                    <h1 class="display-3 mb-3">@about.Header</h1>
+                    <h4 class="text-primary text-uppercase">@aboutContent.Title</h4>
+                    <h1 class="display-3 mb-3">@aboutContent.Header</h1>
                     <p class="mb-4">
-                        @Html.Raw(@about.Body)
+                        @Html.Raw(aboutContent.Body)
                     </p>
-                    @Html.Raw(about.Footer)
+                    @Html.Raw(aboutContent.Footer)
                 </div>
             </div>
         </div>
