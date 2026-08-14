@@ -1,11 +1,12 @@
-using System.Diagnostics;
+using Aquasip.Fiters;
+using Aquasip.Models;
+using Aquasip.Repositories;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Aquasip.Models;
-using Aquasip.Repositories;
+using System.Diagnostics;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Aquasip.Fiters;
 
 namespace Aquasip.Controllers
 {
@@ -67,7 +68,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                model.CreateBy = UploadedBy;
                 UserRepository userRepo = new UserRepository(_connectionString);
                 TempData["message"] = userRepo.Add(model);
             }
@@ -114,7 +119,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                model.CreateBy = UploadedBy;
                 UserRepository userRepo = new UserRepository(_connectionString);
                 TempData["message"] = userRepo.Update(model);
                 if (model.RoleId > 0)
@@ -137,7 +146,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                model.CreateBy = UploadedBy;
                 UserRepository userRepo = new UserRepository(_connectionString);
                 TempData["message"] = userRepo.UpdateEmail(model);
             }
@@ -155,7 +168,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                model.CreateBy = UploadedBy;
                 UserRepository userRepo = new UserRepository(_connectionString);
                 TempData["message"] = userRepo.UpdateUsername(model);
             }
@@ -173,7 +190,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                model.CreateBy = UploadedBy;
                 UserRepository userRepo = new UserRepository(_connectionString);
                 TempData["message"] = userRepo.UpdatePassword(model);
             }

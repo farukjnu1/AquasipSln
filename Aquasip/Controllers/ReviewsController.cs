@@ -92,7 +92,10 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Details(ReviewVM model)
         {
-            int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+            var user = HttpContext.Session.GetObject<UserVM>("User");
+            int UserId = user == null ? 0 : user.UserID;
+            int? UploadedBy = UserId;
+            //int? UploadedBy = HttpContext.Session.GetInt32("UserID");
             #region Media
             if (model.MediaFile != null && model.MediaFile.Length > 0)
             {

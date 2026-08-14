@@ -1,11 +1,12 @@
-using System.Diagnostics;
+using Aquasip.Fiters;
+using Aquasip.Models;
+using Aquasip.Repositories;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Aquasip.Models;
-using Aquasip.Repositories;
+using System.Diagnostics;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Aquasip.Fiters;
 
 namespace Aquasip.Controllers
 {
@@ -28,7 +29,9 @@ namespace Aquasip.Controllers
             try
             {
                 UserRepository userRepo = new UserRepository(_connectionString);
-                int? UserId = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                //int? UserId = HttpContext.Session.GetInt32("UserID");
                 if (UserId != null)
                 {
                     var oUser = userRepo.GetById((int)UserId);
@@ -81,7 +84,11 @@ namespace Aquasip.Controllers
         {
             try
             {
-                model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //model.CreateBy = HttpContext.Session.GetInt32("UserID");
+                model.CreateBy = UploadedBy;
                 UserRepository userRepo = new UserRepository(_connectionString);
                 TempData["message"] = userRepo.UpdatePassword(model);
             }

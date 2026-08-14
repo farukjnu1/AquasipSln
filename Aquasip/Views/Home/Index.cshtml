@@ -67,11 +67,11 @@
     //var oHome = Model.Where(x => x.Slug == "home").FirstOrDefault() == null ? new PageVM() : Model.Where(x => x.Slug == "home").First();
 
     var listProduct = oHome.Products;
-
-    if (listProduct.Count == 0) //
+    #region Products
+    if (listProduct.Count == 0)
     {
-        listProduct.Add(new ProductVM() 
-        { 
+        listProduct.Add(new ProductVM()
+        {
             ProductId = 0,
             ProductCode = "STL101",
             ProductName = "Insulated Steel Bottle (With Grip/Sleeve)",
@@ -95,6 +95,8 @@
             ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/silicone_bottle.png", } }
         });
     }
+    #endregion
+    
 
     var section1 = oHome.PageContents.Where(x => x.SlugPageContent == "section1" && x.IsActive == true).FirstOrDefault();
     if (section1 == null)

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Aquasip.Models;
 using Aquasip.Repositories;
 using Aquasip.Utilities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Aquasip.Fiters
 {
@@ -10,43 +11,38 @@ namespace Aquasip.Fiters
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             #region Authentication
-            int? UserId = context.HttpContext.Session.GetInt32("UserID");
-            if (UserId != null)
+            var user = context.HttpContext.Session.GetObject<UserVM>("User");
+            int UserId = user == null ? 0 : user.UserID;
+            //int? UserId = context.HttpContext.Session.GetInt32("UserID");
+            if (UserId > 0)
             {
-                if (UserId > 0)
+                #region Authorization
+                //context.Result = new RedirectToActionResult("Index", "Pages", null);
+                //var Action = context.ActionDescriptor.RouteValues["Action"];
+                string? controller = context.ActionDescriptor.RouteValues["Controller"];
+                var roleRepo = new RoleRepository(WebsiteConfig.ConnectionString);
+                var userRepo = new UserRepository(WebsiteConfig.ConnectionString);
+                var oUser = userRepo.GetById((int)UserId);
+                if (oUser != null)
                 {
-                    #region Authorization
-                    //context.Result = new RedirectToActionResult("Index", "Pages", null);
-                    //var Action = context.ActionDescriptor.RouteValues["Action"];
-                    string? controller = context.ActionDescriptor.RouteValues["Controller"];
-                    var roleRepo = new RoleRepository(WebsiteConfig.ConnectionString);
-                    var userRepo = new UserRepository(WebsiteConfig.ConnectionString);
-                    var oUser = userRepo.GetById((int)UserId);
-                    if (oUser != null)
+                    if (oUser.RoleId > 0)
                     {
-                        if (oUser.RoleId > 0)
+                        var oRolePermission = roleRepo.GetPermissionByRole(oUser.RoleId, controller == null ? string.Empty : controller).FirstOrDefault();
+                        if (oRolePermission != null)
                         {
-                            var oRolePermission = roleRepo.GetPermissionByRole(oUser.RoleId, controller == null ? string.Empty : controller).FirstOrDefault();
-                            if (oRolePermission != null)
-                            {
-                                // okay ahead
-                            }
-                            else
-                            {
-                                context.Result = new RedirectToActionResult("Index", "Admin", null);
-                            }
+                            // okay ahead
                         }
                         else
                         {
                             context.Result = new RedirectToActionResult("Index", "Admin", null);
                         }
                     }
-                    #endregion
+                    else
+                    {
+                        context.Result = new RedirectToActionResult("Index", "Admin", null);
+                    }
                 }
-                else
-                {
-                    context.Result = new RedirectToActionResult("Index", "Admin", null);
-                }
+                #endregion
             }
             else
             {

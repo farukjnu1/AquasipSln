@@ -12,6 +12,35 @@
     var productPage = viewModel.Where(x => x.Slug == "products").FirstOrDefault() == null ? new PageVM()
         : viewModel.Where(x => x.Slug == "products").First();
     var listProduct = productPage.Products;
+    #region Products
+    if (listProduct.Count == 0)
+    {
+        listProduct.Add(new ProductVM()
+        {
+            ProductId = 0,
+            ProductCode = "STL101",
+            ProductName = "Insulated Steel Bottle (With Grip/Sleeve)",
+            Price = 1099,
+            ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/steel_bottle_grip.png", } }
+        });
+        listProduct.Add(new ProductVM()
+        {
+            ProductId = 0,
+            ProductCode = "STL102",
+            ProductName = "Insulated Steel Bottle(With Grip / Sleeve)",
+            Price = 999,
+            ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/steel_bottle.png", } }
+        });
+        listProduct.Add(new ProductVM()
+        {
+            ProductId = 0,
+            ProductCode = "SL201",
+            ProductName = "Silicone Water Bottle",
+            Price = 850,
+            ListProductMedia = new List<ProductMediumVM>() { new ProductMediumVM() { FilePath = "/img/silicone_bottle.png", } }
+        });
+    }
+    #endregion
 
     var oNavbar = new Aquasip.Models.NavbarVM()
     {

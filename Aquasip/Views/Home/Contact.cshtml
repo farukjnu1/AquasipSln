@@ -26,7 +26,22 @@
         Slug = contactPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
-                            
+
+    oPhone.Body = oPhone == null ? @"+880 1831-828580" : oPhone.Body;
+    oEmail.Body = oEmail == null ? @"support@aquasip.shop" : oEmail.Body;
+    oAddress.Body = oAddress == null ? @"House# 927, Road# 13/A, Avenue# 03, Mirpur DOHS, Dhaka, Bangladesh." : oAddress.Body;
+    if (oContact == null)
+    {
+        oContact = new PageContentVM();
+        oContact.Header = "Let’s Connect";
+        oContact.Description = @"Have a question, need product support, or want to know more about AquaSip? We're here to help. Our team is committed to providing fast, friendly, and reliable assistance. Whether it's an order inquiry, product information, or feedback, we'd love to hear from you. Your satisfaction is our priority—reach out anytime, and we'll get back to you as soon as possible. Stay Hydrated. Stay Connected. Choose AquaSip.";
+        oContact.Body = "";
+    }
+    if (oMap == null)
+    {
+        oMap = new PageContentVM();
+        oMap.Header = @"";
+    }
 }
 
 <!-- Navbar & Hero Start -->

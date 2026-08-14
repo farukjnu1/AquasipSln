@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Aquasip.Fiters;
+﻿using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Repositories;
+using Aquasip.Utilities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Aquasip.Controllers
 {
@@ -64,7 +65,10 @@ namespace Aquasip.Controllers
             try
             {
                 #region PageContent Update
-                int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //int? UploadedBy = HttpContext.Session.GetInt32("UserID");
                 PageContentRepository pcRepo = new PageContentRepository(_connectionString);
                 model.UploadedBy = UploadedBy;
                 //TempData["message"] = pcRepo.Add(model);
@@ -157,7 +161,10 @@ namespace Aquasip.Controllers
             try
             {
                 #region PageContent Update
-                int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //int? UploadedBy = HttpContext.Session.GetInt32("UserID");
                 PageContentRepository pcRepo = new PageContentRepository(_connectionString);
                 model.UploadedBy = UploadedBy;
                 TempData["message"] = pcRepo.Update(model);

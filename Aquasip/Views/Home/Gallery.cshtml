@@ -13,6 +13,109 @@
                         galleryPage.PageContents.Where(x => x.SlugPageContent == "gallery").First();
 
     var listGallery = galleryPage.Galleries;
+    if (listGallery.Count == 0)
+    {
+        listGallery.Add(new GalleryVM()
+        {
+            Title = "Carry Confidence. Carry AquaSip.",
+            Header = "Gym",
+            ListGalleryMedia = new List<GalleryMediumVM>()
+            {
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Gym1.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Gym2.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Gym3.png"
+                },
+            }
+        });
+        listGallery.Add(new GalleryVM()
+        {
+            Title = "Inspired by Every Lifestyle",
+            Header = "Lifestyle",
+            ListGalleryMedia = new List<GalleryMediumVM>()
+            {
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Lifestyle1.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Lifestyle2.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Lifestyle3.png"
+                },
+            }
+        });
+        listGallery.Add(new GalleryVM()
+        {
+            Title = "Made for Every Journey",
+            Header = "Silicon",
+            ListGalleryMedia = new List<GalleryMediumVM>()
+            {
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Silicon1.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Silicon2.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Silicon3.png"
+                },
+            }
+        });
+        listGallery.Add(new GalleryVM()
+        {
+            Title = "Our Journey in Pictures",
+            Header = "Insulated Steel",
+            ListGalleryMedia = new List<GalleryMediumVM>()
+            {
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Insulated Steel1.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Insulated Steel2.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Insulated Steel3.png"
+                },
+            }
+        });
+        listGallery.Add(new GalleryVM()
+        {
+            Title = "Where Every Journey Begins with a Sip",
+            Header = "Travel",
+            ListGalleryMedia = new List<GalleryMediumVM>()
+            {
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Travel1.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Travel2.png"
+                },
+                new GalleryMediumVM()
+                {
+                    FilePath = "/img/Travel3.png"
+                },
+            }
+        });
+    }
 
     var oNavbar = new Aquasip.Models.NavbarVM()
     {
@@ -20,7 +123,6 @@
         Slug = galleryPage.Slug,
         Pages = (List<PageVM>)viewModel
     };
-    
 }
 
 <!-- Navbar & Hero Start -->

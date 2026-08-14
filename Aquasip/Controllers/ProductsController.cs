@@ -2,6 +2,7 @@
 using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Repositories;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Build.Tasks.Deployment.Bootstrapper;
@@ -93,7 +94,10 @@ namespace Aquasip.Controllers
         {
             if (ModelState.IsValid)
             {
-                int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                int UserId = user == null ? 0 : user.UserID;
+                int? UploadedBy = UserId;
+                //int? UploadedBy = HttpContext.Session.GetInt32("UserID");
                 product.UploadedBy = UploadedBy;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
@@ -118,7 +122,10 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Details([Bind("ProductId,ProductCode,ProductName,Description,Price,IsActive,UploadedBy,UploadedAt,MediaFile")] ProductVM model)
         {
-            int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+            var user = HttpContext.Session.GetObject<UserVM>("User");
+            int UserId = user == null ? 0 : user.UserID;
+            int? UploadedBy = UserId;
+            //int? UploadedBy = HttpContext.Session.GetInt32("UserID");
             #region Media
             if (model.MediaFile != null && model.MediaFile.Length > 0)
             {
@@ -221,7 +228,10 @@ namespace Aquasip.Controllers
             {
                 try
                 {
-                    int? UploadedBy = HttpContext.Session.GetInt32("UserID");
+                    var user = HttpContext.Session.GetObject<UserVM>("User");
+                    int UserId = user == null ? 0 : user.UserID;
+                    int? UploadedBy = UserId;
+                    //int? UploadedBy = HttpContext.Session.GetInt32("UserID");
                     product.UploadedBy = UploadedBy;
                     var price = await (from x in _context.Products where x.ProductId == id select x.Price).FirstOrDefaultAsync();
                     if (price != null)

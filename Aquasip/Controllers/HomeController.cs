@@ -478,10 +478,13 @@ namespace Aquasip.Controllers
                 selectList.Add(new SelectListItem { Text = item.ProductName, Value = item.ProductId.ToString() });
             }
             ViewData["ProductId"] = selectList;
+            var customer = HttpContext.Session.GetObject<CustomerVM>("Customer");
+            long CustomerId = customer == null ? 0 : customer.CustomerId;
+            //int? UploadedBy = UserId;
             var oReview = new ReviewVM
             {
                 ProductId = id ?? 0,
-                CustomerId = Convert.ToInt64(HttpContext.Session.GetString("CustomerId") ?? "0")
+                CustomerId = CustomerId
             };
             ReviewRepository reviewRepo = new ReviewRepository(_connectionString);
             var listReview = reviewRepo.GetAll();
@@ -703,9 +706,16 @@ namespace Aquasip.Controllers
                 {
                     if (oCustomer.IsActive == true)
                     {
-                        HttpContext.Session.SetString("CustomerId", oCustomer.CustomerId.ToString());
-                        HttpContext.Session.SetString("Email", oCustomer.Email ?? "");
-                        HttpContext.Session.SetString("FullName", oCustomer.FullName ?? "");
+                        var customer = new CustomerVM() 
+                        {
+                            CustomerId = oCustomer.CustomerId,
+                            Email = oCustomer.Email,
+                            FullName = oCustomer.FullName
+                        };
+                        HttpContext.Session.SetObject<CustomerVM>("Customer", customer);
+                        //HttpContext.Session.SetString("CustomerId", oCustomer.CustomerId.ToString());
+                        //HttpContext.Session.SetString("Email", oCustomer.Email ?? "");
+                        //HttpContext.Session.SetString("FullName", oCustomer.FullName ?? "");
                         if (model.CallbackAction == "Review" && model.CallbackController == "Home")
                         {
                             return RedirectToAction("Review", "Home");

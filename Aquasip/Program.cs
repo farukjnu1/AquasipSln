@@ -30,7 +30,6 @@ builder.Services.AddDataProtection();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 //string Aquasip = builder.Configuration["ConnectionStrings:AquasipContext"];
-
 builder.Services.AddDbContext<AquasipContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("AquasipContext")));

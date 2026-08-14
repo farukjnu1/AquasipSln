@@ -4,6 +4,7 @@ using Aquasip.Models;
 using Aquasip.Repositories;
 using Aquasip.Services.EmailServices;
 using Aquasip.Services.TokenServices;
+using Aquasip.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -67,8 +68,10 @@ namespace Aquasip.Controllers
             ViewData["aquasip"] = listPage;
             #endregion
 
-            long CustomerId = HttpContext.Session.GetString("CustomerId") == null ? 0 : Convert.ToInt64(HttpContext.Session.GetString("CustomerId"));
-            
+            var customer = HttpContext.Session.GetObject<CustomerVM>("Customer");
+            long CustomerId = customer == null ? 0 : customer.CustomerId;
+            //long CustomerId = HttpContext.Session.GetString("CustomerId") == null ? 0 : Convert.ToInt64(HttpContext.Session.GetString("CustomerId"));
+
             #region Dropdown List
             var listOrderStatus = new List<SelectListItem>();
             listOrderStatus.Add(new SelectListItem { Value = "0", Text = "All" });
@@ -81,23 +84,6 @@ namespace Aquasip.Controllers
                 .ToListAsync());
             ViewData["OrderStateId"] = listOrderStatus;
             #endregion
-
-            /*var aquasipContext = (from o in _context.SalesOrders.Include(o => o.Customer)
-                                  join os in _context.SalesOrderStates on o.OrderStateId equals os.OrderStateId
-                                  where o.IsActive == true && o.CustomerId == CustomerId && o.OrderStateId == (OrderStateId == 0 ? o.OrderStateId : OrderStateId)
-                                  select new SalesOrderVM
-                                  {
-                                      CustomerName = o.Customer.FullName,
-                                      GrandTotal = o.GrandTotal,
-                                      Notes = o.Notes,
-                                      OrderId = o.OrderId,
-                                      OrderNumber = o.OrderNumber,
-                                      OrderDate = o.OrderDate,
-                                      OrderStatus = os.OrderStatus,
-                                      ColorCode = os.ColorCode
-                                  }).OrderByDescending(x => x.OrderId).Take(PageSize);
-            return View(await aquasipContext.ToListAsync());*/
-
             SalesOrderRepository soRepo = new SalesOrderRepository(_connectionString);
             var listSalesOrder = soRepo.GetAll(OrderStateId, PageSize);
             listSalesOrder = listSalesOrder.Where(x => x.CustomerId == CustomerId).ToList();
@@ -152,7 +138,9 @@ namespace Aquasip.Controllers
             ViewData["aquasip"] = listPage;
             #endregion
 
-            long CustomerId = HttpContext.Session.GetString("CustomerId") == null ? 0 : Convert.ToInt64(HttpContext.Session.GetString("CustomerId"));
+            var customer = HttpContext.Session.GetObject<CustomerVM>("Customer");
+            long CustomerId = customer == null ? 0 : customer.CustomerId;
+            //long CustomerId = HttpContext.Session.GetString("CustomerId") == null ? 0 : Convert.ToInt64(HttpContext.Session.GetString("CustomerId"));
 
             var aquasipContext = _context.CustomerPayments.Include(s => s.Order).Include(s => s.PaymentMethod).Include(s => s.PaymentStatus).Where(x=> x.Order.CustomerId == CustomerId && x.PaymentStatusId == 2); // paid
             return View(await aquasipContext.ToListAsync());

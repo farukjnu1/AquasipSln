@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Aquasip.EF;
+﻿using Aquasip.EF;
 using Aquasip.Fiters;
 using Aquasip.Models;
 using Aquasip.Repositories;
+using Aquasip.Utilities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Aquasip.Controllers
 {
@@ -44,9 +45,10 @@ namespace Aquasip.Controllers
         {
             try
             {
-                int? CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
+                //int? CreateBy = HttpContext.Session.GetInt32("UserID");
                 ContactMessageRepository contactRepo = new ContactMessageRepository();
-                TempData["message"] = contactRepo.MarkAsReadOrUnread(id, CreateBy);
+                TempData["message"] = contactRepo.MarkAsReadOrUnread(id, user.UserID);
             }
             catch (Exception ex)
             {
@@ -83,9 +85,10 @@ namespace Aquasip.Controllers
         {
             try
             {
-                int? CreateBy = HttpContext.Session.GetInt32("UserID");
+                //int? CreateBy = HttpContext.Session.GetInt32("UserID");
+                var user = HttpContext.Session.GetObject<UserVM>("User");
                 ContactMessageRepository contactRepo = new ContactMessageRepository();
-                TempData["message"] = contactRepo.SuspendOrRestore(id, CreateBy);
+                TempData["message"] = contactRepo.SuspendOrRestore(id, user.UserID);
             }
             catch (Exception ex)
             {

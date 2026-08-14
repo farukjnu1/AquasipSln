@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Aquasip.EF;
 using Aquasip.Models;
 using Aquasip.Repositories;
+using Aquasip.Utilities;
 
 namespace Aquasip.Controllers
 {
@@ -35,9 +36,14 @@ namespace Aquasip.Controllers
                 {
                     if (oUser.IsActive == true)
                     {
-                        HttpContext.Session.SetInt32("UserID", oUser.UserID);
-                        HttpContext.Session.SetString("Username", oUser.Username);
-                        HttpContext.Session.Set("UserInfo", user);
+                        UserVM user = new UserVM
+                        {
+                            UserID = oUser.UserID,
+                            Username = oUser.Username
+                        };
+                        HttpContext.Session.SetObject<UserVM>("User", user);
+                        //HttpContext.Session.SetInt32("UserID", oUser.UserID);
+                        //HttpContext.Session.SetString("Username", oUser.Username);
                         return RedirectToAction("Index", "SalesOrders");
                     }
                     else
@@ -54,8 +60,9 @@ namespace Aquasip.Controllers
 
         public IActionResult Logout(int? UserID)
         {
-            HttpContext.Session.Remove("UserID");
-            HttpContext.Session.Remove("Username");
+            HttpContext.Session.Remove("UserInfo");
+            //HttpContext.Session.Remove("UserID");
+            //HttpContext.Session.Remove("Username");
             return RedirectToAction("Index");
         }
 
