@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Aquasip.Models.PageVM>
-@using Aquasip.Utilities
+@using Aquasip.Utilities;
 @{
     var pRepo = new Aquasip.Repositories.PageRepository(WebsiteConfig.ConnectionString);
     var pcRepo = new Aquasip.Repositories.PageContentRepository(WebsiteConfig.ConnectionString);
@@ -155,9 +155,13 @@
     }
 
     ViewData["Title"] = "Home";
-    string? CustomerId = Context.Session.GetString("CustomerId");
-    string? Email = Context.Session.GetString("Email");
-    string? FullName = Context.Session.GetString("FullName");
+    var customer = Context.Session.GetObject<CustomerVM>("Customer");
+    string? CustomerId = customer == null ? "" : customer.CustomerId.ToString();
+    string? Email = customer == null ? "" : customer.Email.ToString();
+    string? FullName = customer == null ? "" : customer.FullName;
+    // string? CustomerId = Context.Session.GetString("CustomerId");
+    // string? Email = Context.Session.GetString("Email");
+    // string? FullName = Context.Session.GetString("FullName");
 }
 
 <!-- Navbar & Hero Start -->

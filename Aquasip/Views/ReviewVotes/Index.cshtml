@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<Aquasip.EF.ReviewVote>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "ReviewVotes";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var oReview = ViewData["Review"] as Aquasip.EF.Review;
 }
-
-<h3>Review(Helpful/Not)</h3>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h3>List of Votes</h3>
+<h4>Title: @oReview.Title</h4>
+<h4>Review By: @oReview.Customer.FullName</h4>
+<a href="/ReviewVotes/Create?reviewId=@oReview?.ReviewId">Create New Vote</a>
+|
+<a asp-action="Details" asp-controller="Reviews" asp-route-id="@oReview?.ReviewId">Back to the Review</a>
 <table class="table">
     <thead>
         <tr>
@@ -52,3 +52,4 @@
 }
     </tbody>
 </table>
+

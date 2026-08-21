@@ -60,7 +60,7 @@ namespace Aquasip.Controllers
 
         public IActionResult Logout(int? UserID)
         {
-            HttpContext.Session.Remove("UserInfo");
+            HttpContext.Session.Remove("User");
             //HttpContext.Session.Remove("UserID");
             //HttpContext.Session.Remove("Username");
             return RedirectToAction("Index");

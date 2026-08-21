@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Aquasip.EF;
+using Aquasip.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Aquasip.EF;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Aquasip.Controllers
 {
@@ -21,6 +22,8 @@ namespace Aquasip.Controllers
         // GET: ReviewVotes
         public async Task<IActionResult> Index(long reviewId)
         {
+            var oReview = _context.Reviews.Where(x => x.ReviewId == reviewId).Include(r => r.Customer).FirstOrDefault();
+            ViewData["Review"] = oReview;
             var aquasipContext = _context.ReviewVotes.Where(x=>x.ReviewId == reviewId).Include(r => r.Customer).Include(r => r.Review);
             return View(await aquasipContext.ToListAsync());
         }
@@ -46,11 +49,33 @@ namespace Aquasip.Controllers
         }
 
         // GET: ReviewVotes/Create
-        public IActionResult Create()
+        public IActionResult Create(long reviewId)
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
-            ViewData["ReviewId"] = new SelectList(_context.Reviews, "ReviewId", "ReviewId");
-            return View();
+            var oReview = _context.Reviews
+                .Where(x => x.ReviewId == reviewId)
+                .Include(x => x.Product)
+                .Include(x => x.Customer).FirstOrDefault();
+            if (oReview == null)
+            {
+                return NotFound();
+            }
+            ViewData["Review"] = oReview;
+            var oReviewVote = new ReviewVote();
+            oReviewVote.ReviewId = oReview.ReviewId;
+            oReviewVote.CustomerId = oReview.CustomerId;
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ReviewId"] = _context.Reviews.OrderBy(x => x.Title)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ReviewId.ToString(),
+                        Text = x.Title
+                    }).ToList();
+            return View(oReviewVote);
         }
 
         // POST: ReviewVotes/Create
@@ -60,14 +85,48 @@ namespace Aquasip.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("VoteId,ReviewId,CustomerId,IsHelpful,CreatedAt")] ReviewVote reviewVote)
         {
-            if (ModelState.IsValid)
+            try
             {
                 _context.Add(reviewVote);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    reviewId = reviewVote.ReviewId
+                });
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", reviewVote.CustomerId);
-            ViewData["ReviewId"] = new SelectList(_context.Reviews, "ReviewId", "ReviewId", reviewVote.ReviewId);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReviewVoteExists(reviewVote.VoteId))
+                {
+                    //return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            var oReview = _context.Reviews
+                .Where(x => x.ReviewId == reviewVote.ReviewId)
+                .Include(x => x.Product)
+                .Include(x => x.Customer).FirstOrDefault();
+            if (oReview == null)
+            {
+                return NotFound();
+            }
+            ViewData["Review"] = oReview;
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ReviewId"] = _context.Reviews.OrderBy(x => x.Title)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ReviewId.ToString(),
+                        Text = x.Title
+                    }).ToList();
             return View(reviewVote);
         }
 
@@ -79,13 +138,29 @@ namespace Aquasip.Controllers
                 return NotFound();
             }
 
-            var reviewVote = await _context.ReviewVotes.FindAsync(id);
+            var reviewVote = await _context.ReviewVotes
+                .Where(x=>x.VoteId == id)
+                .Include(x=>x.Customer)
+                .Include(x=>x.Review)
+                .FirstOrDefaultAsync();
             if (reviewVote == null)
             {
                 return NotFound();
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", reviewVote.CustomerId);
-            ViewData["ReviewId"] = new SelectList(_context.Reviews, "ReviewId", "ReviewId", reviewVote.ReviewId);
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ReviewId"] = _context.Reviews.OrderBy(x => x.Title)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ReviewId.ToString(),
+                        Text = x.Title
+                    }).ToList();
+            //ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", reviewVote.CustomerId);
+            //ViewData["ReviewId"] = new SelectList(_context.Reviews, "ReviewId", "ReviewId", reviewVote.ReviewId);
             return View(reviewVote);
         }
 
@@ -100,30 +175,48 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                try
+                _context.Update(reviewVote);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index), new
                 {
-                    _context.Update(reviewVote);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReviewVoteExists(reviewVote.VoteId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    reviewId = reviewVote.ReviewId
+                });
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", reviewVote.CustomerId);
-            ViewData["ReviewId"] = new SelectList(_context.Reviews, "ReviewId", "ReviewId", reviewVote.ReviewId);
-            return View(reviewVote);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReviewVoteExists(reviewVote.VoteId))
+                {
+                    //return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            var oReviewVote = await _context.ReviewVotes
+                .Where(x => x.VoteId == id)
+                .Include(x => x.Customer)
+                .Include(x => x.Review)
+                .FirstOrDefaultAsync();
+            if (oReviewVote == null)
+            {
+                return NotFound();
+            }
+            ViewData["CustomerId"] = _context.Customers.Where(x => x.IsActive == true).OrderBy(x => x.FullName)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.CustomerId.ToString(),
+                        Text = x.FullName
+                    }).ToList();
+            ViewData["ReviewId"] = _context.Reviews.OrderBy(x => x.Title)
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.ReviewId.ToString(),
+                        Text = x.Title
+                    }).ToList();
+            return View(oReviewVote);
         }
 
         // GET: ReviewVotes/Delete/5

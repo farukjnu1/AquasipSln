@@ -1,10 +1,15 @@
-﻿@*
+﻿@using Aquasip.Utilities;
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    string? CustomerId = Context.Session.GetString("CustomerId");
-    string? Email = Context.Session.GetString("Email");
-    string? FullName = Context.Session.GetString("FullName");
+    var customer = Context.Session.GetObject<CustomerVM>("Customer");
+    string? CustomerId = customer == null ? "" : customer.CustomerId.ToString();
+    string? Email = customer == null ? "" : customer.Email.ToString();
+    string? FullName = customer == null ? "" : customer.FullName;
+    // string? CustomerId = Context.Session.GetString("CustomerId");
+    // string? Email = Context.Session.GetString("Email");
+    // string? FullName = Context.Session.GetString("FullName");
 }
 
 @* <div class="d-flex flex-column pe-3 border-end border-primary">

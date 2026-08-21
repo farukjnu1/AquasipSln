@@ -1,4 +1,5 @@
-﻿@model Aquasip.Models.SalesOrderVM
+﻿@using Aquasip.Utilities;
+@model Aquasip.Models.SalesOrderVM
 
 @{
     ViewData["Title"] = "Order";
@@ -12,9 +13,13 @@
         Slug = "OrderDetails",
         Pages = (List<PageVM>)viewModel
     };
-    string? CustomerId = Context.Session.GetString("CustomerId");
-    string? Email = Context.Session.GetString("Email");
-    string? FullName = Context.Session.GetString("FullName");
+    var customer = Context.Session.GetObject<CustomerVM>("Customer");
+    string? CustomerId = customer == null ? "" : customer.CustomerId.ToString();
+    string? Email = customer == null ? "" : customer.Email.ToString();
+    string? FullName = customer == null ? "" : customer.FullName;
+    // string? CustomerId = Context.Session.GetString("CustomerId");
+    // string? Email = Context.Session.GetString("Email");
+    // string? FullName = Context.Session.GetString("FullName");
 
     decimal totalPaidAmount = 0;
     string? paymentStatus = "undefined";
