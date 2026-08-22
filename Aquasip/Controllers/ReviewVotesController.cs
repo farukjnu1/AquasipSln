@@ -226,7 +226,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             var reviewVote = await _context.ReviewVotes
                 .Include(r => r.Customer)
                 .Include(r => r.Review)
@@ -235,7 +234,6 @@ namespace Aquasip.Controllers
             {
                 return NotFound();
             }
-
             return View(reviewVote);
         }
 
@@ -249,9 +247,15 @@ namespace Aquasip.Controllers
             {
                 _context.ReviewVotes.Remove(reviewVote);
             }
-
+            if (reviewVote == null)
+            {
+                return NotFound();
+            }
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                reviewId = reviewVote.ReviewId
+            });
         }
 
         private bool ReviewVoteExists(long id)
